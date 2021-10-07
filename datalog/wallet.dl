@@ -1,0 +1,24 @@
+.decl transfer(from: address, to: address, amount: number)
+.input transfer
+
+totalMint(s) :- s = sum v: mint(_, v).
+totalBurnt(s) :- s = sum v: burn(_,v).
+
+totalSupply(s) :- totalMint(m), totalBurnt(b), s = m - b.
+
+recv(v,s) :- mint(v, s).
+recv(v,s) :- transfer(_, v, s).
+sent(v,s) :- burn(v,s).
+sent(v,s) :- transfer(v, _,s).
+
+recvTotal(v, s) :- recv(v, _), s = sum m: recv(v,m).
+sentTotal(v, s) :- sent(v, _), s = sum m: sent(v,m).
+
+balanceOf(v, m) :- recvToal(v, r), sentTotal(v, s), m = r - s.
+
+
+commit_send(tx, rx, n) :- send(tx, rx, n),
+                      balanceOf(tx, m), m >= n.
+commit_burn(p, n) :- burn(p, n),
+                      balanceOf(p, m), m >= n.
+

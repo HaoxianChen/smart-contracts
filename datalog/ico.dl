@@ -1,0 +1,40 @@
+// Static configurations
+
+initialSupply(1000).
+tokensPerEther(10).
+optionsPerEther(20).
+
+// Views
+
+avilableSupply(m) :- initialSupply(n),
+  sold(s), m = s-n.
+
+sold(s) :- soldByOption(m), soldByEth(n), s = m + n.  
+
+soldByOption(m) :- m = sum n : buyByOptions(_, n,_).
+soldByEth(m) :- m = sum n : buyTokens(_, n,_).
+
+optionBalance(address, m) :- 
+  buyOptions(address, _, _),
+  m = sum n : buyOptions(address, n, _).
+
+tokenBalance(addres, m) :-
+  buyTokens(address, _, _),
+  m = sum n : buyTokens(addrees, n, _).
+
+// Event-condition-actions
+
+commit_buyOptions(address, amount, ether) :-
+  call_buyOptions(address, payment),
+  optionsPerEther(n),
+  amount = payment * n.
+
+commit_buyByOptions(address, amount) :-
+  call_buyByOptions(address, amount),
+  optionBalance(address, m),
+  availableSupply(n), n >= m.
+
+commit_buyTokens(address, amount, ether) :-
+  call_buyToken(address, ether),
+  tokensPerEther(m), amount = ether * m,
+  availableSupply(n), n >= amount.

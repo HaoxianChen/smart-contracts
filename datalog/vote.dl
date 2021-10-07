@@ -1,0 +1,48 @@
+// A ballot with delegation 
+
+// Transactions
+.decl vote(voter: address, proposal: number)
+.decl assignRightToVote(voter: address)
+.decl delegate(fromVoter: address, toVoter: address)
+.decl close()
+
+// Views
+
+.decl winningProposal(proposal: number)
+.decl owner(p: address)
+
+// Auxilary relations
+.decl weights(voter: number, weight: number)
+.decl voteCounts(proposal: number, count: number)
+.decl delegateCount()
+.decl maxVote(count: number)
+
+
+// Views
+
+delegateCount(v, c) :- delegate(_, v), c = count: {delegate(, v)}.
+
+weights(v, w) :- assignRightToVote(v), delegateCount(v, c), w = c+1.
+weights(v, 1) :- assignRightToVote(v), !delegateCount(v,_).
+
+weightedVotes(v, p, w) :- vote(v,p), weights(v,w).
+voteCounts(p, c) :- weightedVotes(_,p,_), c = sum w: {weightedVotes(_,p,w)}.
+
+maxVote(mc) :- mc = max c: voteCounts(_,c).
+winningProposal(wp) :- voteCount(p, mc), maxVote(mc).
+
+
+// Event conditinos
+
+// Cannot delegate to voters who has already delegated to someone else.
+commit_delegate(from, to) :- call_delegate(from, to), !delegate(from, to),
+  !close(), !delegate(to, _).
+
+commit_assignRightToVote(voter) :- call_assignRightToVote(caller, voter),
+  !close(), owner(caller).
+
+// can only reveal winner after voting close.
+commit_winner(proposal) :- call_winner(caller), owner(caller),
+  close(), winningProposal(proposal).
+
+commit_close() :- call_close(caller), owner(caller).
