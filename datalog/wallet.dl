@@ -1,5 +1,8 @@
 .decl transfer(from: address, to: address, amount: number)
-.input transfer
+.decl mint(p: address, amount: number)
+.decl burn(p: address, amount: number)
+.decl balanceOf(p: address, amount: number)
+.decl totalSuuply(amount: number)
 
 totalMint(s) :- s = sum v: mint(_, v).
 totalBurnt(s) :- s = sum v: burn(_,v).
@@ -17,8 +20,8 @@ sentTotal(v, s) :- sent(v, _), s = sum m: sent(v,m).
 balanceOf(v, m) :- recvToal(v, r), sentTotal(v, s), m = r - s.
 
 
-commit_send(tx, rx, n) :- send(tx, rx, n),
-                      balanceOf(tx, m), m >= n.
-commit_burn(p, n) :- burn(p, n),
-                      balanceOf(p, m), m >= n.
+commit_send(tx, rx, n) :- send(tx, rx, n), balanceOf(tx, m), m >= n.
 
+commit_burn(p, n) :- burn(p, n), balanceOf(p, m), m >= n.
+
+commit_mint(p, n) :- call_mint(p, n), owner(p) n!=0.

@@ -1,0 +1,69 @@
+// views
+.decl totalSupply(amount: uint32)
+.decl balanceOf(p: address, amount: uint32)
+.decl allowance(owner: address, spender: address, amount: uint32)
+
+// transactions
+.decl approve(owner: address, spender: address, amount: uint32, t: time)
+.decl transfer(spender: address, receiver: address, amount: uint32, t:time)
+.decl transferFrom(owner: address, spender: address, receiver: address, 
+    amount: uint32, t:time)
+
+.decl mint(p: address, amount: uint32)
+.decl burn(p: address, amount: uint32)
+
+// Auxilary relations
+.decl totalMint(p: amount)
+.decl totalBurnt(p: amount)
+
+// Total supply
+totalSupply(s) :- totalMint(m), totalBurnt(b), s = m - b.
+
+totalMint(s) :- s = sum v: mint(_, v).
+totalBurnt(s) :- s = sum v: burn(_,v).
+
+// Balance of
+recv(v,s) :- mint(v, s).
+recv(v,s) :- transfer(_, v, s).
+recv(v,s) :- transferFrom(_, _, v, s).
+sent(v,s) :- burn(v,s).
+sent(v,s) :- transfer(v, _,s).
+sent(v,s) :- transferFrom(v, _, _, s).
+
+recvTotal(v, s) :- recv(v, _), s = sum m: recv(v,m).
+sentTotal(v, s) :- sent(v, _), s = sum m: sent(v,m).
+
+balanceOf(v, m) :- recvToal(v, r), sentTotal(v, s), m = r - s.
+
+// Allowance
+allowance(owner, spender, n) :- latest_approval(owner, spender, m, t), 
+    spent_since(owner, spender, s, t), n = m - s.
+
+latest_approval_time(owner, spender, lt) :- approve(owner, spender, _, _), 
+    lt = max t: approve approve(owner, spender, _, t).
+latest_approval(owner, spender, n, t) :- approve(owner, spender, n, t), 
+    latest_approval_time(owner, spender, t).
+
+transfers_since(owner, spender, n, lt) :- transferFrom(owner, spender, n, t),
+    latest_approval_time(owner, spender, lt),  t >= lt.
+spent_since(owner, spender, s, t) :- transfers_since(owner, spender, _, t),
+    s = sum n : transfers_since(owner, spender, n, _).
+
+// Events...
+commit_approve(owner, spender, amount, t) :- 
+  call_approve(caller, owner, spender, amount, t), caller == owner.
+
+commit_transfer(sender, receiver, amount, t) :-
+    call_transfer(caller, caller, receiver, amount, t), balanceOf(caller, n),
+    n >= amount.
+
+commit_transferFrom(owner, spender, receiver, amount, t) :-
+    call_transferFrom(caller, owner, receiver, amount, t), 
+    balanceOf(owner, n), n >= amount,
+    allowance(owner, spender, m), m >= amount.
+
+commit_mint(account, amount) :- call_mint(caller, account, amount),
+    owner(caller), account != 0.
+
+commit_burn(account, amount) :- call_burn(caller, account, amount),
+    owner(caller), account != 0, balanceOf(account, n), n >= amount. 
