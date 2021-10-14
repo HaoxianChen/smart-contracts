@@ -1,0 +1,48 @@
+// Built-in relations
+// true is p is a contract address
+.decl isContract(p: address)
+// true if p implements interface if
+.decl implementsInterface(p:address, if: interface)
+
+// Static configurations
+.decl owner(p: address)
+
+// Views
+.decl owner(token: id, owner: address)
+.decl balanceOf(p: address, n: uint32)
+.decl getApproved(token: id, p: address)
+.decl isApprovedForAll(owner: address, to: address)
+
+// Functions
+.decl safeTransferFrom(from: address, to: address, token: id, t: time)
+.decl approve(to: address, token: id, t: time)
+.decl approveForAll(to: address, t: time)
+
+.decl mint(account: address, token: id)
+.decl burn(account: address, token: id)
+
+// Views
+
+ownerOf(token, p) :- mint(p, token), !safeTransfer(p, _, token, _),
+  !burn(_,token).
+ownerOf(token, p) :- safeTransfer(p,_,token,t1), !safeTransfer(p,_,token,t2),
+  t1<t2, !burn(_,token).
+
+balanceOf(p, n) :- ownerOf(p, _), n = sum : ownerOf(p, _).
+
+getApproved(token,p) :- approve(_,p,token,t1), !safeTransfer(_,_,token,t2),t2>t1.
+isApprovedForAll(o,p) :- ownerOf(_, o), approveForAll(o,p,token).
+
+// Transaction commit conditions
+commit_safeTransferFrom(from,to,token,t) :- call_safeTransferFrom(caller,from,to,token,t),
+   from != 0, to != 0, 
+   (!isContract(to); implementsInterface(to, IERC721Receiver.onERC721Received)), 
+   (caller == from ; getApproved(caller,token); isApprovedForAll(from, caller)).
+
+commit_approve(to,token,t) :- call_aprove(caller,to,token,t),
+    (owner(token,caller); getApproved(token,caller)).
+
+commit_approveForAll(to,t) :- call_approveForAll(caller,to,t),caller!=to.
+
+commit_mint(p,token) :- call_mint(caller,p,token), owner(caller), !mint(_,token).
+commit_burn(p,token) :- call_burn(caller,p,token), owner(caller), owner(token,p).
