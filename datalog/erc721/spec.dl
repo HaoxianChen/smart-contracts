@@ -1,0 +1,10 @@
+/** Formal specification for ERC721 token. */
+
+// Every token has an owner (no token is lost).
+mint(p,t) /\ !burn(_,t) => \exits o, ownerOf(o, t).
+
+// No negative balance
+balanceOf(p,n) => n >= 0.
+
+// Every token has only one owner
+ownerOf(t,p1) /\ owner(t, p2) => p1=p2.

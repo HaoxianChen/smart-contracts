@@ -1,0 +1,8 @@
+// Total raised amount is the sum of all investor deposit.
+raised(n) => n = sum m: invest(_,m).
+
+// Withdraw and claimRefund cannot both happen
+!(withdraw(beneficiary,amount1) /\ claimRefund(investor,amount2)).
+
+// cannot claim refund after target amount of money is reached
+claimRefund(p,n) => raised(m) /\ m > TARGET.

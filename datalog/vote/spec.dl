@@ -1,0 +1,7 @@
+vote(v,p,t) => assignRightToVote(v).
+
+// Every voter can only vote once.
+vote(v,p1,t1) /\ vote(v,p2,t2) => p1=p2 /\ t1=t2.
+
+// cannot vote after close
+vote(v,p,t) => !state(CLOSE)
