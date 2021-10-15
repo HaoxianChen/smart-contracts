@@ -1,0 +1,2 @@
+// Can only mint after ICO paused.
+commit_mint(caller,p,n,t) => state(PAUSED).

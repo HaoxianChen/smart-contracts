@@ -1,0 +1,5 @@
+// Only owner can mint.
+commit_mint(caller, p,n,t) => owner(caller).
+
+// Total supply is the sum of all account balance.
+totalSuply(n) => n = sum m: balanceOf(_,m).
