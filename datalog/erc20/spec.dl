@@ -1,0 +1,7 @@
+/* Specification for ERC20 tokens. */
+
+// No negative balance
+balanceOf(p,n) => n >= 0.
+
+// Total supply is the sum of all balance
+totalSupply(n) => n = sum m: balanceOf(_,m).
