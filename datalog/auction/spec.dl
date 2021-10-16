@@ -1,0 +1,8 @@
+// Cannot withdraw before auction ended.
+commit_withdraw(p,n) => isEnded().
+
+// Cannot bid after auction ended.
+commit_bid(p,n) => !isEnded().
+
+// During auction, owner balance equals to the sum of all bids
+balance(owner, n), !isEnded() => n = sum m: bid(_, m).

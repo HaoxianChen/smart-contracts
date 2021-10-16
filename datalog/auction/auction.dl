@@ -1,0 +1,38 @@
+/** 
+  Example taken from Solidity documentation: https://docs.soliditylang.org/en/v0.8.7/solidity-by-example.html#simple-open-auction
+ */
+
+// Configs
+.decl beneficiary(p: address)
+.decl owner(p: address)
+
+// Transactions
+.decl bid(bidder: address, amount: uint32)
+.decl withdraw(bidder: address, amount: uint32)
+.decl endAuction()
+
+// Views
+.decl highestBid(amount: uint32)
+.decl highestBidder(bidder: address)
+.decl pendingReturns(bidder: address, amount: uint32)
+.decl isEnded()
+
+highestBid(m) :- m = max n: bid(_, n).
+
+highestBidder(p) :- bid(p,m), highestBid(m).
+
+pendingReturns(p, n) :- bid(p, _), !highestBidder(p), n = sum m: bid(p, m).
+pendingReturns(p, n) :- highestBidder(p), highestBid(m), s = sum m: bid(p, m), 
+    n = s-m.
+
+isEnded() :- endAuction().
+
+// Transaction conditions
+commit_bid(p,n) :- call_bid(p,n), !isEnded(), n > 0.
+
+commit_withdraw(p,n) :- call_withdraw(p), isEnded(), !withdraw(p,_), pendingReturns(p,n).
+
+commit_endAuction() :- call_endAuction(caller), owner(caller).
+
+commit_transfer(o, b, n) :- call_endAuction(caller), owner(caller), 
+      beneficiary(b), highestBid(n).
