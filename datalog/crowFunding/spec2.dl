@@ -1,0 +1,10 @@
+// the sum of investor deposit equals the contract balance
+q1() :- s = sum m: invest(_,m), s != this.balance.
+
+// withdraw and refund cannot both happen
+q2() :- withdraw(_,_), refund(_,_).
+
+// when the funding target is reached, no refund can be issued.
+q3() :- raised > goal, refund(_,_).
+
+

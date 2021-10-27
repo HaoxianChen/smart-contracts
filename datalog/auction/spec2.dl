@@ -1,0 +1,8 @@
+// Cannot withdraw before auction ended.
+earlyWithdraw(p,t1) :- withdraw(p,_,t1), isEnded(t2), t1 < t2.
+
+// Cannot bid after auction ended.
+latdBid(p,t1) :- bid(p,_,t1), isEnded(t2), t1 >= t2.
+
+// During auction, owner balance equals to the sum of all bids
+q3() :- !isEnded(), balanceOf(owner, n), s = sum m: bid(_,m), n != s.  

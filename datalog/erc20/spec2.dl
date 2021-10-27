@@ -1,0 +1,13 @@
+// total suply equals sum of all account balance
+
+q1() :- s = sum m: balanceOf(_,m), totalSuply(t), s!=t.
+
+// Every user spend is within approval amount.
+overspend(owner, spender) :- s = sum m: transfer(owner, spender, _, m), 
+    approval(owner, spender, p), s > p.
+
+// Only owner can mint
+q3() :- mint(caller, _), caller != OWNER.
+
+// Only owner can burn
+q4() :- burn(caller, _), caller != OWNER.
