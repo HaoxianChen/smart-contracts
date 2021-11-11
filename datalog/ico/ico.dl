@@ -1,8 +1,17 @@
+/** ICO smart contract. 
+    Adopt from https://github.com/eth-sri/verx-benchmarks/tree/master/ICO.
+*/
+
 // Static configurations
 
 initialSupply(1000).
 tokensPerEther(10).
 optionsPerEther(20).
+
+/** States
+  IOC states: Created, RunningOptionSelling, RunningForOptionHolders, Running, Finished
+*/
+state(0).
 
 // Views
 
@@ -26,15 +35,24 @@ tokenBalance(addres, m) :-
 
 commit_buyOptions(address, amount, ether) :-
   call_buyOptions(address, payment),
+  state(1),
   optionsPerEther(n),
   amount = payment * n.
 
 commit_buyByOptions(address, amount) :-
   call_buyByOptions(address, amount),
+  state(2),
   optionBalance(address, m),
   availableSupply(n), n >= m.
 
 commit_buyTokens(address, amount, ether) :-
   call_buyToken(address, ether),
+  state(3),
   tokensPerEther(m), amount = ether * m,
   availableSupply(n), n >= amount.
+
+// State can only progress in order
+commit_state(state) :-
+  call_state_update(caller, state),
+  state(s0),
+  state = s0 + 1.

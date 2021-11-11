@@ -1,2 +1,9 @@
-// Can only mint after ICO paused.
-commit_mint(caller,p,n,t) => state(PAUSED).
+// States progress in order
+[] state == 0 ==> state' == 0 || state' == 1
+[] state == 1 ==> state' == 1 || state' == 2
+[] state == 2 ==> state' == 2 || state' == 3
+[] state == 3 ==> state' == 3 || state' == 4
+[] state == 4 ==> state' == 4 
+
+// Total tokens sold do not exceed initial supply.
+sold(s), initialSupply(t), s <= t.
