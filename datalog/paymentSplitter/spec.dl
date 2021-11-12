@@ -1,0 +1,6 @@
+// Release amount is no greater than each account's fair share.
+[] released(p,r) /\ balance(n) /\ shares(p,sp) 
+    /\ totalShares(s) ==> r <= (n*sp) / s. 
+
+// Total released is the sum of all releases to individual accounts. 
+[] totalReleased(r) ==> r ==  sum m: released(_,m).

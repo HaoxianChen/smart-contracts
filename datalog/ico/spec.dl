@@ -6,4 +6,4 @@
 [] state == 4 ==> state' == 4 
 
 // Total tokens sold do not exceed initial supply.
-sold(s), initialSupply(t), s <= t.
+sold(s) /\ initialSupply(t) ==> s <= t.

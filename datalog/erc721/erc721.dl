@@ -8,7 +8,7 @@
 .decl owner(p: address)
 
 // Views
-.decl owner(token: id, owner: address)
+.decl ownerOf(token: id, owner: address)
 .decl balanceOf(p: address, n: uint32)
 .decl getApproved(token: id, p: address)
 .decl isApprovedForAll(owner: address, to: address)

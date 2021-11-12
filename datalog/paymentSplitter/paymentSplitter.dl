@@ -1,0 +1,38 @@
+/* Payment splitter. 
+   Adopted from:https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/finance/PaymentSplitter.sol
+
+   The balance of the contract is splitted amont accounts, 
+   proportional to their shares.
+*/
+
+.type Account <: number
+
+// Static configurations
+.decl shares(p: Account, n: number)
+
+// Views
+
+.decl totalShares(n: number)
+.decl totalReleased(n: number)
+
+/* The amount of ethers that have been released to each account. */
+.decl released(p: Account, n: number)
+
+// Transactions
+
+/* When the contract receive payments. */
+.decl call_release(p: Account)
+.decl commit_release(p: Account, n: number)
+
+// Rules
+totalShares(n) :- n = sum m : shares(_,m).
+totalReleased(n) :- n = sum m: release(_,m).
+
+released(p,n) :- release(p,_), n = sum m: release(p,m).
+
+commit_release(p, m) :-
+    call_release(p), 
+    released(p, r),
+    balance(n), totalShares(s), share(p,sp),
+    m = (n*sp) / s - r,
+    m > 0.

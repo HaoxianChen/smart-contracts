@@ -1,7 +1,16 @@
 /* Specification for ERC20 tokens. */
 
 // No negative balance
-balanceOf(p,n) => n >= 0.
+[] balanceOf[p] >= 0.
 
 // Total supply is the sum of all balance
-totalSupply(n) => n = sum m: balanceOf(_,m).
+[] totalSupply = sum m: balanceOf(_,m).
+
+// Only owner can change the total supply
+[] totalSupply != totalSupply' -> msg.sender == OWNER
+
+// No overspend
+[] sum m: transfer(owner, spender) <= allowance[owner][spender]
+
+// Only account owner can change the allowance
+[] allowance[owner][spender] != allowance'[owner][spender] -> msg.sender == owner
