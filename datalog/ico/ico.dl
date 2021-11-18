@@ -4,6 +4,7 @@
 
 // Static configurations
 
+owner(0x123).
 initialSupply(1000).
 tokensPerEther(10).
 optionsPerEther(20).
@@ -11,6 +12,8 @@ optionsPerEther(20).
 /** States
   IOC states: Created, RunningOptionSelling, RunningForOptionHolders, Running, Finished
 */
+
+// Initial configurations.
 state(0).
 
 // Views
@@ -52,7 +55,8 @@ commit_buyTokens(address, amount, ether) :-
   availableSupply(n), n >= amount.
 
 // State can only progress in order
-commit_state(state) :-
+commit_state(caller, state) :-
   call_state_update(caller, state),
   state(s0),
+  owner(caller),
   state = s0 + 1.

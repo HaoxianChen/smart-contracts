@@ -1,0 +1,22 @@
+// Overspend
+overspend(s,t) :- totalSupply(t), sold(s), s > t.
+
+// States should progress in order
+invalidTransition(s) :- commit_state(caller, s), state(s0),
+                        s != s0+1, s0 < 4.
+
+// Only owner can change the states
+invalidTransition(s) :- commit_state(caller, s), !owner(caller).
+
+// State-based properties
+buyOptionsInWrongState(address, amount, s) :- 
+    commit_buyOptions(addrees,amount), state(s),
+    s != RunningOptionSelling.
+
+buyByOptionsInWrongState(address, amount, s) :- 
+    commit_buyByOptions(addrees,amount), state(s),
+    s != RunningForOptionHolders.
+
+buyTokensInWrongState(address, amount, s) :- 
+    commit_buyTokens(addrees,amount), state(s),
+    s != Running.

@@ -34,6 +34,9 @@ winningProposal(wp) :- voteCount(p, mc), maxVote(mc).
 
 // Event conditinos
 
+commit_vote(v,p) :- call_vote(v,p), assignRightToVote(v),
+                    !delegate(v,_).
+
 // Cannot delegate to voters who has already delegated to someone else.
 commit_delegate(from, to) :- call_delegate(from, to), !delegate(from, to),
   !close(), !delegate(to, _).

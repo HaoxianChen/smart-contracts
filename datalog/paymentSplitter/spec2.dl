@@ -1,0 +1,9 @@
+// Release amount is no greater than each account's 
+// fair share.
+overdraw(p,r) :- released(p,r),balance(n),shares(p,sp),
+                totalShares(s), r > (n*sp) / s. 
+
+// Total released is the sum of all releases to individual accounts. 
+overdrawTotal(r,s) :- totalReleased(r), 
+                   s = sum m: released(_,m), r != s.
+

@@ -8,4 +8,11 @@ lossToken(t) :- mint(_,t), !burn(_,t), !ownerOf(_,t).
 negativeBalance(p,n) :- balanceOf(p,n), n < 0.
 
 // Every token has only one owner
-duplicateOwner(t,p1,p2) :- ownerOf(p1, t), ownerOf(p2,t), p1 != p2.
+TwoOwners(t,p1,p2) :- ownerOf(p1, t), ownerOf(p2,t), p1 != p2.
+
+// Only owner or approved user can transfer token
+invalidTransfer(from,to,token) :- transfer(from,to,token),
+                                ownerOf(token,owner),
+                                from != owner,
+                                !approve(owner,from,token),
+                                !setApprovalForAll(owner,from).
