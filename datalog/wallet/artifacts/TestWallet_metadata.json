@@ -1,0 +1,83 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "testMint",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testOwner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"constructor": {
+					"notice": "Initiate accounts variable"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"wallet2/test.sol": "TestWallet"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"wallet2/example.sol": {
+			"keccak256": "0x5c0594bb41c65d9b29d8c1352d2a74e3b1f9c8e38fa429a463bf8f374ad6539a",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://5fe15f5e7a5519abc0c558ed0a47b17eda19c6be50aec3d7fe50169b29b1a351",
+				"dweb:/ipfs/Qmb1z8NhUjjZta7gkZYV1Eo5hQ8aBMGfVoDAQbwRTPzB4h"
+			]
+		},
+		"wallet2/test.sol": {
+			"keccak256": "0x430d8ea1ad0db8f0cce57f62179bdb4ea4ba7e354dd467b07fc9fe266de44d8a",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://61dfb6cb4e163f1afb9e1371d8a53564761b4091f07d34e69e6cd6c197bf5940",
+				"dweb:/ipfs/QmUUacjJpzuSHKWeV6pQMrgUrmJGprpGSxeJrPiqgvkJHG"
+			]
+		}
+	},
+	"version": 1
+}

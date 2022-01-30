@@ -22,6 +22,7 @@ commit_invest(address, n) :- call_invest(address, n), open().
 
 commit_refund(address, n) :- call_refund(address), failed(), 
     !refund(address,_), balanceOf(address, n), n > 0.
+commit_send(address,n) :- commit_refund(address,n).
 
 commit_withdraw(address, n) :- call_withdraw(address), beneficiary(address),
   success().

@@ -1,0 +1,91 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "testMint",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testOwner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"constructor": {
+					"notice": "Initiate accounts variable"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"wallet/testWallet.sol": "TestWallet"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"util/datalog.sol": {
+			"keccak256": "0x021c3dec68614a879e7e41eaf1906159586b983c6dcfa2887f08bf0e2e0e5248",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://d2148016f3070fa4ce4807a2950a56e917028d21b3ec4b923c027390b02943aa",
+				"dweb:/ipfs/QmTYB3QhjYBe3gENJC9jTSjFo3Uxct6oot6cCqjM8Kt1v5"
+			]
+		},
+		"wallet/testWallet.sol": {
+			"keccak256": "0xa783560315ef3cd0004fc0b6f4b607996abca91766a1b943b1243ed54fcd4dad",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://2eed02244f1209d8cb235accb4926c038169030d547bf1a0be52ab68f22b39c1",
+				"dweb:/ipfs/Qmf4mUwgPz4qDoHRiyTimv43jmaBQXGeb2aGLths1e3TBK"
+			]
+		},
+		"wallet/wallet-dl.sol": {
+			"keccak256": "0x36d8826e059ab3dd96145f319806e97d542c0b0b3f69caeadf5132ff2fb99358",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://87294773adbed46631f1aeed57a6f26fe1515df3cdfd5e8d9af24be95c79e73a",
+				"dweb:/ipfs/Qmeb4qJ3MHMmhw5qegC6sSkhCcwD8RwXwg98f2AzDN2GKd"
+			]
+		}
+	},
+	"version": 1
+}
