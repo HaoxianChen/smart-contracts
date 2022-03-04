@@ -1,18 +1,19 @@
 contract Erc20 {
   struct AllowanceTuple {
-    address p;
-    address s;
     int n;
+    bool _valid;
   }
   struct BalanceOfTuple {
-    address p;
     int n;
+    bool _valid;
   }
   struct TotalSupplyTuple {
     int n;
+    bool _valid;
   }
   struct OwnerTuple {
     address p;
+    bool _valid;
   }
   mapping(address=>mapping(address=>AllowanceTuple)) allowance;
   mapping(address=>BalanceOfTuple) balanceOf;
@@ -228,7 +229,7 @@ contract Erc20 {
       if(true) {
         address s = msg.sender;
         if(true) {
-          owner = OwnerTuple(s);
+          owner = OwnerTuple(s,true);
         }
       }
   }

@@ -1,22 +1,27 @@
 contract CrowFunding {
   struct TargetTuple {
     uint t;
+    bool _valid;
   }
   struct OwnerTuple {
     address p;
+    bool _valid;
   }
   struct RaisedTuple {
     uint n;
+    bool _valid;
   }
   struct ClosedTuple {
     bool b;
+    bool _valid;
   }
   struct BeneficiaryTuple {
     address p;
+    bool _valid;
   }
   struct BalanceOfTuple {
-    address p;
     uint n;
+    bool _valid;
   }
   TargetTuple target;
   RaisedTuple raised;
@@ -70,25 +75,25 @@ contract CrowFunding {
       _;
       // Empty()
   }
-  function updateBeneficiaryOnInsertConstructor_r12(address p) private    {
-      if(true) {
-        beneficiary = BeneficiaryTuple(p);
-      }
-  }
   function updateBalanceOfOnIncrementRefundTotal_r3(address p,uint r) private    {
       balanceOf[p].n -= r;
+  }
+  function updateSendOnInsertRefund_r1(address p,uint n) private    {
+      if(true) {
+        payable(p).send(n);
+      }
+  }
+  function updateTargetOnInsertConstructor_r2(uint t) private    {
+      if(true) {
+        target = TargetTuple(t,true);
+      }
   }
   function updateOwnerOnInsertConstructor_r7() private    {
       if(true) {
         address p = msg.sender;
         if(true) {
-          owner = OwnerTuple(p);
+          owner = OwnerTuple(p,true);
         }
-      }
-  }
-  function updateSendOnInsertRefund_r1(address p,uint n) private    {
-      if(true) {
-        payable(p).send(n);
       }
   }
   function updateInvestTotalOnInsertInvest_r6(address p,uint m) private    {
@@ -119,26 +124,26 @@ contract CrowFunding {
       }
       return false;
   }
+  function updateRaisedOnInsertInvest_r10(uint m) private    {
+      raised.n += m;
+  }
+  function updateBeneficiaryOnInsertConstructor_r12(address p) private    {
+      if(true) {
+        beneficiary = BeneficiaryTuple(p,true);
+      }
+  }
   function updateClosedOnInsertRecv_close_r9() private   returns (bool) {
       if(true) {
         address s = owner.p;
         if(s==msg.sender) {
           if(true) {
-            closed = ClosedTuple(true);
+            closed = ClosedTuple(true,true);
             emit Closed(true);
             return true;
           }
         }
       }
       return false;
-  }
-  function updateTargetOnInsertConstructor_r2(uint t) private    {
-      if(true) {
-        target = TargetTuple(t);
-      }
-  }
-  function updateRaisedOnInsertInvest_r10(uint m) private    {
-      raised.n += m;
   }
   function updateRefundOnInsertRecv_refund_r4() private   returns (bool) {
       if(true==closed.b) {

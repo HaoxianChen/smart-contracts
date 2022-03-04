@@ -1,23 +1,28 @@
 contract Auction {
   struct BalanceTuple {
-    address p;
     uint n;
+    bool _valid;
   }
   struct OwnerTuple {
     address p;
+    bool _valid;
   }
   struct BeneficiaryTuple {
     address p;
+    bool _valid;
   }
   struct HighestBidTuple {
     address bidder;
     uint amount;
+    bool _valid;
   }
   struct EndTimeTuple {
     uint t;
+    bool _valid;
   }
   struct EndTuple {
     bool b;
+    bool _valid;
   }
   mapping(address=>BalanceTuple) balance;
   BeneficiaryTuple beneficiary;
@@ -90,6 +95,13 @@ contract Auction {
       }
       return false;
   }
+  function updateHighestBidOnInsertBid_r0(address p,uint m) private    {
+      HighestBidTuple memory highestBidTuple = highestBid;
+      uint _max = highestBid.amount;
+      if(m>_max) {
+        highestBid = HighestBidTuple(p,m,true);
+      }
+  }
   function updateBidTotalOnInsertBid_r12(address p,uint m) private    {
       uint delta = m;
       updateBalanceOnIncrementBidTotal_r7(p,delta);
@@ -119,42 +131,53 @@ contract Auction {
       }
       return false;
   }
-  function updateHighestBidOnInsertBid_r0(address p,uint m) private    {
-      HighestBidTuple memory highestBidTuple = highestBid;
-      uint _max = highestBid.amount;
-      if(m>_max) {
-        highestBid = HighestBidTuple(p,m);
-      }
-  }
-  function updateOwnerOnInsertConstructor_r10() private    {
-      if(true) {
-        address s = msg.sender;
-        if(true) {
-          owner = OwnerTuple(s);
-        }
-      }
-  }
-  function updateBalanceOnIncrementBidTotal_r7(address p,uint b) private    {
-      balance[p].n += b;
-  }
   function updateEndTimeOnInsertConstructor_r3(uint d) private    {
       if(true) {
         uint t = block.timestamp;
         if(true) {
           uint t2 = t+d;
-          endTime = EndTimeTuple(t2);
+          endTime = EndTimeTuple(t2,true);
         }
       }
   }
+  function updateWithdrawOnInsertRecv_withdraw_r4() private   returns (bool) {
+      if(true==end.b) {
+        if(true) {
+          address h = highestBid.bidder;
+          if(true) {
+            address p = msg.sender;
+            BalanceTuple memory balanceTuple = balance[p];
+            if(true) {
+              uint n = balanceTuple.n;
+              if(p!=h && n>0) {
+                updateWithdrawTotalOnInsertWithdraw_r2(p,n);
+                updateSendOnInsertWithdraw_r8(p,n);
+                emit Withdraw(p,n);
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+  }
   function updateBeneficiaryOnInsertConstructor_r11(address p) private    {
       if(true) {
-        beneficiary = BeneficiaryTuple(p);
+        beneficiary = BeneficiaryTuple(p,true);
       }
   }
   function updateSendOnInsertWithdraw_r8(address p,uint n) private    {
       if(true) {
         payable(p).send(n);
         emit Send(p,n);
+      }
+  }
+  function updateOwnerOnInsertConstructor_r10() private    {
+      if(true) {
+        address s = msg.sender;
+        if(true) {
+          owner = OwnerTuple(s,true);
+        }
       }
   }
   function updateBidOnInsertRecv_bid_r9() private   returns (bool) {
@@ -184,26 +207,8 @@ contract Auction {
   function updateBalanceOnIncrementWithdrawTotal_r7(address p,uint w) private    {
       balance[p].n -= w;
   }
-  function updateWithdrawOnInsertRecv_withdraw_r4() private   returns (bool) {
-      if(true==end.b) {
-        if(true) {
-          address h = highestBid.bidder;
-          if(true) {
-            address p = msg.sender;
-            BalanceTuple memory balanceTuple = balance[p];
-            if(true) {
-              uint n = balanceTuple.n;
-              if(p!=h && n>0) {
-                updateWithdrawTotalOnInsertWithdraw_r2(p,n);
-                updateSendOnInsertWithdraw_r8(p,n);
-                emit Withdraw(p,n);
-                return true;
-              }
-            }
-          }
-        }
-      }
-      return false;
+  function updateBalanceOnIncrementBidTotal_r7(address p,uint b) private    {
+      balance[p].n += b;
   }
   function updateEndOnInsertRecv_endAuction_r5() private   returns (bool) {
       if(true) {
@@ -214,7 +219,7 @@ contract Auction {
             uint t2 = endTime.t;
             if(s==owner.p) {
               if(t1>=t2) {
-                end = EndTuple(true);
+                end = EndTuple(true,true);
                 emit End(true);
                 return true;
               }

@@ -1,18 +1,19 @@
 contract Wallet {
   struct BalanceOfTuple {
-    address p;
     int n;
+    bool _valid;
   }
   struct TotalSupplyTuple {
     int n;
+    bool _valid;
   }
   struct NegativeBalanceTuple {
-    address p;
     int n;
-    bool valid;
+    bool _valid;
   }
   struct OwnerTuple {
     address p;
+    bool _valid;
   }
   struct NegativeBalanceKeyTuple {
     address p;
@@ -60,7 +61,7 @@ contract Wallet {
       for(uint i = 0; i<N; i = i+1) {
           NegativeBalanceKeyTuple memory negativeBalanceKeyTuple = negativeBalanceKeyArray[i];
           NegativeBalanceTuple memory negativeBalanceTuple = negativeBalance[negativeBalanceKeyTuple.p];
-          if(negativeBalanceTuple.valid==true) {
+          if(negativeBalanceTuple._valid==true) {
             revert("negativeBalance");
           }
       }
@@ -70,20 +71,20 @@ contract Wallet {
       _;
       checkNegativeBalance();
   }
-  function updateAllMintOnInsertMint_r0(int n) private    {
-      int delta = n;
-      updateTotalSupplyOnIncrementAllMint_r11(delta);
-  }
   function updateAllBurnOnInsertBurn_r10(int n) private    {
       int delta = n;
       updateTotalSupplyOnIncrementAllBurn_r11(delta);
   }
-  function updateTransferOnInsertMint_r9(address p,int n) private    {
-      if(true) {
-        updateTotalOutOnInsertTransfer_r7(address(0),n);
-        updateTotalInOnInsertTransfer_r1(p,n);
-        emit Transfer(address(0),p,n);
+  function updateNegativeBalanceOnDeleteBalanceOf_r8(address p,int n) private    {
+      if(n<0) {
+        NegativeBalanceTuple memory negativeBalanceTuple = negativeBalance[p];
+        if(n==negativeBalanceTuple.n) {
+          negativeBalance[p] = NegativeBalanceTuple(0,false);
+        }
       }
+  }
+  function updateTotalSupplyOnIncrementAllBurn_r11(int b) private    {
+      totalSupply.n -= b;
   }
   function updateMintOnInsertRecv_mint_r3(address p,int n) private   returns (bool) {
       if(true) {
@@ -99,17 +100,25 @@ contract Wallet {
       }
       return false;
   }
-  function updateBalanceOfOnIncrementTotalOut_r2(address p,int o) private    {
-      balanceOf[p].n -= o;
-      int delta = -o;
-      updateNegativeBalanceOnIncrementBalanceOf_r6(p,delta);
-  }
-  function updateTransferOnInsertBurn_r8(address p,int n) private    {
+  function updateTransferOnInsertBurn_r7(address p,int n) private    {
       if(true) {
-        updateTotalOutOnInsertTransfer_r7(p,n);
+        updateTotalOutOnInsertTransfer_r6(p,n);
         updateTotalInOnInsertTransfer_r1(address(0),n);
         emit Transfer(p,address(0),n);
       }
+  }
+  function updateTransferOnInsertRecv_transfer_r4(address s,address r,int n) private   returns (bool) {
+      BalanceOfTuple memory balanceOfTuple = balanceOf[s];
+      if(true) {
+        int m = balanceOfTuple.n;
+        if(m>=n) {
+          updateTotalOutOnInsertTransfer_r6(s,n);
+          updateTotalInOnInsertTransfer_r1(r,n);
+          emit Transfer(s,r,n);
+          return true;
+        }
+      }
+      return false;
   }
   function updateBurnOnInsertRecv_burn_r12(address p,int n) private   returns (bool) {
       if(true) {
@@ -119,7 +128,7 @@ contract Wallet {
           if(true) {
             int m = balanceOfTuple.n;
             if(n<=m) {
-              updateTransferOnInsertBurn_r8(p,n);
+              updateTransferOnInsertBurn_r7(p,n);
               updateAllBurnOnInsertBurn_r10(n);
               emit Burn(p,n);
               return true;
@@ -129,64 +138,58 @@ contract Wallet {
       }
       return false;
   }
-  function updateTotalOutOnInsertTransfer_r7(address p,int n) private    {
+  function updateAllMintOnInsertMint_r0(int n) private    {
       int delta = n;
-      updateBalanceOfOnIncrementTotalOut_r2(p,delta);
+      updateTotalSupplyOnIncrementAllMint_r11(delta);
   }
-  function updateNegativeBalanceOnDeleteBalanceOf_r6(address p,int n) private    {
-      if(n<0) {
-        NegativeBalanceTuple memory negativeBalanceTuple = negativeBalance[p];
-        if(n==negativeBalanceTuple.n && true==negativeBalanceTuple.valid) {
-          negativeBalance[p] = NegativeBalanceTuple(address(address(0)),0,false);
-        }
-      }
-  }
-  function updateTransferOnInsertRecv_transfer_r4(address s,address r,int n) private   returns (bool) {
-      BalanceOfTuple memory balanceOfTuple = balanceOf[s];
-      if(true) {
-        int m = balanceOfTuple.n;
-        if(m>=n) {
-          updateTotalOutOnInsertTransfer_r7(s,n);
-          updateTotalInOnInsertTransfer_r1(r,n);
-          emit Transfer(s,r,n);
-          return true;
-        }
-      }
-      return false;
-  }
-  function updateTotalSupplyOnIncrementAllBurn_r11(int b) private    {
-      totalSupply.n -= b;
+  function updateNegativeBalanceOnIncrementBalanceOf_r8(address p,int n) private    {
+      BalanceOfTuple memory toInsert = balanceOf[p];
+      updateNegativeBalanceOnInsertBalanceOf_r8(p,toInsert.n+n);
   }
   function updateTotalInOnInsertTransfer_r1(address p,int n) private    {
       int delta = n;
       updateBalanceOfOnIncrementTotalIn_r2(p,delta);
   }
+  function updateTransferOnInsertMint_r9(address p,int n) private    {
+      if(true) {
+        updateTotalOutOnInsertTransfer_r6(address(0),n);
+        updateTotalInOnInsertTransfer_r1(p,n);
+        emit Transfer(address(0),p,n);
+      }
+  }
   function updateOwnerOnInsertConstructor_r5() private    {
       if(true) {
         address s = msg.sender;
         if(true) {
-          owner = OwnerTuple(s);
+          owner = OwnerTuple(s,true);
         }
       }
   }
-  function updateNegativeBalanceOnIncrementBalanceOf_r6(address p,int n) private    {
-      BalanceOfTuple memory toInsert = balanceOf[p];
-      updateNegativeBalanceOnInsertBalanceOf_r6(toInsert.p,toInsert.n+n);
+  function updateTotalOutOnInsertTransfer_r6(address p,int n) private    {
+      int delta = n;
+      updateBalanceOfOnIncrementTotalOut_r2(p,delta);
+  }
+  function updateNegativeBalanceOnInsertBalanceOf_r8(address p,int n) private    {
+      BalanceOfTuple memory toDelete = balanceOf[p];
+      if(toDelete._valid==true) {
+        updateNegativeBalanceOnDeleteBalanceOf_r8(p,toDelete.n);
+      }
+      if(n<0) {
+        negativeBalance[p] = NegativeBalanceTuple(n,true);
+        negativeBalanceKeyArray.push(NegativeBalanceKeyTuple(p));
+      }
   }
   function updateTotalSupplyOnIncrementAllMint_r11(int m) private    {
       totalSupply.n += m;
   }
-  function updateNegativeBalanceOnInsertBalanceOf_r6(address p,int n) private    {
-      BalanceOfTuple memory toDelete = balanceOf[p];
-      updateNegativeBalanceOnDeleteBalanceOf_r6(toDelete.p,toDelete.n);
-      if(n<0) {
-        negativeBalance[p] = NegativeBalanceTuple(p,n,true);
-        negativeBalanceKeyArray.push(NegativeBalanceKeyTuple(p));
-      }
-  }
   function updateBalanceOfOnIncrementTotalIn_r2(address p,int i) private    {
-      balanceOf[p].n += i;
       int delta = i;
-      updateNegativeBalanceOnIncrementBalanceOf_r6(p,delta);
+      updateNegativeBalanceOnIncrementBalanceOf_r8(p,delta);
+      balanceOf[p].n += i;
+  }
+  function updateBalanceOfOnIncrementTotalOut_r2(address p,int o) private    {
+      int delta = -o;
+      updateNegativeBalanceOnIncrementBalanceOf_r8(p,delta);
+      balanceOf[p].n -= o;
   }
 }
