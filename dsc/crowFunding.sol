@@ -2,6 +2,9 @@ contract CrowFunding {
   struct TargetTuple {
     uint t;
   }
+  struct OwnerTuple {
+    address p;
+  }
   struct RaisedTuple {
     uint n;
   }
@@ -11,15 +14,6 @@ contract CrowFunding {
   struct BeneficiaryTuple {
     address p;
   }
-  struct OwnerTuple {
-    address p;
-  }
-  struct MsgSenderTuple {
-    address p;
-  }
-  struct MsgValueTuple {
-    uint p;
-  }
   struct BalanceOfTuple {
     address p;
     uint n;
@@ -28,98 +22,176 @@ contract CrowFunding {
   RaisedTuple raised;
   ClosedTuple closed;
   BeneficiaryTuple beneficiary;
-  mapping(address=>uint) balanceOf;
+  mapping(address=>BalanceOfTuple) balanceOf;
   OwnerTuple owner;
+  event Refund(address p,uint n);
+  event Invest(address p,uint n);
+  event Closed(bool b);
+  event Withdraw(address p,uint n);
   constructor(uint t,address b) public {
-    updateOwnerOnConstructor();
-    updateTargetOnConstructor(t);
-    updateBeneficiaryOnConstructor(b);
+    updateBeneficiaryOnInsertConstructor_r12(b);
+    updateOwnerOnInsertConstructor_r7();
+    updateTargetOnInsertConstructor_r2(t);
   }
-  function getRaised() public view returns (uint) {
-    uint n = raised.n;
-    return n;
-  }
-  function invest() public  {
-    updateInvestOnRecv_invest();
-  }
-  function getClosed() public view returns (bool) {
-    bool b = closed.b;
-    return b;
-  }
-  function close() public  {
-    updateClosedOnRecv_close();
-  }
-  function refund() public  {
-    updateRefundOnRecv_refund();
-  }
-  function withdraw() public  {
-    updateWithdrawOnRecv_withdraw();
-  }
-  function updateBeneficiaryOnConstructor(address p) private  {
-    if(true) {
-      beneficiary = BeneficiaryTuple(p);
-    }
-  }
-  function updateTargetOnConstructor(uint t) private  {
-    if(true) {
-      target = TargetTuple(t);
-    }
-  }
-  function updateOwnerOnConstructor() private  {
-    if(true) {
-      address p = msg.sender;
-      if(true) {
-        owner = OwnerTuple(p);
+  function refund() public  checkViolations  {
+      bool r4 = updateRefundOnInsertRecv_refund_r4();
+      if(r4==false) {
+        revert("Rule condition failed");
       }
-    }
   }
-  function updateRefundOnRecv_refund() private  {
-    require(true==closed.b,"condition true==closed.b is false.");
-    address p = msg.sender;
-    uint t = target.t;
-    uint r = raised.n;
-    BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-    uint n = balanceOfTuple.n;
-    require(r<t && n>0,"condition r<t && n>0 is false.");
-    updateRefundTotalOnRefund(p,n);
+  function getRaised() public view  returns (uint) {
+      uint n = raised.n;
+      return n;
   }
-  function updateInvestOnRecv_invest() private  {
-    require(false==closed.b,"condition false==closed.b is false.");
-    uint s = raised.n;
-    uint t = target.t;
-    uint n = msg.value;
-    address p = msg.sender;
-    require(s<t,"condition s<t is false.");
-    updateInvestTotalOnInvest(p,n);
-    updateRaisedOnInvest(n);
+  function withdraw() public  checkViolations  {
+      bool r8 = updateWithdrawOnInsertRecv_withdraw_r8();
+      if(r8==false) {
+        revert("Rule condition failed");
+      }
   }
-  function updateClosedOnRecv_close() private  {
-    address s = owner.p;
-    require(s==msg.sender,"condition s==msg.sender is false.");
-    closed = ClosedTuple(true);
+  function close() public  checkViolations  {
+      bool r9 = updateClosedOnInsertRecv_close_r9();
+      if(r9==false) {
+        revert("Rule condition failed");
+      }
   }
-  function updateWithdrawOnRecv_withdraw() private  {
-    address p = beneficiary.p;
-    uint t = target.t;
-    uint r = raised.n;
-    require(p==msg.sender,"condition p==msg.sender is false.");
-    require(r>=t,"condition r>=t is false.");
+  function getClosed() public view  returns (bool) {
+      bool b = closed.b;
+      return b;
   }
-  function updateInvestTotalOnInvest(address p,uint m) private  {
-    uint delta = m;
-    updateBalanceOfOnInvestTotal(p,delta);
+  function invest() public  checkViolations payable  {
+      bool r5 = updateInvestOnInsertRecv_invest_r5();
+      if(r5==false) {
+        revert("Rule condition failed");
+      }
   }
-  function updateRaisedOnInvest(uint m) private  {
-    raised.n += m;
+  modifier checkViolations() {
+      // Empty()
+      _;
+      // Empty()
   }
-  function updateRefundTotalOnRefund(address p,uint m) private  {
-    uint delta = m;
-    updateBalanceOfOnRefundTotal(p,delta);
+  function updateBeneficiaryOnInsertConstructor_r12(address p) private    {
+      if(true) {
+        beneficiary = BeneficiaryTuple(p);
+      }
   }
-  function updateBalanceOfOnInvestTotal(address p,uint i) private  {
-    balanceOf[p].n += i;
+  function updateBalanceOfOnIncrementRefundTotal_r3(address p,uint r) private    {
+      balanceOf[p].n -= r;
   }
-  function updateBalanceOfOnRefundTotal(address p,uint r) private  {
-    balanceOf[p].n -= r;
+  function updateOwnerOnInsertConstructor_r7() private    {
+      if(true) {
+        address p = msg.sender;
+        if(true) {
+          owner = OwnerTuple(p);
+        }
+      }
+  }
+  function updateSendOnInsertRefund_r1(address p,uint n) private    {
+      if(true) {
+        payable(p).send(n);
+      }
+  }
+  function updateInvestTotalOnInsertInvest_r6(address p,uint m) private    {
+      uint delta = m;
+      updateBalanceOfOnIncrementInvestTotal_r3(p,delta);
+  }
+  function updateSendOnInsertWithdraw_r0(address p,uint r) private    {
+      if(true) {
+        payable(p).send(r);
+      }
+  }
+  function updateWithdrawOnInsertRecv_withdraw_r8() private   returns (bool) {
+      if(true) {
+        address p = beneficiary.p;
+        if(true) {
+          uint t = target.t;
+          if(true) {
+            uint r = raised.n;
+            if(p==msg.sender) {
+              if(r>=t) {
+                updateSendOnInsertWithdraw_r0(p,r);
+                emit Withdraw(p,r);
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+  }
+  function updateClosedOnInsertRecv_close_r9() private   returns (bool) {
+      if(true) {
+        address s = owner.p;
+        if(s==msg.sender) {
+          if(true) {
+            closed = ClosedTuple(true);
+            emit Closed(true);
+            return true;
+          }
+        }
+      }
+      return false;
+  }
+  function updateTargetOnInsertConstructor_r2(uint t) private    {
+      if(true) {
+        target = TargetTuple(t);
+      }
+  }
+  function updateRaisedOnInsertInvest_r10(uint m) private    {
+      raised.n += m;
+  }
+  function updateRefundOnInsertRecv_refund_r4() private   returns (bool) {
+      if(true==closed.b) {
+        if(true) {
+          address p = msg.sender;
+          if(true) {
+            uint t = target.t;
+            if(true) {
+              uint r = raised.n;
+              BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+              if(true) {
+                uint n = balanceOfTuple.n;
+                if(r<t && n>0) {
+                  updateRefundTotalOnInsertRefund_r11(p,n);
+                  updateSendOnInsertRefund_r1(p,n);
+                  emit Refund(p,n);
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+      return false;
+  }
+  function updateRefundTotalOnInsertRefund_r11(address p,uint m) private    {
+      uint delta = m;
+      updateBalanceOfOnIncrementRefundTotal_r3(p,delta);
+  }
+  function updateBalanceOfOnIncrementInvestTotal_r3(address p,uint i) private    {
+      balanceOf[p].n += i;
+  }
+  function updateInvestOnInsertRecv_invest_r5() private   returns (bool) {
+      if(false==closed.b) {
+        if(true) {
+          uint s = raised.n;
+          if(true) {
+            uint t = target.t;
+            if(true) {
+              uint n = msg.value;
+              if(true) {
+                address p = msg.sender;
+                if(s<t) {
+                  updateInvestTotalOnInsertInvest_r6(p,n);
+                  updateRaisedOnInsertInvest_r10(n);
+                  emit Invest(p,n);
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+      return false;
   }
 }
