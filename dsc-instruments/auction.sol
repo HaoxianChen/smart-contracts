@@ -7,6 +7,10 @@ contract Auction {
     address p;
     bool _valid;
   }
+  struct WithdrawCountTuple {
+    uint c;
+    bool _valid;
+  }
   struct BeneficiaryTuple {
     address p;
     bool _valid;
@@ -20,6 +24,10 @@ contract Auction {
     uint t;
     bool _valid;
   }
+  struct RepeatWithdrawTuple {
+    uint c;
+    bool _valid;
+  }
   struct EndTuple {
     bool b;
     bool _valid;
@@ -28,9 +36,11 @@ contract Auction {
     address p;
   }
   mapping(address=>BalanceTuple) balance;
+  mapping(address=>WithdrawCountTuple) withdrawCount;
   BeneficiaryTuple beneficiary;
   HighestBidTuple highestBid;
   EndTimeTuple endTime;
+  mapping(address=>RepeatWithdrawTuple) repeatWithdraw;
   OwnerTuple owner;
   EndTuple end;
   RepeatWithdrawKeyTuple[] repeatWithdrawKeyArray;
@@ -43,20 +53,20 @@ contract Auction {
     updateOwnerOnInsertConstructor_r8();
     updateBeneficiaryOnInsertConstructor_r9(beneficiary);
   }
-  function bid() public  payable  {
+  function bid() public  checkViolations payable  {
       bool r7 = updateBidOnInsertRecv_bid_r7();
       if(r7==false) {
         revert("Rule condition failed");
       }
   }
-  function withdraw() public    {
+  function withdraw() public  checkViolations  {
       bool r14 = updateWithdrawOnInsertRecv_withdraw_r14();
       bool r3 = updateWithdrawOnInsertRecv_withdraw_r3();
       if(r14==false && r3==false) {
         revert("Rule condition failed");
       }
   }
-  function endAuction() public    {
+  function endAuction() public  checkViolations  {
       bool r1 = updateSendOnInsertRecv_endAuction_r1();
       bool r4 = updateEndOnInsertRecv_endAuction_r4();
       if(r1==false && r4==false) {
@@ -67,6 +77,21 @@ contract Auction {
       BalanceTuple memory balanceTuple = balance[p];
       uint n = balanceTuple.n;
       return n;
+  }
+  function checkRepeatWithdraw() private    {
+      uint N = repeatWithdrawKeyArray.length;
+      for(uint i = 0; i<N; i = i+1) {
+          RepeatWithdrawKeyTuple memory repeatWithdrawKeyTuple = repeatWithdrawKeyArray[i];
+          RepeatWithdrawTuple memory repeatWithdrawTuple = repeatWithdraw[repeatWithdrawKeyTuple.p];
+          if(repeatWithdrawTuple._valid==true) {
+            revert("repeatWithdraw");
+          }
+      }
+  }
+  modifier checkViolations() {
+      // Empty()
+      _;
+      checkRepeatWithdraw();
   }
   function updateBidOnInsertRecv_bid_r7() private   returns (bool) {
       if(true) {
@@ -149,27 +174,10 @@ contract Auction {
         }
       }
   }
-  function updateWithdrawOnInsertRecv_withdraw_r14() private   returns (bool) {
-      if(true) {
-        address p = highestBid.bidder;
-        uint m = highestBid.amount;
-        if(true==end.b) {
-          if(p==msg.sender) {
-            BalanceTuple memory balanceTuple = balance[p];
-            if(true) {
-              uint n = balanceTuple.n;
-              if(n-m>0) {
-                uint s = n-m;
-                updateSendOnInsertWithdraw_r6(p,s);
-                updateWithdrawTotalOnInsertWithdraw_r2(p,s);
-                emit Withdraw(p,s);
-                return true;
-              }
-            }
-          }
-        }
-      }
-      return false;
+  function updateRepeatWithdrawOnIncrementWithdrawCount_r11(address p,int c) private    {
+      int _delta = int(c);
+      uint newValue = updateuintByint(withdrawCount[p].c,_delta);
+      updateRepeatWithdrawOnInsertWithdrawCount_r11(p,newValue);
   }
   function updateEndOnInsertRecv_endAuction_r4() private   returns (bool) {
       if(true) {
@@ -190,26 +198,30 @@ contract Auction {
       }
       return false;
   }
-  function updateWithdrawOnInsertRecv_withdraw_r3() private   returns (bool) {
-      if(true==end.b) {
-        if(true) {
-          address h = highestBid.bidder;
-          if(true) {
-            address p = msg.sender;
-            BalanceTuple memory balanceTuple = balance[p];
-            if(true) {
-              uint n = balanceTuple.n;
-              if(p!=h && n>0) {
-                updateWithdrawTotalOnInsertWithdraw_r2(p,n);
-                updateSendOnInsertWithdraw_r6(p,n);
-                emit Withdraw(p,n);
-                return true;
-              }
-            }
-          }
+  function updateRepeatWithdrawOnInsertWithdrawCount_r11(address p,uint c) private    {
+      WithdrawCountTuple memory toDelete = withdrawCount[p];
+      if(toDelete._valid==true) {
+        updateRepeatWithdrawOnDeleteWithdrawCount_r11(p,toDelete.c);
+      }
+      if(c>1) {
+        repeatWithdraw[p] = RepeatWithdrawTuple(c,true);
+        repeatWithdrawKeyArray.push(RepeatWithdrawKeyTuple(p));
+      }
+  }
+  function updateRepeatWithdrawOnDeleteWithdrawCount_r11(address p,uint c) private    {
+      if(c>1) {
+        RepeatWithdrawTuple memory repeatWithdrawTuple = repeatWithdraw[p];
+        if(c==repeatWithdrawTuple.c) {
+          repeatWithdraw[p] = RepeatWithdrawTuple(0,false);
         }
       }
-      return false;
+  }
+  function updateWithdrawCountOnInsertWithdraw_r13(address p,uint _amount1) private    {
+      int delta = int(1);
+      updateRepeatWithdrawOnIncrementWithdrawCount_r11(p,delta);
+      int _delta = int(1);
+      uint newValue = updateuintByint(withdrawCount[p].c,_delta);
+      withdrawCount[p].c = newValue;
   }
   function updateSendOnInsertWithdraw_r6(address p,uint n) private    {
       if(true) {
@@ -237,5 +249,50 @@ contract Auction {
       int value = convertedX+delta;
       uint convertedValue = uint(value);
       return convertedValue;
+  }
+  function updateWithdrawOnInsertRecv_withdraw_r3() private   returns (bool) {
+      if(true==end.b) {
+        if(true) {
+          address h = highestBid.bidder;
+          if(true) {
+            address p = msg.sender;
+            BalanceTuple memory balanceTuple = balance[p];
+            if(true) {
+              uint n = balanceTuple.n;
+              if(p!=h && n>0) {
+                updateWithdrawTotalOnInsertWithdraw_r2(p,n);
+                updateWithdrawCountOnInsertWithdraw_r13(p,n);
+                updateSendOnInsertWithdraw_r6(p,n);
+                emit Withdraw(p,n);
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+  }
+  function updateWithdrawOnInsertRecv_withdraw_r14() private   returns (bool) {
+      if(true) {
+        address p = highestBid.bidder;
+        uint m = highestBid.amount;
+        if(true==end.b) {
+          if(p==msg.sender) {
+            BalanceTuple memory balanceTuple = balance[p];
+            if(true) {
+              uint n = balanceTuple.n;
+              if(n-m>0) {
+                uint s = n-m;
+                updateSendOnInsertWithdraw_r6(p,s);
+                updateWithdrawCountOnInsertWithdraw_r13(p,s);
+                updateWithdrawTotalOnInsertWithdraw_r2(p,s);
+                emit Withdraw(p,s);
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
   }
 }

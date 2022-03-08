@@ -17,6 +17,9 @@ contract Nft {
     uint time;
     bool _valid;
   }
+  struct TokenNoOwnerTuple {
+    bool _valid;
+  }
   struct ApprovalTuple {
     address p;
     bool b;
@@ -40,6 +43,7 @@ contract Nft {
   mapping(uint=>OwnerOfTuple) ownerOf;
   mapping(uint=>mapping(address=>ApprovedTuple)) approved;
   mapping(uint=>LatestTransferTuple) latestTransfer;
+  mapping(uint=>TokenNoOwnerTuple) tokenNoOwner;
   mapping(address=>mapping(uint=>ApprovalTuple)) approval;
   mapping(uint=>ExistsTuple) exists;
   mapping(address=>mapping(address=>IsApprovedForAllTuple)) isApprovedForAll;
@@ -52,9 +56,9 @@ contract Nft {
   constructor() public {
     updateOwnerOnInsertConstructor_r10();
   }
-  function setApprovalForAll(address operator,bool _approved) public    {
-      bool r1 = updateIsApprovedForAllOnInsertRecv_setApprovalForAll_r1(operator,_approved);
-      if(r1==false) {
+  function burn(uint tokenId) public  checkViolations  {
+      bool r12 = updateTransferOnInsertRecv_burn_r12(tokenId);
+      if(r12==false) {
         revert("Rule condition failed");
       }
   }
@@ -63,9 +67,16 @@ contract Nft {
       address p = ownerOfTuple.p;
       return p;
   }
-  function setApproval(uint tokenId,address p,bool b) public    {
+  function setApproval(uint tokenId,address p,bool b) public  checkViolations  {
       bool r9 = updateApprovalOnInsertRecv_setApproval_r9(tokenId,p,b);
       if(r9==false) {
+        revert("Rule condition failed");
+      }
+  }
+  function transferFrom(address from,address to,uint tokenId) public  checkViolations  {
+      bool r6 = updateTransferOnInsertRecv_transferFrom_r6(from,to,tokenId);
+      bool r4 = updateTransferOnInsertRecv_transferFrom_r4(from,to,tokenId);
+      if(r6==false && r4==false) {
         revert("Rule condition failed");
       }
   }
@@ -79,9 +90,9 @@ contract Nft {
       bool b = approvedTuple.b;
       return b;
   }
-  function mint(uint tokenId,address to) public    {
-      bool r3 = updateTransferOnInsertRecv_mint_r3(tokenId,to);
-      if(r3==false) {
+  function setApprovalForAll(address operator,bool _approved) public  checkViolations  {
+      bool r1 = updateIsApprovedForAllOnInsertRecv_setApprovalForAll_r1(operator,_approved);
+      if(r1==false) {
         revert("Rule condition failed");
       }
   }
@@ -90,9 +101,9 @@ contract Nft {
       uint n = balanceOfTuple.n;
       return n;
   }
-  function burn(uint tokenId) public    {
-      bool r12 = updateTransferOnInsertRecv_burn_r12(tokenId);
-      if(r12==false) {
+  function mint(uint tokenId,address to) public  checkViolations  {
+      bool r3 = updateTransferOnInsertRecv_mint_r3(tokenId,to);
+      if(r3==false) {
         revert("Rule condition failed");
       }
   }
@@ -101,18 +112,40 @@ contract Nft {
       bool b = isApprovedForAllTuple.b;
       return b;
   }
-  function transferFrom(address from,address to,uint tokenId) public    {
-      bool r6 = updateTransferOnInsertRecv_transferFrom_r6(from,to,tokenId);
-      bool r4 = updateTransferOnInsertRecv_transferFrom_r4(from,to,tokenId);
-      if(r6==false && r4==false) {
-        revert("Rule condition failed");
-      }
-  }
-  function transfer(address to,uint tokenId) public    {
+  function transfer(address to,uint tokenId) public  checkViolations  {
       bool r8 = updateTransferOnInsertRecv_transfer_r8(to,tokenId);
       if(r8==false) {
         revert("Rule condition failed");
       }
+  }
+  function checkTokenNoOwner() private    {
+      uint N = tokenNoOwnerKeyArray.length;
+      for(uint i = 0; i<N; i = i+1) {
+          TokenNoOwnerKeyTuple memory tokenNoOwnerKeyTuple = tokenNoOwnerKeyArray[i];
+          TokenNoOwnerTuple memory tokenNoOwnerTuple = tokenNoOwner[tokenNoOwnerKeyTuple.tokenId];
+          if(tokenNoOwnerTuple._valid==true) {
+            revert("tokenNoOwner");
+          }
+      }
+  }
+  modifier checkViolations() {
+      // Empty()
+      _;
+      checkTokenNoOwner();
+  }
+  function updateTransferOnInsertRecv_transferFrom_r6(address s,address r,uint tokenId) private   returns (bool) {
+      if(true) {
+        uint time = block.timestamp;
+        ApprovedTuple memory approvedTuple = approved[tokenId][s];
+        if(true==approvedTuple.b) {
+          if(true) {
+            updateLatestTransferOnInsertTransfer_r13(tokenId,s,r,time);
+            emit Transfer(tokenId,s,r,time);
+            return true;
+          }
+        }
+      }
+      return false;
   }
   function updateTransferOnInsertRecv_transfer_r8(address r,uint tokenId) private   returns (bool) {
       if(true) {
@@ -131,17 +164,6 @@ contract Nft {
       }
       return false;
   }
-  function updateIsApprovedForAllOnInsertRecv_setApprovalForAll_r1(address o,bool b) private   returns (bool) {
-      if(true) {
-        address p = msg.sender;
-        if(true) {
-          isApprovedForAll[p][o] = IsApprovedForAllTuple(b,true);
-          emit IsApprovedForAll(p,o,b);
-          return true;
-        }
-      }
-      return false;
-  }
   function updateApprovedOnInsertOwnerOf_r2(uint tokenId,address o) private    {
       OwnerOfTuple memory toDelete = ownerOf[tokenId];
       if(toDelete._valid==true) {
@@ -156,10 +178,39 @@ contract Nft {
         }
       }
   }
-  function updateBalanceOfOnDeleteOwnerOf_r5(uint _tokenId0,address p) private    {
-      int _delta = int(-1);
-      uint newValue = updateuintByint(balanceOf[p].n,_delta);
-      balanceOf[p].n = newValue;
+  function updateTokenNoOwnerOnInsertOwnerOf_r7(uint tokenId,address o) private    {
+      OwnerOfTuple memory toDelete = ownerOf[tokenId];
+      if(toDelete._valid==true) {
+        updateTokenNoOwnerOnDeleteOwnerOf_r7(tokenId,toDelete.p);
+      }
+      if(o==address(0)) {
+        tokenNoOwner[tokenId] = TokenNoOwnerTuple(true);
+        tokenNoOwnerKeyArray.push(TokenNoOwnerKeyTuple(tokenId));
+      }
+  }
+  function updateApprovedOnDeleteOwnerOf_r2(uint tokenId,address o) private    {
+      ApprovalTuple memory approvalTuple = approval[o][tokenId];
+      if(true) {
+        address p = approvalTuple.p;
+        bool b = approvalTuple.b;
+        if(true) {
+          ApprovedTuple memory approvedTuple = approved[tokenId][p];
+          if(b==approvedTuple.b) {
+            approved[tokenId][p] = ApprovedTuple(false,false);
+          }
+        }
+      }
+  }
+  function updateOwnerOfOnDeleteLatestTransfer_r0(uint tokenId,address p) private    {
+      if(p!=address(0)) {
+        updateTokenNoOwnerOnDeleteOwnerOf_r7(tokenId,p);
+        updateBalanceOfOnDeleteOwnerOf_r5(tokenId,p);
+        updateApprovedOnDeleteOwnerOf_r2(tokenId,p);
+        OwnerOfTuple memory ownerOfTuple = ownerOf[tokenId];
+        if(p==ownerOfTuple.p) {
+          ownerOf[tokenId] = OwnerOfTuple(address(address(0)),false);
+        }
+      }
   }
   function updateLatestTransferOnInsertTransfer_r13(uint tokenId,address s,address r,uint t) private    {
       LatestTransferTuple memory latestTransferTuple = latestTransfer[tokenId];
@@ -233,20 +284,6 @@ contract Nft {
         }
       }
   }
-  function updateTransferOnInsertRecv_transferFrom_r6(address s,address r,uint tokenId) private   returns (bool) {
-      if(true) {
-        uint time = block.timestamp;
-        ApprovedTuple memory approvedTuple = approved[tokenId][s];
-        if(true==approvedTuple.b) {
-          if(true) {
-            updateLatestTransferOnInsertTransfer_r13(tokenId,s,r,time);
-            emit Transfer(tokenId,s,r,time);
-            return true;
-          }
-        }
-      }
-      return false;
-  }
   function updateOwnerOfOnInsertLatestTransfer_r0(uint tokenId,address p) private    {
       LatestTransferTuple memory toDelete = latestTransfer[tokenId];
       if(toDelete._valid==true) {
@@ -255,29 +292,31 @@ contract Nft {
       if(p!=address(0)) {
         updateApprovedOnInsertOwnerOf_r2(tokenId,p);
         updateBalanceOfOnInsertOwnerOf_r5(tokenId,p);
+        updateTokenNoOwnerOnInsertOwnerOf_r7(tokenId,p);
         ownerOf[tokenId] = OwnerOfTuple(p,true);
       }
   }
-  function updateOwnerOfOnDeleteLatestTransfer_r0(uint tokenId,address p) private    {
-      if(p!=address(0)) {
-        updateBalanceOfOnDeleteOwnerOf_r5(tokenId,p);
-        updateApprovedOnDeleteOwnerOf_r2(tokenId,p);
-        OwnerOfTuple memory ownerOfTuple = ownerOf[tokenId];
-        if(p==ownerOfTuple.p) {
-          ownerOf[tokenId] = OwnerOfTuple(address(address(0)),false);
+  function updateIsApprovedForAllOnInsertRecv_setApprovalForAll_r1(address o,bool b) private   returns (bool) {
+      if(true) {
+        address p = msg.sender;
+        if(true) {
+          isApprovedForAll[p][o] = IsApprovedForAllTuple(b,true);
+          emit IsApprovedForAll(p,o,b);
+          return true;
         }
       }
+      return false;
   }
-  function updateApprovedOnDeleteOwnerOf_r2(uint tokenId,address o) private    {
-      ApprovalTuple memory approvalTuple = approval[o][tokenId];
-      if(true) {
-        address p = approvalTuple.p;
-        bool b = approvalTuple.b;
+  function updateBalanceOfOnDeleteOwnerOf_r5(uint _tokenId0,address p) private    {
+      int _delta = int(-1);
+      uint newValue = updateuintByint(balanceOf[p].n,_delta);
+      balanceOf[p].n = newValue;
+  }
+  function updateTokenNoOwnerOnDeleteOwnerOf_r7(uint tokenId,address o) private    {
+      if(o==address(0)) {
+        TokenNoOwnerTuple memory tokenNoOwnerTuple = tokenNoOwner[tokenId];
         if(true) {
-          ApprovedTuple memory approvedTuple = approved[tokenId][p];
-          if(b==approvedTuple.b) {
-            approved[tokenId][p] = ApprovedTuple(false,false);
-          }
+          tokenNoOwner[tokenId] = TokenNoOwnerTuple(false);
         }
       }
   }
