@@ -22,14 +22,20 @@ contract Wallet {
   event Mint(address p,int amount);
   event Burn(address p,int amount);
   constructor() public {
-    updateOwnerOnInsertConstructor_r5();
+    updateOwnerOnInsertConstructor_r4();
+  }
+  function mint(address p,int amount) public    {
+      bool r2 = updateMintOnInsertRecv_mint_r2(p,amount);
+      if(r2==false) {
+        revert("Rule condition failed");
+      }
   }
   function getTotalSupply() public view  returns (int) {
       int n = totalSupply.n;
       return n;
   }
-  function mint(address p,int amount) public    {
-      bool r3 = updateMintOnInsertRecv_mint_r3(p,amount);
+  function transfer(address from,address to,int amount) public    {
+      bool r3 = updateTransferOnInsertRecv_transfer_r3(from,to,amount);
       if(r3==false) {
         revert("Rule condition failed");
       }
@@ -40,35 +46,71 @@ contract Wallet {
         revert("Rule condition failed");
       }
   }
-  function transfer(address from,address to,int amount) public    {
-      bool r4 = updateTransferOnInsertRecv_transfer_r4(from,to,amount);
-      if(r4==false) {
-        revert("Rule condition failed");
-      }
-  }
   function getBalanceOf(address p) public view  returns (int) {
       BalanceOfTuple memory balanceOfTuple = balanceOf[p];
       int n = balanceOfTuple.n;
       return n;
   }
-  function updateBalanceOfOnIncrementTotalOut_r2(address p,int o) private    {
-      balanceOf[p].n -= o;
+  function updateOwnerOnInsertConstructor_r4() private    {
+      if(true) {
+        address s = msg.sender;
+        if(true) {
+          owner = OwnerTuple(s,true);
+        }
+      }
   }
   function updateAllBurnOnInsertBurn_r10(int n) private    {
       int delta = int(n);
       updateTotalSupplyOnIncrementAllBurn_r11(delta);
   }
-  function updateBalanceOfOnIncrementTotalIn_r2(address p,int i) private    {
-      balanceOf[p].n += i;
-  }
-  function updateTotalOutOnInsertTransfer_r6(address p,int n) private    {
+  function updateAllMintOnInsertMint_r0(int n) private    {
       int delta = int(n);
-      updateBalanceOfOnIncrementTotalOut_r2(p,delta);
+      updateTotalSupplyOnIncrementAllMint_r11(delta);
   }
-  function updateTotalSupplyOnIncrementAllBurn_r11(int b) private    {
-      totalSupply.n -= b;
+  function updateBurnOnInsertRecv_burn_r12(address p,int n) private   returns (bool) {
+      if(true) {
+        address s = owner.p;
+        if(s==msg.sender) {
+          BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+          if(true) {
+            int m = balanceOfTuple.n;
+            if(n<=m) {
+              updateTransferOnInsertBurn_r6(p,n);
+              updateAllBurnOnInsertBurn_r10(n);
+              emit Burn(p,n);
+              return true;
+            }
+          }
+        }
+      }
+      return false;
   }
-  function updateMintOnInsertRecv_mint_r3(address p,int n) private   returns (bool) {
+  function updateTotalSupplyOnIncrementAllMint_r11(int m) private    {
+      totalSupply.n += m;
+  }
+  function updateintByint(int x,int delta) private   returns (int) {
+      int newValue = x+delta;
+      return newValue;
+  }
+  function updateTotalInOnInsertTransfer_r8(address p,int n) private    {
+      int delta = int(n);
+      updateBalanceOfOnIncrementTotalIn_r1(p,delta);
+  }
+  function updateBalanceOfOnIncrementTotalOut_r1(address p,int o) private    {
+      balanceOf[p].n -= o;
+  }
+  function updateTransferOnInsertBurn_r6(address p,int n) private    {
+      if(true) {
+        updateTotalInOnInsertTransfer_r8(address(0),n);
+        updateTotalOutOnInsertTransfer_r5(p,n);
+        emit Transfer(p,address(0),n);
+      }
+  }
+  function updateTotalOutOnInsertTransfer_r5(address p,int n) private    {
+      int delta = int(n);
+      updateBalanceOfOnIncrementTotalOut_r1(p,delta);
+  }
+  function updateMintOnInsertRecv_mint_r2(address p,int n) private   returns (bool) {
       if(true) {
         address s = owner.p;
         if(s==msg.sender) {
@@ -82,71 +124,29 @@ contract Wallet {
       }
       return false;
   }
-  function updateOwnerOnInsertConstructor_r5() private    {
-      if(true) {
-        address s = msg.sender;
-        if(true) {
-          owner = OwnerTuple(s,true);
-        }
-      }
-  }
-  function updateTransferOnInsertBurn_r7(address p,int n) private    {
-      if(true) {
-        updateTotalOutOnInsertTransfer_r6(p,n);
-        updateTotalInOnInsertTransfer_r1(address(0),n);
-        emit Transfer(p,address(0),n);
-      }
-  }
-  function updateTotalSupplyOnIncrementAllMint_r11(int m) private    {
-      totalSupply.n += m;
-  }
-  function updateintByint(int x,int delta) private   returns (int) {
-      int newValue = x+delta;
-      return newValue;
-  }
-  function updateTransferOnInsertRecv_transfer_r4(address s,address r,int n) private   returns (bool) {
+  function updateTransferOnInsertRecv_transfer_r3(address s,address r,int n) private   returns (bool) {
       BalanceOfTuple memory balanceOfTuple = balanceOf[s];
       if(true) {
         int m = balanceOfTuple.n;
         if(m>=n) {
-          updateTotalOutOnInsertTransfer_r6(s,n);
-          updateTotalInOnInsertTransfer_r1(r,n);
+          updateTotalOutOnInsertTransfer_r5(s,n);
+          updateTotalInOnInsertTransfer_r8(r,n);
           emit Transfer(s,r,n);
           return true;
         }
       }
       return false;
   }
-  function updateBurnOnInsertRecv_burn_r12(address p,int n) private   returns (bool) {
-      if(true) {
-        address s = owner.p;
-        if(s==msg.sender) {
-          BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-          if(true) {
-            int m = balanceOfTuple.n;
-            if(n<=m) {
-              updateTransferOnInsertBurn_r7(p,n);
-              updateAllBurnOnInsertBurn_r10(n);
-              emit Burn(p,n);
-              return true;
-            }
-          }
-        }
-      }
-      return false;
+  function updateBalanceOfOnIncrementTotalIn_r1(address p,int i) private    {
+      balanceOf[p].n += i;
   }
-  function updateTotalInOnInsertTransfer_r1(address p,int n) private    {
-      int delta = int(n);
-      updateBalanceOfOnIncrementTotalIn_r2(p,delta);
-  }
-  function updateAllMintOnInsertMint_r0(int n) private    {
-      int delta = int(n);
-      updateTotalSupplyOnIncrementAllMint_r11(delta);
+  function updateTotalSupplyOnIncrementAllBurn_r11(int b) private    {
+      totalSupply.n -= b;
   }
   function updateTransferOnInsertMint_r9(address p,int n) private    {
       if(true) {
-        updateTotalOutOnInsertTransfer_r6(address(0),n);
-        updateTotalInOnInsertTransfer_r1(p,n);
+        updateTotalInOnInsertTransfer_r8(p,n);
+        updateTotalOutOnInsertTransfer_r5(address(0),n);
         emit Transfer(address(0),p,n);
       }
   }
