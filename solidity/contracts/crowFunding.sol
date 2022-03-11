@@ -1,6 +1,6 @@
 // source: https://github.com/eth-sri/verx-benchmarks/blob/master/overview/main.sol
 
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
 
 contract Escrow {
   mapping(address => uint256) deposits;
@@ -39,22 +39,24 @@ contract Crowdsale {
   Escrow escrow;
   uint256 raised = 0;
   uint256 goal = 10000 * 10**18;
-  uint256 closeTime = now + 30 days;
+  uint256 closeTime = block.timestamp + 30 days;
+
+  //address payable constant init = payable(address(uint160(0xDEADBEEF)));
 
   constructor() public{
-    escrow = new Escrow(address(0xDEADBEEF));
+    escrow = new Escrow(payable(address(0xDEADBEEF)));
   }
 
   function invest() payable public{
     // fix:
-    require(now<=closeTime);
+    require(block.timestamp<=closeTime);
     require(raised < goal);
-    escrow.deposit.value(msg.value)(msg.sender);
+    escrow.deposit{value: msg.value}(msg.sender);
     raised += msg.value;
   }
 
   function close() public{
-    require(now > closeTime || raised >= goal);
+    require(block.timestamp > closeTime || raised >= goal);
     if (raised >= goal) {
       escrow.close();
     } else {
