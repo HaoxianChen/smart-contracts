@@ -3,7 +3,7 @@ Install require packages:
 npm install
 ```
 
-Run ganache blockchain with *n* accounts
+Run ganache blockchain with *n* accounts (by default on port 8545)
 ```
 ganache -a n
 ```
