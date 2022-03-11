@@ -4,10 +4,10 @@ pragma solidity >=0.7.0 <0.9.0;
 
 contract Wallet {
     address private _owner;
-    mapping(address => uint32) private _balanceOf;
-    uint32 private _totalSupply;
+    mapping(address => int) private _balanceOf;
+    int private _totalSupply;
     
-    event Transfer(address from, address to, uint32 amount);
+    event Transfer(address from, address to, int amount);
     event Construction(address owner);
     
     constructor() {
@@ -19,7 +19,7 @@ contract Wallet {
         return _owner;
     }
     
-    function mint(address account,uint32 amount) public {
+    function mint(address account,int amount) public {
         require(msg.sender == _owner);
         require(account != address(0));
 
@@ -28,7 +28,7 @@ contract Wallet {
         emit Transfer(address(0), account, amount);
     }
     
-    function burn(address account,uint32 amount) public {
+    function burn(address account,int amount) public {
         require(msg.sender == _owner);
         require(account != address(0));
         
@@ -37,7 +37,7 @@ contract Wallet {
         emit Transfer(account, address(0), amount);
     }
     
-    function transfer(address from, address to, uint32 amount) public {
+    function transfer(address from, address to, int amount) public {
         require(_balanceOf[from] >= amount);
         
         _balanceOf[from] -= amount;
@@ -47,11 +47,11 @@ contract Wallet {
         emit Transfer(from, to, amount);
     }
     
-    function totalSupply() public view returns(uint32) {
+    function totalSupply() public view returns(int) {
         return _totalSupply;
     }
     
-    function balanceOf(address account) public view returns(uint32) {
+    function balanceOf(address account) public view returns(int) {
         return _balanceOf[account];
     }
 }

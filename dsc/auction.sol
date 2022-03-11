@@ -69,15 +69,15 @@ contract Auction {
       return n;
   }
   function updateBidOnInsertRecv_bid_r7() private   returns (bool) {
-      if(true) {
+      
         uint t1 = block.timestamp;
-        if(true) {
+        
           uint t2 = endTime.t;
-          if(true) {
+          
             uint m = highestBid.amount;
-            if(true) {
+            
               uint n = msg.value;
-              if(true) {
+              
                 address p = msg.sender;
                 if(n>m && t1<t2) {
                   updateHighestBidOnInsertBid_r0(p,n);
@@ -85,15 +85,12 @@ contract Auction {
                   emit Bid(p,n);
                   return true;
                 }
-              }
-            }
-          }
-        }
-      }
+       
+      
       return false;
   }
   function updateHighestBidOnInsertBid_r0(address p,uint m) private    {
-      HighestBidTuple memory highestBidTuple = highestBid;
+      // HighestBidTuple memory highestBidTuple = highestBid;
       uint _max = highestBid.amount;
       if(m>_max) {
         highestBid = HighestBidTuple(p,m,true);
@@ -223,9 +220,7 @@ contract Auction {
       }
   }
   function updateBalanceOnIncrementBidTotal_r5(address p,int b) private    {
-      int _delta = int(b);
-      uint newValue = updateuintByint(balance[p].n,_delta);
-      balance[p].n = newValue;
+      balance[p].n += uint(b);
   }
   function updateBalanceOnIncrementWithdrawTotal_r5(address p,int w) private    {
       int _delta = int(-w);
