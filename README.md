@@ -6,10 +6,10 @@ Declarative smart contracts.
 ## Install dependencies
 
 1. [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
-2. [Ganache](https://trufflesuite.com/ganache/)
-3. Install [Truffle](https://trufflesuite.com/docs/truffle/getting-started/installation/) via npm: ``npm install -g truffle``
+2. [Ganache](https://trufflesuite.com/ganache/): ``npm install -g ganache-cli``
+3. [Truffle](https://trufflesuite.com/docs/truffle/getting-started/installation/) via npm: ``npm install -g truffle``
 
-## Run experiments in the paper
+## Reproduce experiment results in the paper
 
 The contracts used for gas measurements, and the instructions 
 are in separate sub directories.
