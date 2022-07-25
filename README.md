@@ -5,9 +5,9 @@ Declarative smart contracts.
 
 ## Install dependencies
 
-1. [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
-2. [Ganache](https://trufflesuite.com/ganache/): ``npm install -g ganache-cli``
-3. [Truffle](https://trufflesuite.com/docs/truffle/getting-started/installation/) via npm: ``npm install -g truffle``
+1. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm): please follow instructions in the link to install npm for your operating system.
+2. Install [Ganache](https://trufflesuite.com/ganache/): ``npm install -g ganache``
+3. Install [Truffle](https://trufflesuite.com/docs/truffle/getting-started/installation/): ``npm install -g truffle``
 
 ## Reproduce experiment results in the paper
 
