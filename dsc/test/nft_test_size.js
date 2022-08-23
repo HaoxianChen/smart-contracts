@@ -1,4 +1,4 @@
-var YourContract = artifacts.require("NFT");
+var YourContract = artifacts.require("Nft");
 
 contract('NFT', function(accounts) {
   it("get the size of the NFT contract", function() {

@@ -1,4 +1,4 @@
-var Wallet = artifacts.require("./wallet.sol");
+var Wallet = artifacts.require("Wallet");
 
 
 contract("Wallet", async accounts => {

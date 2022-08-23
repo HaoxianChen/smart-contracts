@@ -6,7 +6,7 @@ const {
   time, // Assertions for transactions that should fail
 } = require('@openzeppelin/test-helpers');
 
-var NFT = artifacts.require("NFT");
+var NFT = artifacts.require("Nft");
 
 
 contract("NFT", async accounts => {
