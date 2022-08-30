@@ -13,7 +13,8 @@ contract("NFT", async accounts => {
     it("test NFT.transferFrom gas consumption", async () => {
       const instance = await NFT.deployed();
       await instance.mint(accounts[0], 123)
-      const result = await instance.transferFrom(accounts[0], accounts[1], 123);
+      const result = await instance.transferFrom(accounts[0], accounts[1], 123,
+        { gas: 5000000, gasPrice: 500000000 });
       const gasUsed = await result.receipt.gasUsed;
       console.log("NFT.transferFrom Gas Used: ", gasUsed);
 
