@@ -10,27 +10,38 @@ var Token = artifacts.require("Token");
 
 
 contract("Token", async accounts => {
-    it("test Token.transfer gas consumption", async () => {
+  it("test Token.mint gas consumption", async() => {
+    const instance = await Token.new();
+    const result = await instance.mint(accounts[1], 30);
+    const gasUsed = await result.receipt.gasUsed;
+    console.log("Token.mint Gas Used: ", gasUsed);
+  });   
+
+  it("test Token.burn gas consumption", async() => {
+    const instance = await Token.new();
+    await instance.mint(accounts[1], 30);
+    const result = await instance.burn(accounts[1], 30);
+    const gasUsed = await result.receipt.gasUsed;
+    console.log("Token.burn Gas Used: ", gasUsed);
+  }); 
+
+  it("test Token.transfer gas consumption", async () => {
       const instance = await Token.deployed();
       await instance.mint(accounts[0], 100);
       const result = await instance.transfer(accounts[1], 10);
       const gasUsed = await result.receipt.gasUsed;
       console.log("Token.transfer Gas Used: ", gasUsed);
+  });
 
-
-    });
-
-    it("test Token.approve gas consumption", async () => {
+  it("test Token.approve gas consumption", async () => {
       const instance = await Token.deployed();
       //await instance._mint(accounts[0], 100);
       const result = await instance.approve(accounts[1], 10);
       const gasUsed = await result.receipt.gasUsed;
       console.log("Token.approve Gas Used: ", gasUsed);
-  
-  
-      });
+    });
 
-    it("test Token.transferFrom gas consumption", async () => {
+  it("test Token.transferFrom gas consumption", async () => {
       const instance = await Token.deployed();
       await instance.mint(accounts[0], 100);
       await instance.approve(accounts[0], 50);
@@ -38,9 +49,8 @@ contract("Token", async accounts => {
       const result = await instance.transferFrom(accounts[0], accounts[1], 10);
       const gasUsed = await result.receipt.gasUsed;
       console.log("Token.transferFrom Gas Used: ", gasUsed);
+  });
 
+  
 
-    });
-
-});
-
+})
