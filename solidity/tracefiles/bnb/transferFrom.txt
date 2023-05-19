@@ -1,0 +1,5 @@
+nt,10
+transferFrom,constructor,,1000 "BNB Token" 18 "BNB",,
+transferFrom,transfer,instance,accounts[0] 100,,
+transferFrom,approve,instance,accounts[0] 100,,
+transferFrom,transferFrom,instance,accounts[0] accounts[1] 50,,

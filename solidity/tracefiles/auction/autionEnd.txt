@@ -1,0 +1,4 @@
+nt,10
+autionEnd,constructor,,30 accounts[0],,
+auctionEnd,increase,time,time.duration.seconds[31],,
+autionEnd,auctionEnd,instance,,,

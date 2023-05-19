@@ -1,0 +1,3 @@
+nt,10
+bid,constructor,,30 accounts[0],,
+bid,bid,instance,,,10
