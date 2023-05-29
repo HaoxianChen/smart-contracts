@@ -1,3 +1,0 @@
-nt,10
-withdrawEther,constructor,,1000 "BNB Token" 18 "BNB",,
-withdrawEther,withdrawEther,instance,1,,web.utils.toWei('1', 'ether')

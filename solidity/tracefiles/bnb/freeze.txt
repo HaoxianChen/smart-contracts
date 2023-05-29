@@ -1,4 +1,0 @@
-nt,10
-freeze,constructor,,1000 "BNB Token" 18 "BNB",,
-freeze,transfer,instance,accounts[0] 100,,
-freeze,freeze,instance,50,0,

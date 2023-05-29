@@ -1,3 +1,0 @@
-nt,10
-approve,constructor,,1000 "BNB Token" 18 "BNB",,
-approve,transfer,instance,accounts[0] 100,,

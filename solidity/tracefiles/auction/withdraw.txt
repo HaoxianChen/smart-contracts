@@ -1,3 +1,0 @@
-nt,10
-withdraw,constructor,,30 accounts[0],,,
-withdraw,withdraw,instance,,,
