@@ -1,2 +1,2 @@
-nt,2
+nt,10
 method,average

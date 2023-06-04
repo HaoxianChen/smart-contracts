@@ -27,10 +27,19 @@ contract("ERC1155", async accounts => {
 
   it("test ERC1155.mint gas consumption", async() => {
     const instance = await ERC1155.new("https://token-cdn-domain/01.json");
-    const result = await instance.mint(accounts[0], 1, 30, 0x1155);
+    const result = await instance.mint(accounts[0], 1, 30, 0);
     const gasUsed = await result.receipt.gasUsed;
     console.log("ERC1155.mint Gas Used: ", gasUsed);
-  });   
+  })  
+
+  it("test ERC1155.mint gas consumption", async() => {
+    const instance = await ERC1155.new("https://token-cdn-domain/01.json");
+    const result = await instance.mint(accounts[0], 500, 30, 0);
+    const gasUsed = await result.receipt.gasUsed;
+    console.log("ERC1155.mint Gas Used: ", gasUsed);
+  });  
+
+  
 
   it("test ERC1155.burn gas consumption", async() => {
     const instance = await ERC1155.new("https://token-cdn-domain/01.json");

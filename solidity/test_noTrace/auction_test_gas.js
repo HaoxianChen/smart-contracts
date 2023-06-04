@@ -12,7 +12,7 @@ var Auction = artifacts.require("SimpleAuction");
 contract("SimpleAuction", async accounts => {
     it("test SimpleAuction.bid gas consumption", async () => {
       const instance = await Auction.new(30, accounts[0]);
-      const result = await instance.bid({value:10});
+      const result = await instance.bid({from: accounts[1], value:10});
       const gasUsed = await result.receipt.gasUsed;
       console.log("SimpleAuction.bid Gas Used: ", gasUsed);
 
@@ -21,7 +21,8 @@ contract("SimpleAuction", async accounts => {
 
     it("test SimpleAuction.withdraw gas consumption", async () => {
         const instance = await Auction.new(30, accounts[0]);
-        const result = await instance.withdraw();
+        await instance.bid({from: accounts[1], value: 100})
+        const result = await instance.withdraw({from: accounts[1]});
         const gasUsed = await result.receipt.gasUsed;
         console.log("SimpleAuction.withdraw Gas Used: ", gasUsed);
   

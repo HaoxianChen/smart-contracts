@@ -6,213 +6,111 @@ const {
   time, // Assertions for transactions that should fail
 } = require('@openzeppelin/test-helpers');
 
+const helper = require("./helper_functions");
 const fs = require('fs');
 const path = require('path');
+const autionTimeLowerBound = 10;
+const autionTimeUpperBound = 100;
+const BiddingValLowerBound = 10;
+const BiddingValUpperBound = 1000;
 
+const testFolder = path.join(__dirname, `../tracefiles/auction`);
 // set up tests for contracts
-const testPath = path.join(__dirname, '../tracefiles/auction/setup.txt');
+const testPath = path.join(testFolder, '/setup.txt');
 const setup = fs.readFileSync(testPath, 'utf-8');
 let contractName;
+let deployAccountCount = 10;
 setup.split(/\r?\n/).some(line => {
-  if(line[0] == 'n' && line[1] != 'a') {
-    let lineArr = line.split(',');
+  let lineArr = line.split(',');
+  if(lineArr[0] == 'n') {
     contractName = lineArr[1];
     return true;
   }
+  if(lineArr[0] == 'a') {
+    deployAccountCount = +lineArr[1];
+  }
 })
 
-var Auction = artifacts.require(contractName);
+// read setup.txt in each test folder
+const transactionFolders = fs.readdirSync(testFolder, {withFileTypes: true})
+  .filter(dirent => dirent.isDirectory())
+  .map(dirent => dirent.name);
+const transactionCounts = transactionFolders.length;
+var transactionName;
+var transactionFolderPath;
+var setupPath;
+var transactionCount = 1;
+var tracefileCount = 0;
 
-contract(`${contractName}`, async accounts => {
-  const testFolder = path.join(__dirname, `../tracefiles/auction`);
-  // get all transaction folders
-  const transactionFolders = fs.readdirSync(testFolder, {withFileTypes: true})
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
-  const transactionCounts = transactionFolders.length;
-  for(let l = 0; l < transactionCounts; l++) {
-    const transactionName = transactionFolders[l];
-    console.log('transaction name: ', transactionName);
-    const transactionFolderPath = path.join(testFolder, `/${transactionName}`);
-    // get all files in the transaction folder
-    const filesInTransaction = fs.readdirSync(transactionFolderPath, 'utf-8');
-    // read setup
-    const setupPath = path.join(transactionFolderPath, '/setup.txt');
-    // transaction count default to 1
-    var transactionCount = 1;
-    var aggregationMethod = 'average';
-    // parsing setup.txt
-    if (fs.existsSync(setupPath)) {
-      console.log('setup exists');
-      const setupFS = fs.readFileSync(setupPath, 'utf-8');
-      const setupLines = setupFS.split(/\r?\n/);
-      let i = 0;
-      while(i < setupLines.length) {
-        let sl = setupLines[i];
-        if (sl.startsWith('nt')) {
-          transactionCount = +sl.split(',')[1];
-        }
-        if(sl.startsWith('method')) {
-          aggregationMethod = sl.split(',')[1];
-        }
-        i++;
+helper.range(transactionCounts).forEach(l => {
+  transactionName = transactionFolders[l];
+  // get the setup file
+  transactionFolderPath = path.join(testFolder, `/${transactionName}`);
+  setupPath = path.join(transactionFolderPath, '/setup.txt');
+  // get the transaction count in setup.txt for each transaction
+  if (fs.existsSync(setupPath)) {
+    console.log('setup exists');
+    const setupFS = fs.readFileSync(setupPath, 'utf-8');
+    const setupLines = setupFS.split(/\r?\n/);
+    let i = 0;
+    while(i < setupLines.length) {
+      let sl = setupLines[i];
+      if (sl.startsWith('nt')) {
+        transactionCount = +sl.split(',')[1];
       }
+      i++;
     }
-    console.log('transaction count: ', transactionCount);
-    it(`Testing ${contractName}.${transactionName} gas consumption`, async() => {
-      var resultArr = [];
-      var instance;
-      var line;
-      var fromAccountIndex = -1;
-      var valueTran = -1;
-      var currentFuncName;
-      var currentCallFrom;
-      for(let i = 0; i < transactionCount; i++) {
-        // get the tracefile based on the index
-        var traceFileName;
-        if(i <= 9) {
-          traceFileName = `${transactionName}_0${i.toString()}.txt`;
-        } else {
-          traceFileName = `${transactionName}_${i.toString()}.txt`;
-        }
-        const transactionFS = fs.readFileSync(path.join(transactionFolderPath, `./${traceFileName}`), 'utf-8');
-        const lineArr = transactionFS.split(/\r?\n/);
-        const lineCount = lineArr.length;
-        for(let j = 0; j < lineCount; j++) {
-          line = lineArr[j];
-          // split each line by comma
-          const eachLineArr = line.split(',');
-          var argArr = [];
-          var argsCount;
-          if(line != '') {
-            console.log(line);
-            if(eachLineArr[3] != '') {
-              argArr = eachLineArr[3].split(' ');
-            }
-            argsCount = argArr.length;
-            // convert args for the function to the correct data type
-            if(argsCount > 0) {
-              for(let n = 0; n < argsCount; n++) {
-                let ele = argArr[n];
-                if(!isNaN(ele)) {
-                  argArr[n] = +ele;
-                }
-                if(ele.startsWith('accounts')) {
-                  let init = ele.indexOf('[');
-                  let fin = ele.indexOf(']');
-                  let accountsNum = +ele.substr(init+1,fin-init-1);
-                  argArr[n] = accounts[accountsNum];
-                }
-              }
-            }
+  }
 
-            if (eachLineArr[4] != '') {
-              fromAccountIndex = +eachLineArr[4];
-            }
-            if (eachLineArr[5] != '') {
-              if(eachLineArr[5].startsWith('web3.utils.toWei')) {
-                let valueStr = eachLineArr[5];
-                let parentOpen = valueStr.indexOf('(');
-                let parentClose = valueStr.indexOf(')');
-                let insideParent = valueStr.substr(parentOpen+1,parentClose-parentOpen-1);
-                let insideParentArr = insideParent.split(' ');
-                valueTran = web3.utils.toWei(insideParentArr[0], insideParentArr[1]);
-              } else {
-                valueTran = +eachLineArr[5];
-              }
-            } 
-            // call constructor
-            if(eachLineArr[1] == 'constructor') {
-              if(fromAccountIndex != -1 && valueTran!= -1) {
-                // console.log('from + value');
-                instance = await Auction.new(...argArr, {from: accounts[fromAccountIndex], value: valueTran});
-              } else if(fromAccountIndex != -1) {
-                // console.log('from ');
-                instance = await Auction.new(...argArr, {from: accounts[fromAccountIndex]});
-              } else if(valueTran != -1) {
-                // console.log('value');
-                instance = await Auction.new(...argArr, {value: valueTran});
-              } else {
-                // console.log('neither from + value');
-                instance = await Auction.new(...argArr);
-              }  
-            }
-            // call transaction
-            else if(eachLineArr[0] == eachLineArr[1]) {
-              var result;
-              if(fromAccountIndex != -1 && valueTran!= -1) {
-                // console.log('from + value');
-                result = await instance[transactionName](...argArr, {from: accounts[fromAccountIndex], value: valueTran});
-              } else if(fromAccountIndex != -1) {
-                // console.log('from ');
-                result = await instance[transactionName](...argArr, {from: accounts[fromAccountIndex]});
-              } else if(valueTran != -1) {
-                // console.log('value');
-                result = await instance[transactionName](...argArr, {value: valueTran});
-              } else {
-                // console.log('neither from + value');
-                result = await instance[transactionName](...argArr);
-              }   
-              let gasUsed = await result.receipt.gasUsed;
-              resultArr.push(gasUsed);
-              console.log(`Gas used by ${contractName}.${transactionName} (test ${i+1}): `, gasUsed);                            
-            }
-            // call intermediate functions
-            else {
-              currentFuncName = eachLineArr[1];
-              currentCallFrom = eachLineArr[2];
-              // if called from previous instance of the contract
-              if(currentCallFrom == 'instance') {
-                // console.log('calling intance ...');
-                if(fromAccountIndex != -1 && valueTran!= -1) {
-                  // console.log('from + value');
-                  await instance[currentFuncName](...argArr, {from: accounts[fromAccountIndex], value: valueTran});
-                } else if(fromAccountIndex != -1) {
-                  // console.log('from ');
-                  await instance[currentFuncName](...argArr, {from: accounts[fromAccountIndex]});
-                } else if(valueTran != -1) {
-                  // console.log('value');
-                  await instance[currentFuncName](...argArr, {value: valueTran});
-                } else {
-                  // console.log('neither from + value');
-                  await instance[currentFuncName](...argArr);
-                }                  
-              }
-              // if others
-              else if (currentCallFrom == 'time') {
-                // get the time to increase
-                let bracketOpen = eachLineArr[3].indexOf('[');
-                let bracketClose = eachLineArr[3].indexOf(']');
-                let timeValue = +eachLineArr[3].substr(bracketOpen+1,bracketClose-bracketOpen-1);
-                // console.log(timeValue);
-                await time[currentFuncName](time.duration.seconds(timeValue));
-              }
-            }
-            // reset value for 'from' and 'value'
-            fromAccountIndex = -1;
-            valueTran = -1;
-          }
-        }
-      }
-      // calculate aggregation
-      var gasUsedAgg;
-      if(aggregationMethod == 'average') {
-        let total = 0;
-        resultArr.forEach((value, index) => {
-          // console.log(value);
-          total += value;
-        })
-        gasUsedAgg =  total / transactionCount;
-      }
+  if(transactionName == 'bid') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let biddingTime = helper.random(autionTimeLowerBound, autionTimeUpperBound+1);
+      let beneficiary = helper.random(0, deployAccountCount);
+      let bidFromAccountIndex = helper.random(0, deployAccountCount);
+      let biddingVal = helper.random(BiddingValLowerBound, BiddingValUpperBound+1);    
+      let text = `bid,constructor,,${biddingTime} accounts[${beneficiary}],,,false\nbid,bid,instance,,${bidFromAccountIndex},${biddingVal},true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    }) 
+  }
 
-      console.log(`${contractName}.${transactionName} Gas Used (${aggregationMethod}): `, gasUsedAgg);
+  if(transactionName == 'withdraw') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let biddingTime = helper.random(autionTimeLowerBound, autionTimeUpperBound+1);
+      let beneficiary = helper.random(0, deployAccountCount);
+      let bidFromAccountIndex = helper.random(0, deployAccountCount);
+      let biddingVal = helper.random(BiddingValLowerBound, BiddingValUpperBound+1);   
+      let text = `withdraw,constructor,,${biddingTime} accounts[${beneficiary}],,,false\nwithdraw,bid,instance,,${bidFromAccountIndex},${biddingVal},false\nwithdraw,withdraw,instance,,${bidFromAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    })  
+  }  
+
+  if(transactionName == 'auctionEnd') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let biddingTime = helper.random(autionTimeLowerBound, autionTimeUpperBound+1);
+      let beneficiary = helper.random(0, deployAccountCount);
+      let text = `auctionEnd,constructor,,${biddingTime} accounts[${beneficiary}],,,false\nauctionEnd,increase,time,time.duration.seconds[${biddingTime+1}],,,false\nauctionEnd,auctionEnd,instance,,,,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
     }) 
   }
 })
 
 
-
-
+helper.runTests(transactionCounts, transactionFolders, testFolder, contractName);
 
 
 
