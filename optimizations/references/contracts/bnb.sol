@@ -69,19 +69,19 @@ contract BNB is SafeMath{
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
     constructor(
-        uint256 initialSupply,
-        string memory tokenName,
-        uint8 decimalUnits,
-        string memory tokenSymbol
+        uint256 initialSupply
+        // string memory tokenName,
+        // uint8 decimalUnits,
+        // string memory tokenSymbol
         ) {
         balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens
         totalBalance = initialSupply;
         freezeTotal = 0;
 
         totalSupply = initialSupply;                        // Update total supply
-        name = tokenName;                                   // Set the name for display purposes
-        symbol = tokenSymbol;                               // Set the symbol for display purposes
-        decimals = decimalUnits;                            // Amount of decimals for display purposes
+        // name = tokenName;                                   // Set the name for display purposes
+        // symbol = tokenSymbol;                               // Set the symbol for display purposes
+        // decimals = decimalUnits;                            // Amount of decimals for display purposes
         owner = msg.sender;
 
     }
