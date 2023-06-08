@@ -56,8 +56,10 @@ contract Crowdsale {
 
   //address payable constant init = payable(address(uint160(0xDEADBEEF)));
 
-  constructor() public{
-    escrow = new Escrow(payable(address(0xDEADBEEF)));
+  constructor(uint256 _goal, address _escrow) public{
+    // escrow = new Escrow(payable(address(0xDEADBEEF)));
+    escrow = new Escrow(payable(_escrow));
+    goal = _goal;
     closed = false;
   }
 
@@ -81,5 +83,5 @@ contract Crowdsale {
 }
 
 contract Deployer{
-    Crowdsale c = new Crowdsale();
+    Crowdsale c = new Crowdsale(10000 * 10**18, address(0xDEADBEEF));
 }
