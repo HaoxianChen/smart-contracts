@@ -3,6 +3,10 @@ contract Controllable {
     address p;
     bool _valid;
   }
+  struct ControllerTuple {
+    address p;
+    bool _valid;
+  }
   struct TotalSupplyTuple {
     uint n;
     bool _valid;
@@ -15,6 +19,7 @@ contract Controllable {
     uint n;
     bool _valid;
   }
+  ControllerTuple controller;
   TotalSupplyTuple totalSupply;
   mapping(address=>BalanceOfTuple) balanceOf;
   mapping(address=>mapping(address=>AllowanceTuple)) allowance;
@@ -36,11 +41,6 @@ contract Controllable {
       if(r21==false) {
         revert("Rule condition failed");
       }
-  }
-  function getAllowance(address p,address s) public view  returns (uint) {
-      AllowanceTuple memory allowanceTuple = allowance[p][s];
-      uint n = allowanceTuple.n;
-      return n;
   }
   function mint(address p,uint amount) public    {
       bool r20 = updateMintOnInsertRecv_mint_r20(p,amount);
@@ -75,13 +75,24 @@ contract Controllable {
         revert("Rule condition failed");
       }
   }
+  function getAllowance(address p,address s) public view  returns (uint) {
+      AllowanceTuple memory allowanceTuple = allowance[p][s];
+      uint n = allowanceTuple.n;
+      return n;
+  }
+  function controllerRedeem(address p,uint amount) public    {
+      bool r4 = updateControllerRedeemOnInsertRecv_controllerRedeem_r4(p,amount);
+      if(r4==false) {
+        revert("Rule condition failed");
+      }
+  }
   function updateIncreaseAllowanceOnInsertRecv_approve_r21(address s,uint n) private   returns (bool) {
       address o = msg.sender;
       AllowanceTuple memory allowanceTuple = allowance[o][s];
       uint m = allowanceTuple.n;
       uint d = n-m;
       emit IncreaseAllowance(o,s,d);
-      allowance[o][s].n += n;
+      allowance[o][s].n += d;
       return true;
       return false;
   }
@@ -102,6 +113,21 @@ contract Controllable {
       int value = convertedX+delta;
       uint convertedValue = uint(value);
       return convertedValue;
+  }
+  function updateControllerRedeemOnInsertRecv_controllerRedeem_r4(address p,uint n) private   returns (bool) {
+      address c = controller.p;
+      if(c==msg.sender) {
+        BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+        uint m = balanceOfTuple.n;
+        if(p!=address(0) && n<=m) {
+          emit ControllerRedeem(p,n);
+          emit Burn(p,n);
+          balanceOf[p].n -= n;
+          totalSupply.n -= n;
+          return true;
+        }
+      }
+      return false;
   }
   function updateTotalSupplyOnInsertConstructor_r1() private    {
       totalSupply = TotalSupplyTuple(0,true);
