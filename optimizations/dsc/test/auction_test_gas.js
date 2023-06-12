@@ -86,7 +86,7 @@ helper.range(transactionCounts).forEach(l => {
       let beneficiary = helper.random(0, deployAccountCount);
       let bidFromAccountIndex = helper.random(0, deployAccountCount);
       let biddingVal = helper.random(BiddingValLowerBound, BiddingValUpperBound+1);   
-      let text = `withdraw,constructor,,accounts[${beneficiary}] ${biddingTime},,,false\nwithdraw,bid,instance,,${bidFromAccountIndex},${biddingVal},false\nwithdraw,withdraw,instance,,${bidFromAccountIndex},,true\n`;
+      let text = `withdraw,constructor,,accounts[${beneficiary}] ${biddingTime},0,,false\nwithdraw,bid,instance,,${bidFromAccountIndex},${biddingVal},false\nwithdraw,withdraw,instance,,${beneficiary},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');

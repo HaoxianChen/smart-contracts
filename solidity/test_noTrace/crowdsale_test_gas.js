@@ -21,8 +21,6 @@ contract("Crowdsale", async accounts => {
       const gasUsed = await result.receipt.gasUsed;
       console.log("Crowdsale.invest Gas Used: ", gasUsed);
 
-
-
     });
 
     it("test Crowdsale.close gas consumption", async () => {

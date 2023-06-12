@@ -7,15 +7,22 @@ const {
 } = require('@openzeppelin/test-helpers');
 const ganache = require("ganache");
 const fetch = require("node-fetch");
+const options = {};
+const provider = ganache.provider(options);
+const fs = require('fs');
+const _ = require('lodash');
 
 
-var Link = artifacts.require("LinkToken");
 
-contract("Link", async accounts => {
-  it("test Link.transfer gas consumption", async() => {
-    const instance = await Link.new();
-    const result = await instance.approve(accounts[1], 100, {from: accounts[0]});
-    // const result = await instance.transfer(accounts[1], 100, {from: accounts[0]});
+var NFT = artifacts.require("NFT");
+
+contract("NFT", async accounts => {
+  it("test NFT.transferFrom gas consumption", async() => {
+    var _data = '';
+    const instance = await NFT.new();
+    await instance.mint(accounts[0], 123);
+    const result = await instance.transferFrom(accounts[0], accounts[1], 123,
+        { gas: 5000000, gasPrice: 500000000 });
     const gasUsed = await result.receipt.gasUsed;
     const hash = await result.tx;
     console.log(result.receipt);
@@ -23,6 +30,12 @@ contract("Link", async accounts => {
     var gasUsedCompute = 0;
     var gasUsedMem = 0;
     var gasUsedStorage = 0;
+    var gasUsedMem_others = 0;
+    var storageOverhead_write = 0; // slots (1 slot = 32 bytes)
+    var storageOverhead_read = 0; // slots (1 slot = 32 bytes)
+    var curr_storage_sload  = {};
+    var curr_storage_sstore = {};
+    var if_sstore = false;
     await fetch('http://localhost:8545', {
       body: `{"jsonrpc":"2.0", "id": 1, "method": "debug_traceTransaction", "params": [ "${hash}"] }`,
       headers: {
@@ -36,23 +49,68 @@ contract("Link", async accounts => {
      var logs = data.result.structLogs;
      logs.forEach(log => {
        gasUsedOp += +log.gasCost;
-       if(log.op == 'CALLDATACOPY' || log.op == 'EXTCODECOPY' || log.op == 'RETURNDATACOPY' || log.op == 'MSTORE' || log.op == 'MSTORE8' || log.op == 'CALL' || log.op == 'CALLCODE' || log.op == 'DELEGATECALL' || log.op == 'STATICCALL') {
+       if(log.op == 'MSTORE' || log.op == 'MSTORE8' || log.op == 'MLOAD') {
          gasUsedMem += +log.gasCost;
-       } else if (log.op == 'SSTORE') {
+       } else if(log.op == 'KECCAK256'|| log.op == 'CALLDATACOPY' || log.op == 'CODECOPY' || log.op == 'EXTCODECOPY' || log.op == 'RETURNDATACOPY' || log.op == 'LOG0' || log.op == 'LOG1' || log.op == 'LOG2' || log.op == 'LOG3' || log.op == 'LOG4' || log.op == 'CREATE' || log.op == 'CALL' || log.op == 'CALLCODE' || log.op == 'RETURN' || log.op == 'DELEGATECALL' || log.op == 'CREATE2' || log.op == 'STATICCALL') {
+         gasUsedMem_others += +log.gasCost;
+       } else if (log.op == 'SLOAD') {
          gasUsedStorage += +log.gasCost;
+         console.log('type of storage: ', typeof(log.storage));
+         let storage_json = log.storage;
+         // console.log('storage for SLOAD: ', JSON.stringify(storage_json));
+         if (!_.isEqual(storage_json, curr_storage_sload)) {
+           // get the size of curr_storage_sload
+           let size_pre = Object.keys(curr_storage_sload).length;
+           let size_curr = Object.keys(storage_json).length;
+           if(size_curr < size_pre) {
+             console.log('sload size reduced');
+           }
+           storageOverhead_read += (size_curr - size_pre);
+         } else {
+           console.log('repeated read');
+         }
+         curr_storage_sload = storage_json;
+       } else if(log.op == 'SSTORE') {
+         gasUsedStorage += +log.gasCost;
+         if_sstore = true;
+         console.log('sstore');
+         curr_storage_sstore = log.storage;
        } else {
          gasUsedCompute += +log.gasCost;
        }
-       console.log(`op: ${log.op} gas: ${log.gas} gasCost: ${log.gasCost}`);
+
+       if(log.op != 'SSTORE' && if_sstore == true) {
+         console.log('opcode following sstore');
+         for (const key of Object.keys(log.storage)) {
+           if(log.storage[key] != curr_storage_sstore[key]) {
+             console.log('sstore changes storage');
+             storageOverhead_write ++;
+           }
+        }
+        if_sstore = false;
+       }
+ 
+
+       _data += `op: ${log.op} gas: ${log.gas} gasCost: ${log.gasCost}\n`;
+       _data += `memory: ${log.memory}\n`;
+       _data += `storage: ${JSON.stringify(log.storage)}\n\n`;
+       // console.log(`op: ${log.op} gas: ${log.gas} gasCost: ${log.gasCost}`);
+       // console.log('memeory: ', log.memory);
+       // console.log('storage: ', log.storage);
+       // console.log();
      })
    })
 
-   console.log("\nGas cost (from result.receipt): ", gasUsed);
-   console.log("Gas cost (from opcodes): ", gasUsedOp);
-   console.log("Gas cost (mem operations): ", gasUsedMem);
-   console.log("Gas cost (storage operations): ", gasUsedStorage);
-   console.log("Gas cost (computation operations): ", gasUsedCompute);
+   _data += `\nGas cost (from result.receipt): ${gasUsed}\n`;
+   _data += `Gas cost (from opcodes): ${gasUsedOp}\n`;
+   _data += `Gas cost (mem operations): ${gasUsedMem}\n`;
+   _data += `Gas cost (mem_others operations): ${gasUsedMem_others}\n`;
+   _data += `Gas cost (storage operations): ${gasUsedStorage}\n`;
+   _data += `Gas cost (computation operations): ${gasUsedCompute}\n`;
+   _data += `Transaction storage overhead (read): ${storageOverhead_read} slot(s)\n`;
+   _data += `Transaction storage overhead (write): ${storageOverhead_write} slot(s)\n`;
     // curl -H 'Content-Type: application/json'   --data '{"jsonrpc":"2.0", "id": 1, "method": "debug_traceTransaction", "params": [ "0x947e4af2f52483debffdf52f7daa60b203b146094c4e62e352b33fbb2ef4fd6a" ] }' http://localhost:8545 -o trace.json
+    fs.writeFileSync('trace.txt', _data);
 
   });
 })
