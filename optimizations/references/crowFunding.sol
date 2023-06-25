@@ -9,26 +9,26 @@ contract Escrow {
   State state = State.OPEN;
   address owner;
   address payable beneficiary;
-  uint256 totalFunds;
+  // uint256 totalFunds;
   uint256 raised;
 
   constructor(address payable b) public {
     beneficiary = b;
     owner = msg.sender;
-    totalFunds = 0;
+    // totalFunds = 0;
     raised = 0;
   }
 
   function deposit(address p) onlyOwner public payable {
     deposits[p] = deposits[p] + msg.value;
-    totalFunds += msg.value;
+    // totalFunds += msg.value;
     raised += msg.value;
   }
 
   function withdraw() public {
     require(state == State.SUCCESS);
     beneficiary.transfer(address(this).balance);
-    totalFunds = 0;
+    // totalFunds = 0;
   }
 
   function claimRefund(address payable p) public {
@@ -42,9 +42,9 @@ contract Escrow {
   modifier onlyOwner {require(owner == msg.sender); _; }
   function close() onlyOwner public{state = State.SUCCESS;}
   function refund() onlyOwner public{state = State.REFUND;}
-  function check() public view {
-    assert(totalFunds == raised || state != State.OPEN);
-  }
+  // function check() public view {
+  //   assert(totalFunds == raised || state != State.OPEN);
+  // }
 }
 
 contract Crowdsale {

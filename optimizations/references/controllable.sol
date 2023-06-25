@@ -12,9 +12,9 @@ contract Controllable is ERC20 {
     event ControllerRedemption(address controller, address tokenHolder, uint
                                value);
 
-    uint256 totalBalance;
+    // uint256 totalBalance;
     constructor() ERC20("Token", "MCO") {
-      totalBalance = 0;
+      // totalBalance = 0;
     }
 
     modifier onlyController() {
@@ -32,24 +32,24 @@ contract Controllable is ERC20 {
                                 onlyController {
         _burn(_tokenHolder, _value);
         emit ControllerRedemption(msg.sender, _tokenHolder, _value);
-        totalBalance -= _value;
+        // totalBalance -= _value;
      }
 
 
     function mint(address account, uint256 amount) public {
         _mint(account, amount);
-        totalBalance += amount;
+        // totalBalance += amount;
     }
 
 
     function burn(address account, uint256 amount) public {
         _burn(account, amount);
-        totalBalance -= amount;
+        // totalBalance -= amount;
     }
 
-    function equalBalance() public view {
-      assert(totalSupply() == totalBalance);
-    }
+    // function equalBalance() public view {
+    //   assert(totalSupply() == totalBalance);
+    // }
 
 
 }

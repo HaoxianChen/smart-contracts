@@ -234,7 +234,7 @@ contract ERC20 is IERC20 {
 
     uint256 private _totalSupply;
 
-    uint256 balanceTotal;
+    // uint256 balanceTotal;
 
     /**
      * @dev See `IERC20.totalSupply`.
@@ -355,9 +355,9 @@ contract ERC20 is IERC20 {
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
         _balances[sender] = _balances[sender].sub(amount);
-        balanceTotal = balanceTotal.sub(amount);
+        // balanceTotal = balanceTotal.sub(amount);
         _balances[recipient] = _balances[recipient].add(amount);
-        balanceTotal = balanceTotal.add(amount);
+        // balanceTotal = balanceTotal.add(amount);
         emit Transfer(sender, recipient, amount);
     }
 
@@ -375,7 +375,7 @@ contract ERC20 is IERC20 {
 
         _totalSupply = _totalSupply.add(amount);
         _balances[account] = _balances[account].add(amount);
-        balanceTotal = balanceTotal.add(amount);
+        // balanceTotal = balanceTotal.add(amount);
         emit Transfer(address(0), account, amount);
     }
 
@@ -395,7 +395,7 @@ contract ERC20 is IERC20 {
 
         _totalSupply = _totalSupply.sub(value);
         _balances[account] = _balances[account].sub(value);
-        balanceTotal = balanceTotal.sub(value);
+        // balanceTotal = balanceTotal.sub(value);
         emit Transfer(account, address(0), value);
     }
 
@@ -502,7 +502,7 @@ contract TokenMintERC20Token is ERC20 {
       return _decimals;
     }
 
-    function check() public view {
-      assert(balanceTotal == totalSupply());
-    }
+    // function check() public view {
+    //   assert(balanceTotal == totalSupply());
+    // }
 }

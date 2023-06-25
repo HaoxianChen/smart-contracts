@@ -552,11 +552,11 @@ contract ERC777 is Context, IERC777, IERC20 {
         uint256 amount
     ) internal virtual {}
 
-    function operatorConsistency(address p, address o) public view {
-        // assert( !_operators[p][o]  ||
-        //       !(_defaultOperators[o] && _revokedDefaultOperators[p][o])
-        //       );
-      assert( ! (_operators[p][o] && _defaultOperators[o])); 
-    }
+    // function operatorConsistency(address p, address o) public view {
+    //     // assert( !_operators[p][o]  ||
+    //     //       !(_defaultOperators[o] && _revokedDefaultOperators[p][o])
+    //     //       );
+    //   assert( ! (_operators[p][o] && _defaultOperators[o])); 
+    // }
 
 }

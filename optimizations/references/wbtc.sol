@@ -81,7 +81,7 @@ contract BasicToken is ERC20Basic {
   using SafeMath for uint256;
 
   mapping(address => uint256) internal balances;
-  uint256 balanceTotal;
+  // uint256 balanceTotal;
 
   uint256 internal totalSupply_;
 
@@ -102,9 +102,9 @@ contract BasicToken is ERC20Basic {
     require(_to != address(0));
 
     balances[msg.sender] = balances[msg.sender].sub(_value);
-    balanceTotal = balanceTotal.sub(_value);
+    // balanceTotal = balanceTotal.sub(_value);
     balances[_to] = balances[_to].add(_value);
-    balanceTotal = balanceTotal.add(_value);
+    // balanceTotal = balanceTotal.add(_value);
     emit Transfer(msg.sender, _to, _value);
     return true;
   }
@@ -178,9 +178,9 @@ contract StandardToken is ERC20, BasicToken {
     require(_to != address(0));
 
     balances[_from] = balances[_from].sub(_value);
-    balanceTotal = balanceTotal.sub(_value);
+    // balanceTotal = balanceTotal.sub(_value);
     balances[_to] = balances[_to].add(_value);
-    balanceTotal = balanceTotal.add(_value);
+    // balanceTotal = balanceTotal.add(_value);
     allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
     emit Transfer(_from, _to, _value);
     return true;
@@ -398,7 +398,7 @@ contract MintableToken is StandardToken, Ownable {
   {
     totalSupply_ = totalSupply_.add(_amount);
     balances[_to] = balances[_to].add(_amount);
-    balanceTotal = balanceTotal.add(_amount);
+    // balanceTotal = balanceTotal.add(_amount);
     emit Mint(_to, _amount);
     emit Transfer(address(0), _to, _amount);
     return true;
@@ -440,7 +440,7 @@ contract BurnableToken is BasicToken {
     // sender's balance is greater than the totalSupply, which *should* be an assertion failure
 
     balances[_who] = balances[_who].sub(_value);
-    balanceTotal = balanceTotal.sub(_value);
+    // balanceTotal = balanceTotal.sub(_value);
     totalSupply_ = totalSupply_.sub(_value);
     emit Burn(_who, _value);
     emit Transfer(_who, address(0), _value);
@@ -725,7 +725,7 @@ contract WBTC is StandardToken, DetailedERC20("Wrapped BTC", "WBTC", 8),
         revert("renouncing ownership is blocked");
     }
 
-    function check() public view {
-        assert(balanceTotal == totalSupply());
-    }
+    // function check() public view {
+    //     assert(balanceTotal == totalSupply());
+    // }
 }

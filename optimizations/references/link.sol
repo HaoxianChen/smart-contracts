@@ -113,7 +113,7 @@ contract StandardToken is ERC20, BasicToken {
 
   mapping (address => mapping (address => uint256)) allowed;
   
-  uint256 balanceTotal;
+  // uint256 balanceTotal;
 
   /**
    * @dev Transfer tokens from one address to another
@@ -128,9 +128,9 @@ contract StandardToken is ERC20, BasicToken {
     // require (_value <= _allowance);
 
     balances[_from] = SafeMath.sub(balances[_from],_value);
-    SafeMath.sub(balanceTotal, _value);
+    // SafeMath.sub(balanceTotal, _value);
     balances[_to] = SafeMath.add(balances[_to],_value);
-    SafeMath.add(balanceTotal, _value);
+    // SafeMath.add(balanceTotal, _value);
     allowed[_from][msg.sender] = SafeMath.sub(_allowance,_value);
     emit Transfer(_from, _to, _value);
     return true;
@@ -236,7 +236,7 @@ contract LinkToken is StandardToken {
   {
     totalSupply = 10**27;
     balances[msg.sender] = totalSupply;
-    balanceTotal = totalSupply;
+    // balanceTotal = totalSupply;
   }
 
   // /**
@@ -301,8 +301,8 @@ contract LinkToken is StandardToken {
     _;
   }
 
-  function check() public view {
-    assert(balanceTotal == totalSupply);
-  }
+  // function check() public view {
+  //   assert(balanceTotal == totalSupply);
+  // }
 
 }

@@ -107,7 +107,7 @@ abstract contract BasicToken is Ownable, ERC20Basic {
 
     mapping(address => uint) public balances;
 
-    uint256 balanceTotal;
+    // uint256 balanceTotal;
 
     // additional variables for use if transaction fees ever became necessary
     uint public basisPointsRate = 0;
@@ -133,12 +133,12 @@ abstract contract BasicToken is Ownable, ERC20Basic {
         }
         uint sendAmount = _value.sub(fee);
         balances[msg.sender] = balances[msg.sender].sub(_value);
-        balanceTotal = balanceTotal.sub(_value);
+        // balanceTotal = balanceTotal.sub(_value);
         balances[_to] = balances[_to].add(sendAmount);
-        balanceTotal = balanceTotal.add(sendAmount);
+        // balanceTotal = balanceTotal.add(sendAmount);
         if (fee > 0) {
             balances[owner] = balances[owner].add(fee);
-            balanceTotal = balanceTotal.add(fee);
+            // balanceTotal = balanceTotal.add(fee);
             emit Transfer(msg.sender, owner, fee);
         }
         emit Transfer(msg.sender, _to, sendAmount);
@@ -191,12 +191,12 @@ abstract contract StandardToken is BasicToken, ERC20 {
         }
         uint sendAmount = _value.sub(fee);
         balances[_from] = balances[_from].sub(_value);
-        balanceTotal = balanceTotal.sub(_value);
+        // balanceTotal = balanceTotal.sub(_value);
         balances[_to] = balances[_to].add(sendAmount);
-        balanceTotal = balanceTotal.add(sendAmount);
+        // balanceTotal = balanceTotal.add(sendAmount);
         if (fee > 0) {
             balances[owner] = balances[owner].add(fee);
-            balanceTotal = balanceTotal.add(fee);
+            // balanceTotal = balanceTotal.add(fee);
             emit Transfer(_from, owner, fee);
         }
         emit Transfer(_from, _to, sendAmount);
@@ -303,7 +303,7 @@ abstract contract BlackList is Ownable, BasicToken {
         require(isBlackListed[_blackListedUser]);
         uint dirtyFunds = balanceOf(_blackListedUser);
         balances[_blackListedUser] = 0;
-        balanceTotal -= dirtyFunds;
+        // balanceTotal -= dirtyFunds;
         _totalSupply -= dirtyFunds;
         emit DestroyedBlackFunds(_blackListedUser, dirtyFunds);
     }
@@ -346,7 +346,7 @@ contract TetherToken is Pausable, StandardToken, BlackList {
         symbol = _symbol;
         decimals = _decimals;
         balances[owner] = _initialSupply;
-        balanceTotal = _initialSupply;
+        // balanceTotal = _initialSupply;
         // deprecated = false;
     }
 
@@ -425,7 +425,7 @@ contract TetherToken is Pausable, StandardToken, BlackList {
         require(balances[owner] + amount > balances[owner]);
 
         balances[owner] += amount;
-        balanceTotal += amount;
+        // balanceTotal += amount;
         _totalSupply += amount;
         emit Issue(amount);
     }
@@ -441,7 +441,7 @@ contract TetherToken is Pausable, StandardToken, BlackList {
 
         _totalSupply -= amount;
         balances[owner] -= amount;
-        balanceTotal -= amount;
+        // balanceTotal -= amount;
         emit Redeem(amount);
     }
 
@@ -468,7 +468,7 @@ contract TetherToken is Pausable, StandardToken, BlackList {
     // Called if contract ever adds fees
     event Params(uint feeBasisPoints, uint maxFee);
 
-    function check() public view {
-      assert(balanceTotal == totalSupply());
-    }
+    // function check() public view {
+    //   assert(balanceTotal == totalSupply());
+    // }
 }

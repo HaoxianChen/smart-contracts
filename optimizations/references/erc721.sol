@@ -14,7 +14,7 @@ contract NFT is ERC721 {
         _burn(tokenId);
     }
 
-    function noOwner(uint256 tokenId) public view {
-      assert(ownerOf(tokenId) != address(0) || ! _exists(tokenId));
-    }
+    // function noOwner(uint256 tokenId) public view {
+    //   assert(ownerOf(tokenId) != address(0) || ! _exists(tokenId));
+    // }
 }

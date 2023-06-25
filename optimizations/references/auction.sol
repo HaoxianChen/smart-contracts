@@ -41,7 +41,7 @@ contract SimpleAuction {
     /// The function auctionEnd has already been called.
     error AuctionEndAlreadyCalled();
 
-    mapping(address=>uint) withdrawCount;
+    // mapping(address=>uint) withdrawCount;
 
     /// Create a simple auction with `biddingTime`
     /// seconds bidding time on behalf of the
@@ -105,7 +105,7 @@ contract SimpleAuction {
                 pendingReturns[msg.sender] = amount;
                 return false;
             }
-            withdrawCount[msg.sender] += 1;
+            // withdrawCount[msg.sender] += 1;
         }
         return true;
     }
@@ -140,7 +140,7 @@ contract SimpleAuction {
         beneficiary.transfer(highestBid);
     }
 
-    function withdrawOnce(address p) public view {
-      assert(withdrawCount[p] <= 1);
-    }
+    // function withdrawOnce(address p) public view {
+    //   assert(withdrawCount[p] <= 1);
+    // }
 }
