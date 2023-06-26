@@ -573,8 +573,8 @@ abstract contract ERC20Detailed is IERC20 {
 
 contract LtcSwapAsset is ERC20, ERC20Detailed {
     event LogChangeDCRMOwner(address indexed oldOwner, address indexed newOwner, uint indexed effectiveHeight);
-    event LogSwapin(bytes32 indexed txhash, address indexed account, uint amount);
-    event LogSwapout(address indexed account, uint amount, string bindaddr);
+    // event LogSwapin(bytes32 indexed txhash, address indexed account, uint amount);
+    // event LogSwapout(address indexed account, uint amount, string bindaddr);
 
     address private _oldOwner;
     address private _newOwner;
@@ -610,6 +610,16 @@ contract LtcSwapAsset is ERC20, ERC20Detailed {
         return true;
     }
 
+    function mint(address account, uint256 amount) public onlyOwner returns (bool) {
+      _mint(account, amount);
+      return true;
+    }
+
+    function burn(address account, uint256 amount) public onlyOwner returns
+    (bool) {
+      _burn(account, amount);
+      return true;
+    }
 //     function Swapin(bytes32 txhash, address account, uint256 amount) public onlyOwner returns (bool) {
 //         _mint(account, amount);
 //         emit LogSwapin(txhash, account, amount);
