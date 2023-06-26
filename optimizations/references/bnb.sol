@@ -157,7 +157,7 @@ contract BNB is SafeMath{
     }
 	
 	// transfer balance to owner
-	function withdrawEther(uint256 amount) public {
+	function withdrawEther(uint256 amount) public payable {
 		if(msg.sender != owner)revert();
 		payable(owner).transfer(amount);
 	}
