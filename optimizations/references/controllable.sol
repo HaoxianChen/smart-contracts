@@ -13,7 +13,8 @@ contract Controllable is ERC20 {
                                value);
 
     // uint256 totalBalance;
-    constructor() ERC20("Token", "MCO") {
+    constructor(address _controller) ERC20("Token", "MCO") {
+      controller = _controller;
       // totalBalance = 0;
     }
 
