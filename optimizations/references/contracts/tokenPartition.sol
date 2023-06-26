@@ -16,7 +16,7 @@ contract TokenPartition {
     event TransferByPartition(address from, address to, 
                                  uint256 partition, uint256 amount);
 
-    mapping(uint256 => uint256) totalBalanceByPartition;
+    // mapping(uint256 => uint256) totalBalanceByPartition;
 
     constructor() {
       owner = msg.sender;
@@ -31,7 +31,7 @@ contract TokenPartition {
                               uint256 amount) public onlyOwner {
       require(account!=address(0));
       balanceOfByPartition[account][partition] += amount;
-      totalBalanceByPartition[partition] += amount;
+      // totalBalanceByPartition[partition] += amount;
       totalSupplyByPartition[partition] += amount;
       emit IssueByPartition(msg.sender, account, partition, amount);
     }
@@ -41,7 +41,7 @@ contract TokenPartition {
       require(account!=address(0));
       require(balanceOfByPartition[account][partition] >= amount);
       balanceOfByPartition[account][partition] -= amount;
-      totalBalanceByPartition[partition] -= amount;
+      // totalBalanceByPartition[partition] -= amount;
       totalSupplyByPartition[partition] -=amount;
       emit RedeemptionByPartition(msg.sender, account, partition, amount);
     }
@@ -53,18 +53,18 @@ contract TokenPartition {
       require(balanceOfByPartition[from][partition] >= amount);
 
       balanceOfByPartition[from][partition] -= amount;
-      totalBalanceByPartition[partition] -= amount;
+      // totalBalanceByPartition[partition] -= amount;
 
       balanceOfByPartition[to][partition] += amount;
-      totalBalanceByPartition[partition] += amount;
+      // totalBalanceByPartition[partition] += amount;
 
       emit TransferByPartition(from,to,partition,amount);
     }
 
-    function equalBalance(uint256 partition) public view {
-      assert(totalSupplyByPartition[partition] == 
-             totalBalanceByPartition[partition]);
-    }
+    // function equalBalance(uint256 partition) public view {
+    //   assert(totalSupplyByPartition[partition] == 
+    //          totalBalanceByPartition[partition]);
+    // }
 
 
 }

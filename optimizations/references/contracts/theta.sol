@@ -67,7 +67,7 @@ contract StandardToken is ERC20 {
 
     mapping (address => uint) balances;
 
-    uint balanceTotal;
+    // uint balanceTotal;
     
     mapping (address => mapping (address => uint)) allowed;
 
@@ -83,9 +83,9 @@ contract StandardToken is ERC20 {
         require(balances[msg.sender] >= _value && _value > 0);
         
         balances[msg.sender] = balances[msg.sender].sub(_value);
-        balanceTotal = balanceTotal.sub(_value);
+        // balanceTotal = balanceTotal.sub(_value);
         balances[_to] = balances[_to].add(_value);
-        balanceTotal = balanceTotal.add(_value);
+        // balanceTotal = balanceTotal.add(_value);
         emit Transfer(msg.sender, _to, _value);
         
         return true;
@@ -95,9 +95,9 @@ contract StandardToken is ERC20 {
         require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0);
         
         balances[_from] = balances[_from].sub(_value);
-        balanceTotal = balanceTotal.sub(_value);
+        // balanceTotal = balanceTotal.sub(_value);
         balances[_to] = balances[_to].add(_value);
-        balanceTotal = balanceTotal.add(_value);
+        // balanceTotal = balanceTotal.add(_value);
         allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
         emit Transfer(_from, _to, _value);
         
@@ -175,7 +175,7 @@ contract ThetaToken is StandardToken, Controlled {
     function mint(address _owner, uint _amount) external only_controller returns (bool) {
         _totalSupply = _totalSupply.add(_amount);
         balances[_owner] = balances[_owner].add(_amount);
-        balanceTotal = balanceTotal.add(_amount);
+        // balanceTotal = balanceTotal.add(_amount);
 
         emit Transfer(address(0), _owner, _amount);
         return true;
@@ -206,8 +206,8 @@ contract ThetaToken is StandardToken, Controlled {
         _;
     }
 
-    function check() public view {
-      assert(balanceTotal == totalSupply());
-    }
+    // function check() public view {
+    //   assert(balanceTotal == totalSupply());
+    // }
 
 }

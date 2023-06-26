@@ -138,7 +138,7 @@ contract ERC1155 is Context, ERC165, IERC1155 {
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
 
-    mapping(uint256 => uint256) private totalBalances;
+    // mapping(uint256 => uint256) private totalBalances;
     mapping(uint256 => uint256) private totalSupply;
 
     // Mapping from account to operator approvals
@@ -294,10 +294,10 @@ contract ERC1155 is Context, ERC165, IERC1155 {
         require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
         unchecked {
             _balances[id][from] = fromBalance - amount;
-            totalBalances[id] -= amount;
+            // totalBalances[id] -= amount;
         }
         _balances[id][to] += amount;
-        totalBalances[id] += amount;
+        // totalBalances[id] += amount;
 
         emit TransferSingle(operator, from, to, id, amount);
 
@@ -398,7 +398,7 @@ contract ERC1155 is Context, ERC165, IERC1155 {
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
 
         _balances[id][to] += amount;
-        totalBalances[id] += amount;
+        // totalBalances[id] += amount;
         totalSupply[id] += amount;
         emit TransferSingle(operator, address(0), to, id, amount);
 
@@ -476,7 +476,7 @@ contract ERC1155 is Context, ERC165, IERC1155 {
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
         unchecked {
             _balances[id][from] = fromBalance - amount;
-            totalBalances[id] -= amount;
+            // totalBalances[id] -= amount;
         }
         totalSupply[id] -= amount;
 
@@ -653,7 +653,7 @@ contract ERC1155 is Context, ERC165, IERC1155 {
         return array;
     }
 
-    function equalBalance(uint256 tokenId) public view {
-      assert(totalBalances[tokenId] == totalSupply[tokenId]);
-    }
+    // function equalBalance(uint256 tokenId) public view {
+    //   assert(totalBalances[tokenId] == totalSupply[tokenId]);
+    // }
 }

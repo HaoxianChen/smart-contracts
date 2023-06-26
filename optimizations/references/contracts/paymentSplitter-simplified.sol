@@ -158,9 +158,9 @@ contract PaymentSplitter {
         emit PayeeAdded(account, shares_);
     }
 
-  function check(address p) public view {
-    uint256 _totalReceived = address(this).balance + totalReleased();
-    uint256 amount = shares(p) * _totalReceived / totalShares() ;
-    assert(released(p) <= amount);
-  }
+  // function check(address p) public view {
+  //   uint256 _totalReceived = address(this).balance + totalReleased();
+  //   uint256 amount = shares(p) * _totalReceived / totalShares() ;
+  //   assert(released(p) <= amount);
+  // }
 }

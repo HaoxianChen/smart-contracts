@@ -6,7 +6,7 @@ contract Wallet {
     address private _owner;
     mapping(address => int) private _balanceOf;
     int private _totalSupply;
-    int totalBalance;
+    // int totalBalance;
     
     event Transfer(address from, address to, int amount);
     event Construction(address owner);
@@ -14,7 +14,7 @@ contract Wallet {
     constructor() {
         emit Construction(msg.sender);
         _owner = msg.sender;
-        totalBalance = 0;
+        // totalBalance = 0;
     }
 
     function getOwner() public view returns (address) {
@@ -27,7 +27,7 @@ contract Wallet {
         require(amount > 0);
 
         _totalSupply += amount;
-        totalBalance += amount;
+        // totalBalance += amount;
         _balanceOf[account] += amount;
         emit Transfer(address(0), account, amount);
     }
@@ -39,7 +39,7 @@ contract Wallet {
         require(_balanceOf[account]>=amount);
         
         _totalSupply -= amount;
-        totalBalance -= amount;
+        // totalBalance -= amount;
         _balanceOf[account] -= amount;
         emit Transfer(account, address(0), amount);
     }

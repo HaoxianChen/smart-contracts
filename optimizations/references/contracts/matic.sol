@@ -118,7 +118,7 @@ contract ERC20 is IERC20 {
 
     uint256 private _totalSupply;
 
-    uint256 balanceTotal;
+    // uint256 balanceTotal;
 
     /**
     * @dev Total number of tokens in existence
@@ -234,9 +234,9 @@ contract ERC20 is IERC20 {
         require(to != address(0));
 
         _balances[from] = _balances[from].sub(value);
-        balanceTotal = balanceTotal.sub(value);
+        // balanceTotal = balanceTotal.sub(value);
         _balances[to] = _balances[to].add(value);
-        balanceTotal = balanceTotal.add(value);
+        // balanceTotal = balanceTotal.add(value);
         emit Transfer(from, to, value);
     }
 
@@ -252,7 +252,7 @@ contract ERC20 is IERC20 {
 
         _totalSupply = _totalSupply.add(value);
         _balances[account] = _balances[account].add(value);
-        balanceTotal = balanceTotal.add(value);
+        // balanceTotal = balanceTotal.add(value);
         emit Transfer(address(0), account, value);
     }
 
@@ -267,7 +267,7 @@ contract ERC20 is IERC20 {
 
         _totalSupply = _totalSupply.sub(value);
         _balances[account] = _balances[account].sub(value);
-        balanceTotal = balanceTotal.sub(value);
+        // balanceTotal = balanceTotal.sub(value);
         emit Transfer(account, address(0), value);
     }
 
@@ -504,7 +504,7 @@ contract MaticToken is ERC20Pausable, ERC20Detailed {
         _mint(msg.sender, totalSupply);
     }
 
-    function check() public view {
-      assert(balanceTotal == totalSupply());
-    }
+    // function check() public view {
+    //   assert(balanceTotal == totalSupply());
+    // }
 }

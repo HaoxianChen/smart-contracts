@@ -47,8 +47,8 @@ contract BNB is SafeMath{
 	address public owner;
 
     /* monitors the sum of all account balances. */
-    uint256 totalBalance;
-    uint256 freezeTotal;
+    // uint256 totalBalance;
+    // uint256 freezeTotal;
 
     /* This creates an array with all balances */
     mapping (address => uint256) public balanceOf;
@@ -75,8 +75,8 @@ contract BNB is SafeMath{
         // string memory tokenSymbol
         ) {
         balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens
-        totalBalance = initialSupply;
-        freezeTotal = 0;
+        // totalBalance = initialSupply;
+        // freezeTotal = 0;
 
         totalSupply = initialSupply;                        // Update total supply
         // name = tokenName;                                   // Set the name for display purposes
@@ -93,9 +93,9 @@ contract BNB is SafeMath{
         if (balanceOf[msg.sender] < _value) revert();           // Check if the sender has enough
         if (balanceOf[_to] + _value < balanceOf[_to]) revert(); // Check for overflows
         balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                     // Subtract from the sender
-        totalBalance = SafeMath.safeSub(totalBalance, _value);
+        // totalBalance = SafeMath.safeSub(totalBalance, _value);
         balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                            // Add the same to the recipient
-        totalBalance = SafeMath.safeAdd(totalBalance, _value);
+        // totalBalance = SafeMath.safeAdd(totalBalance, _value);
         emit Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
     }
 
@@ -116,9 +116,9 @@ contract BNB is SafeMath{
         if (balanceOf[_to] + _value < balanceOf[_to]) revert();  // Check for overflows
         if (_value > allowance[_from][msg.sender]) revert();     // Check allowance
         balanceOf[_from] = SafeMath.safeSub(balanceOf[_from], _value);                           // Subtract from the sender
-        totalBalance = SafeMath.safeSub(totalBalance, _value);
+        // totalBalance = SafeMath.safeSub(totalBalance, _value);
         balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                             // Add the same to the recipient
-        totalBalance = SafeMath.safeAdd(totalBalance, _value);
+        // totalBalance = SafeMath.safeAdd(totalBalance, _value);
         allowance[_from][msg.sender] = SafeMath.safeSub(allowance[_from][msg.sender], _value);
         emit Transfer(_from, _to, _value);
         return true;
@@ -128,7 +128,7 @@ contract BNB is SafeMath{
         if (balanceOf[msg.sender] < _value) revert();            // Check if the sender has enough
 		if (_value <= 0) revert(); 
         balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                      // Subtract from the sender
-        totalBalance = SafeMath.safeSub(totalBalance, _value);
+        // totalBalance = SafeMath.safeSub(totalBalance, _value);
         totalSupply = SafeMath.safeSub(totalSupply,_value);                                // Updates totalSupply
         emit Burn(msg.sender, _value);
         return true;
@@ -138,9 +138,9 @@ contract BNB is SafeMath{
         if (balanceOf[msg.sender] < _value) revert();            // Check if the sender has enough
 		if (_value <= 0) revert(); 
         balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                      // Subtract from the sender
-        totalBalance = SafeMath.safeSub(totalBalance, _value);
+        // totalBalance = SafeMath.safeSub(totalBalance, _value);
         freezeOf[msg.sender] = SafeMath.safeAdd(freezeOf[msg.sender], _value);                                // Updates totalSupply
-        freezeTotal = SafeMath.safeAdd(freezeTotal, _value);
+        // freezeTotal = SafeMath.safeAdd(freezeTotal, _value);
         emit Freeze(msg.sender, _value);
         return true;
     }
@@ -149,22 +149,22 @@ contract BNB is SafeMath{
         if (freezeOf[msg.sender] < _value) revert();            // Check if the sender has enough
 		if (_value <= 0) revert(); 
         freezeOf[msg.sender] = SafeMath.safeSub(freezeOf[msg.sender], _value);                      // Subtract from the sender
-        freezeTotal = SafeMath.safeSub(freezeTotal, _value);
+        // freezeTotal = SafeMath.safeSub(freezeTotal, _value);
         balanceOf[msg.sender] = SafeMath.safeAdd(balanceOf[msg.sender], _value);
-        totalBalance = SafeMath.safeAdd(totalBalance, _value);
+        // totalBalance = SafeMath.safeAdd(totalBalance, _value);
         emit Unfreeze(msg.sender, _value);
         return true;
     }
 	
 	// transfer balance to owner
-	function withdrawEther(uint256 amount) public {
+	function withdrawEther(uint256 amount) public payable {
 		if(msg.sender != owner)revert();
 		payable(owner).transfer(amount);
 	}
 
-  function equalBalance() public view {
-    assert(totalBalance + freezeTotal == totalSupply);
-  }
+  // function equalBalance() public view {
+  //   assert(totalBalance + freezeTotal == totalSupply);
+  // }
 	
 	// can accept ether
 	//function() payable {
