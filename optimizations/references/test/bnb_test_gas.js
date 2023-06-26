@@ -7,6 +7,7 @@ const {
 } = require('@openzeppelin/test-helpers');
 
 const helper = require("./helper_functions");
+// const helper = require("./helper_functions_geth");
 const fs = require('fs');
 const path = require('path');
 const lowerBoundInput = 10;
@@ -60,148 +61,148 @@ helper.range(transactionCounts).forEach(l => {
     }
   }
 
-  // if(transactionName == 'approve') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     // construct file name
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`
-  //     // generate random number from 10 to 1000
-  //     let totalSupply =  helper.random(lowerBoundInput, upperBoundInput+1);
-  //     // transfer to a random account but accounts[0]
-  //     let transferToAccountIndex = helper.random(0, deployAccountCount);
-  //     let transferAmount = helper.random(1, totalSupply+1);
-  //     // approve a random account but accounts[transferToAcountIndex]
-  //     let arrayRandom = [];
-  //     for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
-  //       if(appIndex != transferToAccountIndex) {
-  //         arrayRandom.push(appIndex);
-  //       }
-  //     }
-  //     let arrayRandomLen = arrayRandom.length;
-  //     let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-  //     let approveAmount = helper.random(1, transferAmount);
-  //     let text = `approve,constructor,,${totalSupply} BNBToken 18 BNB,,,false\napprove,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},0,,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${transferToAccountIndex},,true\n`;
-  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //       if (err) throw err;
-  //       console.log('File is created successfully.');
-  //     });
-  //   }) 
-  // }
+  if(transactionName == 'approve') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      // generate random number from 10 to 1000
+      let totalSupply =  helper.random(lowerBoundInput, upperBoundInput+1);
+      // transfer to a random account but accounts[0]
+      let transferToAccountIndex = helper.random(0, deployAccountCount);
+      let transferAmount = helper.random(1, totalSupply+1);
+      // approve a random account but accounts[transferToAcountIndex]
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != transferToAccountIndex) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+      let approveAmount = helper.random(1, transferAmount);
+      let text = `approve,constructor,,${totalSupply},,,false\napprove,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},0,,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${transferToAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    }) 
+  }
 
-  // if(transactionName == 'burn') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     // construct file name
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`
-  //     let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
-  //     let transferToAccountIndex = helper.random(0, deployAccountCount);
-  //     let transferAmount = helper.random(1, totalSupply+1);
-  //     let burnAmount = helper.random(1, transferAmount+1);
-  //     let text = `burn,constructor,,${totalSupply} BNBToken 18 BNB,,,false\nburn,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nburn,burn,instance,${burnAmount},${transferToAccountIndex},,true\n`;
-  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //       if (err) throw err;
-  //       console.log('File is created successfully.');
-  //     });
-  //   })   
-  // }  
+  if(transactionName == 'burn') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
+      let transferToAccountIndex = helper.random(0, deployAccountCount);
+      let transferAmount = helper.random(1, totalSupply+1);
+      let burnAmount = helper.random(1, transferAmount+1);
+      let text = `burn,constructor,,${totalSupply},,,false\nburn,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nburn,burn,instance,${burnAmount},${transferToAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    })   
+  }  
 
-  // if(transactionName == 'freeze') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     // construct file name
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`
-  //     let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
-  //     let transferToAccountIndex = helper.random(0, deployAccountCount);
-  //     let transferAmount = helper.random(1, totalSupply+1);
-  //     let freezeAmount = helper.random(1, transferAmount+1);
-  //     let text = `freeze,constructor,,${totalSupply} BNBToken 18 BNB,,,false\nfreeze,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nfreeze,freeze,instance,${freezeAmount},${transferToAccountIndex},,true\n`;
-  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //       if (err) throw err;
-  //       console.log('File is created successfully.');
-  //     });
-  //   })  
-  // }
+  if(transactionName == 'freeze') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
+      let transferToAccountIndex = helper.random(0, deployAccountCount);
+      let transferAmount = helper.random(1, totalSupply+1);
+      let freezeAmount = helper.random(1, transferAmount+1);
+      let text = `freeze,constructor,,${totalSupply},,,false\nfreeze,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nfreeze,freeze,instance,${freezeAmount},${transferToAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    })  
+  }
 
-  // if(transactionName == 'transfer') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     // construct file name
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`
-  //     let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
-  //     let transferToAccountIndex = helper.random(0, deployAccountCount);
-  //     let transferAmount = helper.random(1, totalSupply+1);
-  //     let arrayRandom = [];
-  //     for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
-  //       if(appIndex != transferToAccountIndex) {
-  //         arrayRandom.push(appIndex);
-  //       }
-  //     }
-  //     let arrayRandomLen = arrayRandom.length;
-  //     let transferToFinalAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-  //     let transferFinalAmount = helper.random(1, transferAmount+1);
-  //     let text = `transfer,constructor,,${totalSupply} BNBToken 18 BNB,,,false\ntransfer,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\ntransfer,transfer,instance,accounts[${transferToFinalAccountIndex}] ${transferFinalAmount},${transferToAccountIndex},,true\n`;
-  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //       if (err) throw err;
-  //       console.log('File is created successfully.');
-  //     });
-  //   })  
-  // }  
+  if(transactionName == 'transfer') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
+      let transferToAccountIndex = helper.random(0, deployAccountCount);
+      let transferAmount = helper.random(1, totalSupply+1);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != transferToAccountIndex) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let transferToFinalAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+      let transferFinalAmount = helper.random(1, transferAmount+1);
+      let text = `transfer,constructor,,${totalSupply},,,false\ntransfer,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\ntransfer,transfer,instance,accounts[${transferToFinalAccountIndex}] ${transferFinalAmount},${transferToAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    })  
+  }  
 
-  // if(transactionName == 'transferFrom') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     // construct file name
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`
-  //     let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
-  //     let transferToAccountIndex = helper.random(0, deployAccountCount);
-  //     let transferAmount = helper.random(1, totalSupply+1);
-  //     let arrayRandom = [];
-  //     for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
-  //       if(appIndex != transferToAccountIndex) {
-  //         arrayRandom.push(appIndex);
-  //       }
-  //     }
-  //     let arrayRandomLen = arrayRandom.length;
-  //     let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-  //     let approveAmount = helper.random(1, transferAmount+1);
-  //     // transferFrom to a random account but the token's owner (after transfer)
-  //     let transferFromToIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-  //     let transferFromAmount = helper.random(1, approveAmount+1);
-  //     let text = `transferFrom,constructor,,${totalSupply} BNBToken 18 BNB,,,false\ntransferFrom,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\ntransferFrom,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${transferToAccountIndex},,false\ntransferFrom,transferFrom,instance,accounts[${transferToAccountIndex}] accounts[${transferFromToIndex}] ${transferFromAmount},${approveAccountIndex},,true\n`;
-  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //       if (err) throw err;
-  //       console.log('File is created successfully.');
-  //     });
-  //   })  
+  if(transactionName == 'transferFrom') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
+      let transferToAccountIndex = helper.random(0, deployAccountCount);
+      let transferAmount = helper.random(1, totalSupply+1);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != transferToAccountIndex) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+      let approveAmount = helper.random(1, transferAmount+1);
+      // transferFrom to a random account but the token's owner (after transfer)
+      let transferFromToIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+      let transferFromAmount = helper.random(1, approveAmount+1);
+      let text = `transferFrom,constructor,,${totalSupply},,,false\ntransferFrom,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\ntransferFrom,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${transferToAccountIndex},,false\ntransferFrom,transferFrom,instance,accounts[${transferToAccountIndex}] accounts[${transferFromToIndex}] ${transferFromAmount},${approveAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    })  
 
-  // }
-  // if(transactionName == 'unfreeze') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     // construct file name
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`
-  //     let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
-  //     let transferToAccountIndex = helper.random(0, deployAccountCount);
-  //     let transferAmount = helper.random(1, totalSupply+1);
-  //     let freezeAmount = helper.random(1, transferAmount+1);
-  //     let unfreezeAmount = helper.random(1, freezeAmount+1);
-  //     let text = `unfreeze,constructor,,${totalSupply} BNBToken 18 BNB,,,false\nunfreeze,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nunfreeze,freeze,instance,${freezeAmount},${transferToAccountIndex},,false\nunfreeze,unfreeze,instance,${unfreezeAmount},${transferToAccountIndex},,true\n`;
-  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //       if (err) throw err;
-  //       console.log('File is created successfully.');
-  //     });
-  //   }) 
-  // }
+  }
+  if(transactionName == 'unfreeze') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
+      let transferToAccountIndex = helper.random(0, deployAccountCount);
+      let transferAmount = helper.random(1, totalSupply+1);
+      let freezeAmount = helper.random(1, transferAmount+1);
+      let unfreezeAmount = helper.random(1, freezeAmount+1);
+      let text = `unfreeze,constructor,,${totalSupply},,,false\nunfreeze,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nunfreeze,freeze,instance,${freezeAmount},${transferToAccountIndex},,false\nunfreeze,unfreeze,instance,${unfreezeAmount},${transferToAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    }) 
+  }
   if(transactionName == 'withdrawEther') {
     tracefileCount = transactionCount;
     helper.range(tracefileCount).forEach(testFileIndex => {
       // construct file name
       let fileName = `${transactionName}_${testFileIndex}.txt`
       let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
-      let owner = helper.random(0, deployAccountCount);
+      let ownerIndex = helper.random(0, deployAccountCount);
       let valueAmount = helper.random(1, 10+1);
-      let withdrawAmount = helper.random(0, valueAmount+1);
-      let text = `withdrawEther,constructor,,${totalSupply} BNBToken 18 BNB,${owner},,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount},${owner},web3.utils.toWei(${valueAmount} ether),true\n`;
+      let withdrawAmount = helper.random(0, 10);
+      let text = `withdrawEther,constructor,,${totalSupply},${ownerIndex},,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount},${ownerIndex},web3.utils.toWei(${withdrawAmount} ether),true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');

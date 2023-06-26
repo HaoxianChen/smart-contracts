@@ -63,6 +63,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           var gasUsedStorageTotal = 0;
           var storageOverheadTotal_read = 0;
           var storageOverheadTotal_write = 0;
+          var readGasCostTotal = 0;
+          var writeGasCostTotal = 0;
           for (let i = 0; i < transactionCount; i++) {
             // get the tracefile based on the index
             var traceFileName = `${transactionName}_${i.toString()}.txt`;
@@ -165,6 +167,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                   var gasUsedMem_others = 0;
                   var storageOverhead_write = 0; // slots (1 slot = 32 bytes)
                   var storageOverhead_read = 0; // slots (1 slot = 32 bytes)
+                  var readGasCost = 0;
+                  var writeGasCost = 0;
                   var curr_storage_sload  = {};
                   var curr_storage_sstore = {};
                   var if_sstore = false;
@@ -187,6 +191,7 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                        gasUsedMem_others += +log.gasCost;
                      } else if (log.op == 'SLOAD') {
                        gasUsedStorage += +log.gasCost;
+                       readGasCost += +log.gasCost;
                        // // console.log('type of storage: ', typeof(log.storage));
                        // let storage_json = log.storage;
                        // // console.log('storage for SLOAD: ', JSON.stringify(storage_json));
@@ -205,6 +210,7 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                        storageOverhead_read++;
                      } else if (log.op == 'SSTORE') {
                        gasUsedStorage += +log.gasCost;
+                       writeGasCost += +log.gasCost;
                        storageOverhead_write++;
                        // if_sstore = true;
                        // console.log('sstore');
@@ -234,9 +240,12 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                  opcodeData += `Gas cost (from opcodes): ${gasUsedOp}\n`;
                  opcodeData += `Gas cost (memory operations): ${gasUsedMem}\n`;
                  opcodeData += `Gas cost (memory_others operations): ${gasUsedMem_others}\n`;
+                 opcodeData += `Gas cost (storage operations): ${gasUsedStorage}\n`;
                  opcodeData += `Gas cost (computation operations): ${gasUsedCompute}\n\n`;
                  opcodeData += `Transaction storage overhead (read): ${storageOverhead_read} slot(s)\n`;
+                 opcodeData += `Read Gas Cost: ${readGasCost}\n`;
                  opcodeData += `Transaction storage overhead (write): ${storageOverhead_write} slot(s)\n`;
+                 opcodeData += `Write Gas Cost: ${writeGasCost}\n`;
 
                  gasUsedOpTotal += gasUsedOp;
                  gasUsedComputeTotal += gasUsedCompute;
@@ -245,6 +254,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                  gasUsedStorageTotal += gasUsedStorage;
                  storageOverheadTotal_read += storageOverhead_read;
                  storageOverheadTotal_write += storageOverhead_write;
+                 readGasCostTotal += readGasCost;
+                 writeGasCostTotal += writeGasCost;
                 }
                 // call intermediate functions
                 else {
@@ -299,6 +310,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           var gasUsedComputeAgg;
           var storageOverheadAgg_read;
           var storageOverheadAgg_write;
+          var readGasCostAgg;
+          var writeGasCostAgg;
           if(aggregationMethod == 'average') {
             gasUsedAgg =  resultTotal / transactionCount;
             gasUsedOpAgg = gasUsedOpTotal / transactionCount;
@@ -308,6 +321,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
             gasUsedComputeAgg = gasUsedComputeTotal / transactionCount;
             storageOverheadAgg_read = storageOverheadTotal_read / transactionCount; 
             storageOverheadAgg_write = storageOverheadTotal_write / transactionCount; 
+            readGasCostAgg = readGasCostTotal / transactionCount;
+            writeGasCostAgg = writeGasCostTotal / transactionCount;
           }
           console.log(`${contractName}.${transactionName} Gas Used (from result.receipt) (${aggregationMethod}): `, gasUsedAgg);
           console.log(`${contractName}.${transactionName} Gas Used (from opcodes)(${aggregationMethod}): `, gasUsedOpAgg);
@@ -317,7 +332,21 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           console.log(`${contractName}.${transactionName} Gas Used (computation operations)(${aggregationMethod}): `, gasUsedComputeAgg);
           console.log(`${contractName}.${transactionName} Storage overhead (read)(${aggregationMethod}): `, storageOverheadAgg_read);
           console.log(`${contractName}.${transactionName} Storage overhead (write)(${aggregationMethod}): `, storageOverheadAgg_write);
+          console.log(`${contractName}.${transactionName} Read gas cost (${aggregationMethod}): `, readGasCostAgg);
+          console.log(`${contractName}.${transactionName} Write gas cost ${aggregationMethod}): `, writeGasCostAgg);
           // export opdata to file
+          opcodeData += `summary:\n`;
+          opcodeData += `gas: ${gasUsedAgg}\n`;
+          opcodeData += `gas_op: ${gasUsedOpAgg}\n`;
+          opcodeData += `gas_memory: ${gasUsedMemAgg}\n`;
+          opcodeData += `gas_memory_other: ${gasUsedMemAgg_others}\n`;
+          opcodeData += `gas_storage: ${gasUsedStorageAgg}\n`;
+          opcodeData += `gas_computation: ${gasUsedComputeAgg}\n`;
+          opcodeData += `storage_overhead_read_slot: ${storageOverheadAgg_read}\n`;
+          opcodeData += `storage_overhead_write_slot: ${storageOverheadAgg_write}\n`;
+          opcodeData += `storage_read_cost: ${readGasCostAgg}\n`;
+          opcodeData += `storage_write_cost: ${writeGasCostAgg}\n`;
+          
           fs.writeFileSync(path.join(transactionFolderPath, '/opcode.txt'), opcodeData);
         }) 
       })

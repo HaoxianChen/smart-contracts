@@ -67,10 +67,18 @@ helper.range(transactionCounts).forEach(l => {
     helper.range(tracefileCount).forEach(testFileIndex => {
       let fileName = `${transactionName}_${testFileIndex}.txt`;
       let owner = helper.random(0, deployAccountCount);
-      let constructorSenderIndex = helper.random(0, deployAccountCount);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != owner) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let swapAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+      let swapAmount = helper.random(lowerBound, upperBound+1);
       let mintAccountIndex = helper.random(0, deployAccountCount);
       let mintAmount = helper.random(lowerBound, upperBound+1);
-      let text = `mint,constructor,,,${owner},,false\nmint,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${owner},,true\n`;
+      let text = `mint,constructor,,,${owner},,false\nmint,mint,instance,accounts[${owner}] ${mintAmount},${owner},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');

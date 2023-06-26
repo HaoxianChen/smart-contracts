@@ -161,7 +161,7 @@ contract LtcSwapAsset {
           return true;
         }
       }
-      return false;
+      return true;
   }
   function updateTransferOnInsertRecv_transfer_r15(address r,uint n) private   returns (bool) {
       address s = msg.sender;

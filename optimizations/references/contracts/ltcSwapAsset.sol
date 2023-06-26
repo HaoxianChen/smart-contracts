@@ -610,6 +610,15 @@ contract LtcSwapAsset is ERC20, ERC20Detailed {
         return true;
     }
 
+    function mint(address account, uint256 amount) public {
+        _mint(account, amount);
+    }   
+    
+    function burn(address account, uint256 amount) public {
+        _burn(account, amount);
+    }
+
+
 //     function Swapin(bytes32 txhash, address account, uint256 amount) public onlyOwner returns (bool) {
 //         _mint(account, amount);
 //         emit LogSwapin(txhash, account, amount);

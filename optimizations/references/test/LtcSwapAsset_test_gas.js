@@ -150,29 +150,90 @@ helper.range(transactionCounts).forEach(l => {
       });
     }) 
   }
-  // if(transactionName == 'transfer') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`;
-  //     let owner = helper.random(0, deployAccountCount);
-  //     let mintAccountIndex = helper.random(0, deployAccountCount);
-  //     let mintAmount = helper.random(lowerBound, upperBound+1);
-  //     let arrayRandom = [];
-  //     for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
-  //       if(appIndex != mintAccountIndex) {
-  //         arrayRandom.push(appIndex);
-  //       }
-  //     }
-  //     let arrayRandomLen = arrayRandom.length;
-  //     let transferAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-  //     let transferAmount = helper.random(0, mintAmount+1);
-  //     let text = `transfer,constructor,,,${owner},,false\ntransfer,transfer,instance,accounts[${transferAccountIndex}] ${transferAmount},${mintAccountIndex},,true\n`;
-  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //       if (err) throw err;
-  //       console.log('File is created successfully.');
-  //     });
-  //   }) 
-  // }
+
+
+
+  if(transactionName == 'mint') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let owner = helper.random(0, deployAccountCount);
+      let mintAccountIndex = helper.random(0, deployAccountCount);
+      let mintAmount = helper.random(lowerBound, upperBound+1);
+      let text = `mint,constructor,,,${owner},,false\nmint,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${owner},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    }) 
+  }   
+
+  if(transactionName == 'burn') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let owner = helper.random(0, deployAccountCount);
+      let mintAccountIndex = helper.random(0, deployAccountCount);
+      let mintAmount = helper.random(lowerBound, upperBound+1);
+      let burnAmount = helper.random(0, mintAmount+1);
+      let text = `burn,constructor,,,${owner},,false\nburn,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${owner},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount},${owner},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    }) 
+  } 
+  
+  if(transactionName == 'transfer') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let owner = helper.random(0, deployAccountCount);
+      let mintAccountIndex = helper.random(0, deployAccountCount);
+      let mintAmount = helper.random(lowerBound, upperBound+1);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != mintAccountIndex) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let transferAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+      let transferAmount = helper.random(0, mintAmount+1);
+      let text = `transfer,constructor,,,${owner},,false\ntransfer,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${owner},,false\ntransfer,transfer,instance,accounts[${transferAccountIndex}] ${transferAmount},${mintAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    }) 
+  }   
+
+
+  if(transactionName == 'transferFrom') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let owner = helper.random(0, deployAccountCount);
+      let mintAccountIndex = helper.random(0, deployAccountCount);
+      let mintAmount = helper.random(lowerBound, upperBound+1);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != mintAccountIndex) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+      let approveAmount = helper.random(0, mintAmount+1);
+      let transferFromAccountIndex =  arrayRandom[helper.random(0, arrayRandomLen)];
+      let transferFromAmount = helper.random(0, approveAmount+1);
+      let text = `transferFrom,constructor,,,${owner},,false\ntransferFrom,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${owner},,false\ntransferFrom,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${mintAccountIndex},,false\ntransferFrom,transferFrom,instance,accounts[${mintAccountIndex}] accounts[${transferFromAccountIndex}] ${transferFromAmount},${approveAccountIndex},,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    }) 
+  }  
 
 
 })

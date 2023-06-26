@@ -7,6 +7,7 @@ const {
 } = require('@openzeppelin/test-helpers');
 
 const helper = require("./helper_functions");
+// const helper = require("./helper_functions_geth");
 const fs = require('fs');
 const path = require('path');
 const lowerBoundInput = 10;
@@ -201,6 +202,23 @@ helper.range(transactionCounts).forEach(l => {
       let valueAmount = helper.random(1, 10+1);
       let withdrawAmount = helper.random(0, totalSupply+1);
       let text = `withdrawEther,constructor,,${totalSupply},1,,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount},1,,true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    })   
+  }  
+
+  if(transactionName == 'mint') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let owner = helper.random(0, deployAccountCount);
+      let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
+      let mintAmount = helper.random(lowerBoundInput, upperBoundInput+1);
+      let mintAccountIndex = helper.random(0, deployAccountCount);
+      let text = `mint,constructor,,${totalSupply},${owner},,false\nmint,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${owner},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');

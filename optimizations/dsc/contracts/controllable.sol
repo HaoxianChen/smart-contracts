@@ -80,6 +80,7 @@ contract Controllable {
       uint n = allowanceTuple.n;
       return n;
   }
+
   function controllerRedeem(address p,uint amount) public    {
       bool r4 = updateControllerRedeemOnInsertRecv_controllerRedeem_r4(p,amount);
       if(r4==false) {
@@ -127,6 +128,7 @@ contract Controllable {
       int delta0 = int(n);
       updateTotalSupplyOnIncrementAllMint_r13(delta0);
   }
+
   function updateControllerRedeemOnInsertRecv_controllerRedeem_r4(address p,uint n) private   returns (bool) {
       address c = controller.p;
       if(c==msg.sender) {

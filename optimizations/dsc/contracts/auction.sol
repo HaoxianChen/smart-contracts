@@ -42,21 +42,21 @@ contract Auction {
   function bid() public  payable  {
       bool r10 = updateBidOnInsertRecv_bid_r10();
       if(r10==false) {
-        revert("Rule condition failed");
+        revert("Rule condition failed_bid");
       }
   }
   function withdraw() public    {
       bool r1 = updateWithdrawOnInsertRecv_withdraw_r1();
       bool r5 = updateWithdrawOnInsertRecv_withdraw_r5();
       if(r1==false && r5==false) {
-        revert("Rule condition failed");
+        revert("Rule condition failed_withdraw");
       }
   }
   function endAuction() public    {
       bool r2 = updateSendOnInsertRecv_endAuction_r2();
       bool r4 = updateEndOnInsertRecv_endAuction_r4();
       if(r2==false && r4==false) {
-        revert("Rule condition failed");
+        revert("Rule condition failed_endauction");
       }
   }
   function getBalance(address p) public view  returns (uint) {

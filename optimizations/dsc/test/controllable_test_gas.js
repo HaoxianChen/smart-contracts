@@ -7,6 +7,7 @@ const {
 } = require('@openzeppelin/test-helpers');
 
 const helper = require("./helper_functions");
+// const helper = require("./helper_functions_geth");
 const fs = require('fs');
 const path = require('path');
 const mintValLowerBound = 10;
@@ -107,7 +108,7 @@ helper.range(transactionCounts).forEach(l => {
       let mintAccountIndex = helper.random(0, deployAccountCount);
       let mintAmount = helper.random(mintValLowerBound, mintValUpperBound+1);
       let controllerRedeemAmount = helper.random(0, mintAmount+1);
-      let text = `controllerRedeem,constructor,,,${controllerAccountIndex},,false\ncontrollerRedeem,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},,,false\ncontrollerRedeem,controllerRedeem,instance,accounts[${mintAccountIndex}] ${controllerRedeemAmount},${controllerAccountIndex},,true\n`;
+      let text = `controllerRedeem,constructor,,,${controllerAccountIndex},,false\ncontrollerRedeem,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${controllerAccountIndex},,false\ncontrollerRedeem,controllerRedeem,instance,accounts[${mintAccountIndex}] ${controllerRedeemAmount},${controllerAccountIndex},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');
@@ -116,78 +117,78 @@ helper.range(transactionCounts).forEach(l => {
   }  
 
 
-  if(transactionName == 'controllerTransfer') {
-    tracefileCount = transactionCount;
-    helper.range(tracefileCount).forEach(testFileIndex => {
-      let fileName = `${transactionName}_${testFileIndex}.txt`
-      let controllerAccountIndex = helper.random(0, deployAccountCount);
-      let mintAccountIndex = helper.random(0, deployAccountCount);
-      let mintAmount = helper.random(mintValLowerBound, mintValUpperBound+1);
-      let arrayRandom = [];
-      for (let index = 0; index < deployAccountCount; index++) {
-        if(index != mintAccountIndex) {
-          arrayRandom.push(index);
-        }
-      }
-      let arrayRandomLen = arrayRandom.length;
-      let controllerTransferToAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-      let controllerTransferAmount = helper.random(0, mintAmount+1);
-      let text = `controllerTransfer,constructor,,,${controllerAccountIndex},,false\ncontrollerTransfer,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},,,false\ncontrollerTransfer,controllerTransfer,instance,accounts[${mintAccountIndex}] accounts[${controllerTransferToAccountIndex}] ${controllerTransferAmount},${controllerAccountIndex},,true\n`;
-      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-        if (err) throw err;
-        console.log('File is created successfully.');
-      });
-    }) 
-  }  
+  // if(transactionName == 'controllerTransfer') {
+  //   tracefileCount = transactionCount;
+  //   helper.range(tracefileCount).forEach(testFileIndex => {
+  //     let fileName = `${transactionName}_${testFileIndex}.txt`
+  //     let controllerAccountIndex = helper.random(0, deployAccountCount);
+  //     let mintAccountIndex = helper.random(0, deployAccountCount);
+  //     let mintAmount = helper.random(mintValLowerBound, mintValUpperBound+1);
+  //     let arrayRandom = [];
+  //     for (let index = 0; index < deployAccountCount; index++) {
+  //       if(index != mintAccountIndex) {
+  //         arrayRandom.push(index);
+  //       }
+  //     }
+  //     let arrayRandomLen = arrayRandom.length;
+  //     let controllerTransferToAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+  //     let controllerTransferAmount = helper.random(0, mintAmount+1);
+  //     let text = `controllerTransfer,constructor,,,${controllerAccountIndex},,false\ncontrollerTransfer,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},,,false\ncontrollerTransfer,controllerTransfer,instance,accounts[${mintAccountIndex}] accounts[${controllerTransferToAccountIndex}] ${controllerTransferAmount},${controllerAccountIndex},,true\n`;
+  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+  //       if (err) throw err;
+  //       console.log('File is created successfully.');
+  //     });
+  //   }) 
+  // }  
 
 
-  if(transactionName == 'decreaseAllowance') {
-    tracefileCount = transactionCount;
-    helper.range(tracefileCount).forEach(testFileIndex => {
-      let fileName = `${transactionName}_${testFileIndex}.txt`
-      let mintAccountIndex = helper.random(0, deployAccountCount);
-      let mintAmount = helper.random(mintValLowerBound, mintValUpperBound+1);
-      let arrayRandom = [];
-      for (let index = 0; index < deployAccountCount; index++) {
-        if(index != mintAccountIndex) {
-          arrayRandom.push(index);
-        }
-      }
-      let arrayRandomLen = arrayRandom.length;
-      let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-      let approveAmount = helper.random(0, mintAmount+1);
-      let decreaseAllowanceAmount = helper.random(0, approveAmount+1);
-      let text = `decreaseAllowance,constructor,,,,,false\ndecreaseAllowance,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},,,false\ndecreaseAllowance,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${mintAccountIndex},,false\ndecreaseAllowance,decreaseAllowance,instance,accounts[${approveAccountIndex}] ${decreaseAllowanceAmount},${mintAccountIndex},,true\n`;
-      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-        if (err) throw err;
-        console.log('File is created successfully.');
-      });
-    }) 
-  }  
+  // if(transactionName == 'decreaseAllowance') {
+  //   tracefileCount = transactionCount;
+  //   helper.range(tracefileCount).forEach(testFileIndex => {
+  //     let fileName = `${transactionName}_${testFileIndex}.txt`
+  //     let mintAccountIndex = helper.random(0, deployAccountCount);
+  //     let mintAmount = helper.random(mintValLowerBound, mintValUpperBound+1);
+  //     let arrayRandom = [];
+  //     for (let index = 0; index < deployAccountCount; index++) {
+  //       if(index != mintAccountIndex) {
+  //         arrayRandom.push(index);
+  //       }
+  //     }
+  //     let arrayRandomLen = arrayRandom.length;
+  //     let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+  //     let approveAmount = helper.random(0, mintAmount+1);
+  //     let decreaseAllowanceAmount = helper.random(0, approveAmount+1);
+  //     let text = `decreaseAllowance,constructor,,,,,false\ndecreaseAllowance,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},,,false\ndecreaseAllowance,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${mintAccountIndex},,false\ndecreaseAllowance,decreaseAllowance,instance,accounts[${approveAccountIndex}] ${decreaseAllowanceAmount},${mintAccountIndex},,true\n`;
+  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+  //       if (err) throw err;
+  //       console.log('File is created successfully.');
+  //     });
+  //   }) 
+  // }  
 
-  if(transactionName == 'increaseAllowance') {
-    tracefileCount = transactionCount;
-    helper.range(tracefileCount).forEach(testFileIndex => {
-      let fileName = `${transactionName}_${testFileIndex}.txt`
-      let mintAccountIndex = helper.random(0, deployAccountCount);
-      let mintAmount = helper.random(mintValLowerBound, mintValUpperBound+1);
-      let arrayRandom = [];
-      for (let index = 0; index < deployAccountCount; index++) {
-        if(index != mintAccountIndex) {
-          arrayRandom.push(index);
-        }
-      }
-      let arrayRandomLen = arrayRandom.length;
-      let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-      let approveAmount = helper.random(0, mintAmount+1);
-      let increaseAllowanceAmount = helper.random(0, increaseAllowanceUpperBound+1);
-      let text = `increaseAllowance,constructor,,,,,false\nincreaseAllowance,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},,,false\nincreaseAllowance,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${mintAccountIndex},,false\nincreaseAllowance,increaseAllowance,instance,accounts[${approveAccountIndex}] ${increaseAllowanceAmount},${mintAccountIndex},,true\n`;
-      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-        if (err) throw err;
-        console.log('File is created successfully.');
-      });
-    }) 
-  }
+  // if(transactionName == 'increaseAllowance') {
+  //   tracefileCount = transactionCount;
+  //   helper.range(tracefileCount).forEach(testFileIndex => {
+  //     let fileName = `${transactionName}_${testFileIndex}.txt`
+  //     let mintAccountIndex = helper.random(0, deployAccountCount);
+  //     let mintAmount = helper.random(mintValLowerBound, mintValUpperBound+1);
+  //     let arrayRandom = [];
+  //     for (let index = 0; index < deployAccountCount; index++) {
+  //       if(index != mintAccountIndex) {
+  //         arrayRandom.push(index);
+  //       }
+  //     }
+  //     let arrayRandomLen = arrayRandom.length;
+  //     let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
+  //     let approveAmount = helper.random(0, mintAmount+1);
+  //     let increaseAllowanceAmount = helper.random(0, increaseAllowanceUpperBound+1);
+  //     let text = `increaseAllowance,constructor,,,,,false\nincreaseAllowance,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},,,false\nincreaseAllowance,approve,instance,accounts[${approveAccountIndex}] ${approveAmount},${mintAccountIndex},,false\nincreaseAllowance,increaseAllowance,instance,accounts[${approveAccountIndex}] ${increaseAllowanceAmount},${mintAccountIndex},,true\n`;
+  //     fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+  //       if (err) throw err;
+  //       console.log('File is created successfully.');
+  //     });
+  //   }) 
+  // }
 
   if(transactionName == 'mint') {
     tracefileCount = transactionCount;
