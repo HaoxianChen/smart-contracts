@@ -233,10 +233,12 @@ contract LinkToken is StandardToken {
   uint8 public constant decimals = 18;
   string public constant symbol = 'LINK';
 
-  constructor()
+  constructor(uint _initialSupply)
   {
-    totalSupply = 10**27;
-    balances[msg.sender] = totalSupply;
+    // totalSupply = 10**27;
+    // balances[msg.sender] = totalSupply;
+    totalSupply = _initialSupply;
+    balances[msg.sender] = _initialSupply;
     // balanceTotal = totalSupply;
   }
 
