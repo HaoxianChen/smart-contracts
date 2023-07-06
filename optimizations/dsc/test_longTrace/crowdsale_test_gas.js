@@ -105,7 +105,7 @@ helper.range(transactionCounts).forEach(l => {
       let beneficiary = helper.random(0, deployAccountCount);
       let owner = helper.random(0, deployAccountCount);
       let investAccountIndex = helper.random(0, deployAccountCount);
-      let investAmount = helper.random(investAmountLowerBound, investAmountUpperBound+1);
+      let investAmount = helper.random(1, initialAmount);
       let text = `refund,constructor,,${initialAmount} accounts[${beneficiary}],${owner},,false\nrefund,invest,instance,,${investAccountIndex},web3.utils.toWei(${investAmount} ether),false\nrefund,close,instance,,${owner},,false\nrefund,refund,instance,,${investAccountIndex},,false\nrefund,refund,instance,,${investAccountIndex},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
