@@ -70,7 +70,7 @@ helper.range(transactionCounts).forEach(l => {
       let totalSupply =  helper.random(lowerBoundInput, upperBoundInput+1);
       // transfer to a random account but accounts[0]
       let transferToAccountIndex = helper.random(0, deployAccountCount);
-      let transferAmount = helper.random(1, totalSupply+1);
+      let transferAmount = helper.random(2, totalSupply+1);
       // approve a random account but accounts[transferToAcountIndex]
       let arrayRandom = [];
       for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
@@ -97,7 +97,7 @@ helper.range(transactionCounts).forEach(l => {
       let fileName = `${transactionName}_${testFileIndex}.txt`
       let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
       let transferToAccountIndex = helper.random(0, deployAccountCount);
-      let transferAmount = helper.random(1, totalSupply+1);
+      let transferAmount = helper.random(2, totalSupply+1);
       let burnAmount_1 = helper.random(1, (transferAmount+1)/2);
       let burnAmount_2 = helper.random(1, (transferAmount+1)/2);
       let text = `burn,constructor,,${totalSupply},,,false\nburn,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nburn,burn,instance,accounts[${transferToAccountIndex}] ${burnAmount_1},,,false\nburn,burn,instance,accounts[${transferToAccountIndex}] ${burnAmount_2},,,true\n`;
@@ -115,7 +115,7 @@ helper.range(transactionCounts).forEach(l => {
       let fileName = `${transactionName}_${testFileIndex}.txt`
       let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
       let transferToAccountIndex = helper.random(0, deployAccountCount);
-      let transferAmount = helper.random(1, totalSupply+1);
+      let transferAmount = helper.random(2, totalSupply+1);
       let freezeAmount_1 = helper.random(1, (transferAmount+1)/2);
       let freezeAmount_2 = helper.random(1, (transferAmount+1)/2);
       let text = `freeze,constructor,,${totalSupply},,,false\nfreeze,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nfreeze,freeze,instance,${freezeAmount_1},${transferToAccountIndex},,false\nfreeze,freeze,instance,${freezeAmount_2},${transferToAccountIndex},,true\n`;
@@ -188,7 +188,7 @@ helper.range(transactionCounts).forEach(l => {
       let fileName = `${transactionName}_${testFileIndex}.txt`
       let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
       let transferToAccountIndex = helper.random(0, deployAccountCount);
-      let transferAmount = helper.random(1, totalSupply+1);
+      let transferAmount = helper.random(2, totalSupply+1);
       let freezeAmount = helper.random(2, transferAmount+1);
       let unfreezeAmount_1 = helper.random(1, (freezeAmount+1)/2);
       let unfreezeAmount_2 = helper.random(1, (freezeAmount+1)/2);
@@ -204,11 +204,12 @@ helper.range(transactionCounts).forEach(l => {
     helper.range(tracefileCount).forEach(testFileIndex => {
       // construct file name
       let fileName = `${transactionName}_${testFileIndex}.txt`
+      let owner = helper.random(0, deployAccountCount);
       let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
       let valueAmount = helper.random(1, 10+1);
-      let withdrawAmount_1 = helper.random(0, (totalSupply+1)/2);
-      let withdrawAmount_2 = helper.random(0, (totalSupply+1)/2);
-      let text = `withdrawEther,constructor,,${totalSupply},1,,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount_1},1,,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount_2},1,,true\n`;
+      let withdrawAmount_1 = helper.random(1, valueAmount);
+      let withdrawAmount_2 = helper.random(1, valueAmount);
+      let text = `withdrawEther,constructor,,${totalSupply},${owner},,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount_1},${owner},web3.utils.toWei(${withdrawAmount_1} ether),false\nwithdrawEther,withdrawEther,instance,${withdrawAmount_2},${owner},web3.utils.toWei(${withdrawAmount_2} ether),true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');

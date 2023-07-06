@@ -307,7 +307,7 @@ contract ERC20 is Context, IERC20 {
     using SafeMath for uint256;
 
     mapping (address => uint256) private _balances;
-    uint256 balanceTotal;
+    // uint256 balanceTotal;
 
     mapping (address => mapping (address => uint256)) private _allowances;
 
@@ -432,9 +432,9 @@ contract ERC20 is Context, IERC20 {
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
         _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
-        balanceTotal = balanceTotal.sub(amount);
+        // balanceTotal = balanceTotal.sub(amount);
         _balances[recipient] = _balances[recipient].add(amount);
-        balanceTotal = balanceTotal.add(amount);
+        // balanceTotal = balanceTotal.add(amount);
         emit Transfer(sender, recipient, amount);
     }
 
@@ -452,7 +452,7 @@ contract ERC20 is Context, IERC20 {
 
         _totalSupply = _totalSupply.add(amount);
         _balances[account] = _balances[account].add(amount);
-        balanceTotal = balanceTotal.add(amount);
+        // balanceTotal = balanceTotal.add(amount);
         emit Transfer(address(0), account, amount);
     }
 
@@ -471,7 +471,7 @@ contract ERC20 is Context, IERC20 {
         require(account != address(0), "ERC20: burn from the zero address");
 
         _balances[account] = _balances[account].sub(amount, "ERC20: burn amount exceeds balance");
-        balanceTotal = balanceTotal.sub(amount);
+        // balanceTotal = balanceTotal.sub(amount);
         _totalSupply = _totalSupply.sub(amount);
         emit Transfer(account, address(0), amount);
     }
@@ -573,8 +573,8 @@ abstract contract ERC20Detailed is IERC20 {
 
 contract LtcSwapAsset is ERC20, ERC20Detailed {
     event LogChangeDCRMOwner(address indexed oldOwner, address indexed newOwner, uint indexed effectiveHeight);
-    event LogSwapin(bytes32 indexed txhash, address indexed account, uint amount);
-    event LogSwapout(address indexed account, uint amount, string bindaddr);
+    // event LogSwapin(bytes32 indexed txhash, address indexed account, uint amount);
+    // event LogSwapout(address indexed account, uint amount, string bindaddr);
 
     address private _oldOwner;
     address private _newOwner;
@@ -590,9 +590,9 @@ contract LtcSwapAsset is ERC20, ERC20Detailed {
         _newOwnerEffectiveHeight = block.number;
     }
 
-    function check() public view {
-      assert(totalSupply() == balanceTotal);
-    }
+    // function check() public view {
+    //   assert(totalSupply() == balanceTotal);
+    // }
 
     function owner() public view returns (address) {
         if (block.number >= _newOwnerEffectiveHeight) {
@@ -605,20 +605,22 @@ contract LtcSwapAsset is ERC20, ERC20Detailed {
         require(newOwner != address(0), "new owner is the zero address");
         _oldOwner = owner();
         _newOwner = newOwner;
-        _newOwnerEffectiveHeight = block.number + 13300;
+        // _newOwnerEffectiveHeight = block.number + 13300;
+        _newOwnerEffectiveHeight = block.number + 1;
         emit LogChangeDCRMOwner(_oldOwner, _newOwner, _newOwnerEffectiveHeight);
         return true;
     }
 
-    function mint(address account, uint256 amount) public {
-        _mint(account, amount);
-    }   
-    
-    function burn(address account, uint256 amount) public {
-        _burn(account, amount);
+    function mint(address account, uint256 amount) public onlyOwner returns (bool) {
+      _mint(account, amount);
+      return true;
     }
 
-
+    function burn(address account, uint256 amount) public onlyOwner returns
+    (bool) {
+      _burn(account, amount);
+      return true;
+    }
 //     function Swapin(bytes32 txhash, address account, uint256 amount) public onlyOwner returns (bool) {
 //         _mint(account, amount);
 //         emit LogSwapin(txhash, account, amount);
@@ -642,16 +644,16 @@ contract LtcSwapAsset is ERC20, ERC20Detailed {
 //         byte ch4 = bytes(bindaddr)[3];
 // 
 // // Mainnet
-// // p2pkh	base58		0x30	L		34
-// // p2sh		base58		0x32	M		34
-// // p2wpkh	bech32		0x06	ltc1q		43
-// // p2wsh	bech32		0x0A	ltc1q		63
+// // p2pkh base58      0x30    L       34
+// // p2sh      base58      0x32    M       34
+// // p2wpkh    bech32      0x06    ltc1q       43
+// // p2wsh bech32      0x0A    ltc1q       63
 // 
 // //Testnet
-// // p2pkh	base58		0x6f	m or n		34
-// // p2sh		base58		0x3a	Q		34
-// // p2wpkh	bech32		0x52	tltc1q		43
-// // p2wsh	bech32		0x31	tltc1q		63
+// // p2pkh base58      0x6f    m or n      34
+// // p2sh      base58      0x3a    Q       34
+// // p2wpkh    bech32      0x52    tltc1q      43
+// // p2wsh bech32      0x31    tltc1q      63
 // 
 //         if (ch == 'L' || ch == 'M') {
 //             require(length <= 34, "mainnet address length is too long");

@@ -326,7 +326,7 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                     }                  
                   }
                   // if others
-                  else if (currentCallFrom == 'time') {
+                  else if (currentCallFrom == 'time' && currentFuncName == 'increase') {
                     // get the time to increase
                     let bracketOpen = eachLineArr[3].indexOf('[');
                     let bracketClose = eachLineArr[3].indexOf(']');
@@ -340,6 +340,12 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                       await time[currentFuncName](time.duration.days(timeValue));
                     }
 
+                  }
+                  else if(currentCallFrom == 'time' && currentFuncName == 'advanceBlock') {
+                    console.log('here!');
+                    let height = +eachLineArr[3];
+                    let currentBlock = await time.latestBlock();
+                    await time.advanceBlockTo(currentBlock+height);
                   }
                 }
                 // reset value for 'from' and 'value'

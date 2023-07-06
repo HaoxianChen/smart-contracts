@@ -80,8 +80,8 @@ helper.range(transactionCounts).forEach(l => {
       }
       let arrayRandomLen = arrayRandom.length;
       let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
-      let approveAmount_1 = helper.random(1, (transferAmount)/2);
-      let approveAmount_2 = helper.random(1, (transferAmount)/2);
+      let approveAmount_1 = helper.random(1, (transferAmount+1)/2);
+      let approveAmount_2 = helper.random(1, (transferAmount+1)/2) + approveAmount_1;
       let text = `approve,constructor,,${totalSupply},,,false\napprove,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},0,,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount_1},${transferToAccountIndex},,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount_2},${transferToAccountIndex},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
@@ -100,7 +100,7 @@ helper.range(transactionCounts).forEach(l => {
       let transferAmount = helper.random(2, totalSupply+1);
       let burnAmount_1 = helper.random(1, (transferAmount+1)/2);
       let burnAmount_2 = helper.random(1, (transferAmount+1)/2);
-      let text = `burn,constructor,,${totalSupply},,,false\nburn,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nburn,burn,instance,${burnAmount_1},${transferToAccountIndex},,false\nburn,burn,instance,${burnAmount_2},${transferToAccountIndex},,true\n`;
+      let text = `burn,constructor,,${totalSupply},,,false\nburn,transfer,instance,accounts[${transferToAccountIndex}] ${transferAmount},,,false\nburn,burn,instance,accounts[${transferToAccountIndex}] ${burnAmount_1},,,false\nburn,burn,instance,accounts[${transferToAccountIndex}] ${burnAmount_2},,,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');
@@ -133,7 +133,7 @@ helper.range(transactionCounts).forEach(l => {
       let fileName = `${transactionName}_${testFileIndex}.txt`
       let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
       let transferToAccountIndex = helper.random(0, deployAccountCount);
-      let transferAmount = helper.random(2, totalSupply+1);
+      let transferAmount = helper.random(1, totalSupply+1);
       let arrayRandom = [];
       for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
         if(appIndex != transferToAccountIndex) {
@@ -204,12 +204,30 @@ helper.range(transactionCounts).forEach(l => {
     helper.range(tracefileCount).forEach(testFileIndex => {
       // construct file name
       let fileName = `${transactionName}_${testFileIndex}.txt`
+      let owner = helper.random(0, deployAccountCount);
       let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
-      let ownerIndex = helper.random(0, deployAccountCount);
       let valueAmount = helper.random(1, 10+1);
-      let withdrawAmount_1 = helper.random(0, 10);
-      let withdrawAmount_2 = helper.random(0, 10);
-      let text = `withdrawEther,constructor,,${totalSupply},${ownerIndex},,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount_1},${ownerIndex},web3.utils.toWei(${withdrawAmount_1} ether),true\n`;
+      let withdrawAmount_1 = helper.random(1, valueAmount);
+      let withdrawAmount_2 = helper.random(1, valueAmount);
+      let text = `withdrawEther,constructor,,${totalSupply},${owner},,false\nwithdrawEther,withdrawEther,instance,${withdrawAmount_1},${owner},web3.utils.toWei(${withdrawAmount_1} ether),false\nwithdrawEther,withdrawEther,instance,${withdrawAmount_2},${owner},web3.utils.toWei(${withdrawAmount_2} ether),true\n`;
+      fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+      });
+    })   
+  }  
+
+  if(transactionName == 'mint') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      // construct file name
+      let fileName = `${transactionName}_${testFileIndex}.txt`
+      let owner = helper.random(0, deployAccountCount);
+      let totalSupply = helper.random(lowerBoundInput, upperBoundInput+1);
+      let mintAmount_1 = helper.random(lowerBoundInput, upperBoundInput+1);
+      let mintAmount_2 = helper.random(lowerBoundInput, upperBoundInput+1);
+      let mintAccountIndex = helper.random(0, deployAccountCount);
+      let text = `mint,constructor,,${totalSupply},${owner},,false\nmint,mint,instance,accounts[${mintAccountIndex}] ${mintAmount_1},${owner},,false\nmint,mint,instance,accounts[${mintAccountIndex}] ${mintAmount_2},${owner},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');

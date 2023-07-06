@@ -69,8 +69,8 @@ helper.range(transactionCounts).forEach(l => {
       let biddingTime = helper.random(autionTimeLowerBound, autionTimeUpperBound+1);
       let beneficiary = helper.random(0, deployAccountCount);
       let bidFromAccountIndex = helper.random(0, deployAccountCount);
-      let biddingVal_1 = helper.random(BiddingValLowerBound, BiddingValUpperBound+1); 
-      let biddingVal_2 = biddingVal_1 + helper.random(BiddingValLowerBound, BiddingValUpperBound+1);    
+      let biddingVal_1 = helper.random(BiddingValLowerBound, BiddingValUpperBound+1);    
+      let biddingVal_2 = biddingVal_1+ helper.random(0, BiddingValUpperBound+1);    
       let text = `bid,constructor,,accounts[${beneficiary}] ${biddingTime},,,false\nbid,bid,instance,,${bidFromAccountIndex},${biddingVal_1},false\nbid,bid,instance,,${bidFromAccountIndex},${biddingVal_2},true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
@@ -78,30 +78,17 @@ helper.range(transactionCounts).forEach(l => {
       });
     }) 
   }
-  // failed
+
   if(transactionName == 'withdraw') {
     tracefileCount = transactionCount;
     helper.range(tracefileCount).forEach(testFileIndex => {
       let fileName = `${transactionName}_${testFileIndex}.txt`
       let biddingTime = helper.random(autionTimeLowerBound, autionTimeUpperBound+1);
       let beneficiary = helper.random(0, deployAccountCount);
-      let bidFromAccountIndex_1 = helper.random(0, deployAccountCount);
-      let biddingVal_1 = helper.random(BiddingValLowerBound, BiddingValUpperBound+1);
-      let bidFromAccountIndex_2 = helper.random(0, deployAccountCount);
-      while (bidFromAccountIndex_2 == bidFromAccountIndex_1) {
-        bidFromAccountIndex_2 = helper.random(0, deployAccountCount);
-      }
-      let biddingVal_2 = biddingVal_1 + helper.random(0, BiddingValUpperBound+1); 
-      let arrayRandom = [];
-      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
-        if(appIndex != bidFromAccountIndex_1 && appIndex != bidFromAccountIndex_2) {
-          arrayRandom.push(appIndex);
-        }
-      }
-      let arrayRandomLen = arrayRandom.length;
-      let bidFromAccountIndex_3 = arrayRandom[helper.random(0, arrayRandomLen)];
-      let biddingVal_3 = biddingVal_1 + biddingVal_2 + helper.random(0, BiddingValUpperBound+1); 
-      let text = `withdraw,constructor,,accounts[${beneficiary}] ${biddingTime},0,,false\nwithdraw,bid,instance,,${bidFromAccountIndex_1},${biddingVal_1},false\nwithdraw,bid,instance,,${bidFromAccountIndex_2},${biddingVal_2},false\nwithdraw,bid,instance,,${bidFromAccountIndex_3},${biddingVal_3},false\nwithdraw,increase,time,time.duration.seconds[${biddingTime+1}],,,false\nwithdraw,endAuction,instance,,,,false\nwithdraw,withdraw,instance,,${bidFromAccountIndex_1},,false\nwithdraw,withdraw,instance,,${bidFromAccountIndex_2},,true\n`;
+      let bidFromAccountIndex = helper.random(0, deployAccountCount);
+      let biddingVal_1 = helper.random(BiddingValLowerBound, BiddingValUpperBound+1);    
+      let biddingVal_2 = biddingVal_1+ helper.random(0, BiddingValUpperBound+1);   
+      let text = `withdraw,constructor,,accounts[${beneficiary}] ${biddingTime},,,false\nwithdraw,bid,instance,,${bidFromAccountIndex},${biddingVal_1},false\nwithdraw,withdraw,instance,,${bidFromAccountIndex},,false\nwithdraw,bid,instance,,${bidFromAccountIndex},${biddingVal_2},false\nwithdraw,withdraw,instance,,${bidFromAccountIndex},,true\n`;
       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
         if (err) throw err;
         console.log('File is created successfully.');
@@ -109,7 +96,6 @@ helper.range(transactionCounts).forEach(l => {
     })  
   }  
 
-  // can't call second time
   if(transactionName == 'endAuction') {
     tracefileCount = transactionCount;
     helper.range(tracefileCount).forEach(testFileIndex => {

@@ -36,7 +36,7 @@ contract Escrow {
     uint256 amount = deposits[p];
     deposits[p] = 0;
     p.transfer(amount);
-    totalFunds -= amount;
+    // totalFunds -= amount;
   }
 
   modifier onlyOwner {require(owner == msg.sender); _; }
@@ -78,7 +78,7 @@ contract Crowdsale {
       closed = true;
     } else {
       escrow.refund();
-	 }
+   }
   }
 }
 

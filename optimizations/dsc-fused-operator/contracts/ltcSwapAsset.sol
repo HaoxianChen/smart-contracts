@@ -115,7 +115,7 @@ contract LtcSwapAsset {
           return true;
         }
       }
-      return true;
+      return false;
   }
   function updateSwapOwnerOnInsertRecv_swapOwner_r22(address p,address q,uint d) private   returns (bool) {
       address s = msg.sender;
