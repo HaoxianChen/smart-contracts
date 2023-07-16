@@ -10,31 +10,31 @@ pragma solidity ^0.8.0;
  * @title SafeMath
  * @dev Math operations with safety checks that throw on error
  */
-library SafeMath {
-  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-    uint256 c = a * b;
-    require(a == 0 || c / a == b);
-    return c;
-  }
-
-  function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    // assert(b > 0); // Solidity automatically throws when dividing by 0
-    uint256 c = a / b;
-    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-    return c;
-  }
-
-  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-    require(b <= a);
-    return a - b;
-  }
-
-  function add(uint256 a, uint256 b) internal pure returns (uint256) {
-    uint256 c = a + b;
-    require(c >= a);
-    return c;
-  }
-}
+// library SafeMath {
+//   function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+//     uint256 c = a * b;
+//     require(a == 0 || c / a == b);
+//     return c;
+//   }
+// 
+//   function div(uint256 a, uint256 b) internal pure returns (uint256) {
+//     // assert(b > 0); // Solidity automatically throws when dividing by 0
+//     uint256 c = a / b;
+//     // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+//     return c;
+//   }
+// 
+//   function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+//     require(b <= a);
+//     return a - b;
+//   }
+// 
+//   function add(uint256 a, uint256 b) internal pure returns (uint256) {
+//     uint256 c = a + b;
+//     require(c >= a);
+//     return c;
+//   }
+// }
 
 
 /**
@@ -74,7 +74,7 @@ abstract contract ERC20 is ERC20Basic {
 //  * @dev Basic version of StandardToken, with no allowances. 
 //  */
 contract BasicToken is ERC20Basic {
-  using SafeMath for uint256;
+  // using SafeMath for uint256;
 
   mapping(address => uint256) balances;
 
@@ -84,8 +84,10 @@ contract BasicToken is ERC20Basic {
   * @param _value The amount to be transferred.
   */
   function transfer(address _to, uint256 _value) virtual public override returns (bool) {
-    balances[msg.sender] = balances[msg.sender].sub(_value);
-    balances[_to] = balances[_to].add(_value);
+    // balances[msg.sender] = balances[msg.sender].sub(_value);
+    balances[msg.sender] -= _value;
+    // balances[_to] = balances[_to].add(_value);
+    balances[_to] += _value;
     emit Transfer(msg.sender, _to, _value);
     return true;
   }
@@ -125,13 +127,16 @@ contract StandardToken is ERC20, BasicToken {
     uint256 _allowance = allowed[_from][msg.sender];
 
     // Check is not needed because sub(_allowance, _value) will already throw if this condition is not met
-    // require (_value <= _allowance);
+    require (_value <= _allowance);
 
-    balances[_from] = SafeMath.sub(balances[_from],_value);
+    // balances[_from] = SafeMath.sub(balances[_from],_value);
+    balances[_from] -= _value;
     // SafeMath.sub(balanceTotal, _value);
-    balances[_to] = SafeMath.add(balances[_to],_value);
+    // balances[_to] = SafeMath.add(balances[_to],_value);
+    balances[_to] += _value;
     // SafeMath.add(balanceTotal, _value);
-    allowed[_from][msg.sender] = SafeMath.sub(_allowance,_value);
+    // allowed[_from][msg.sender] = SafeMath.sub(_allowance,_value);
+    allowed[_from][msg.sender] -= _value;
     emit Transfer(_from, _to, _value);
     return true;
   }
@@ -165,7 +170,8 @@ contract StandardToken is ERC20, BasicToken {
    */
   function increaseApproval (address _spender, uint _addedValue) 
     public returns (bool) {
-    allowed[msg.sender][_spender] = SafeMath.add(allowed[msg.sender][_spender],_addedValue);
+    // allowed[msg.sender][_spender] = SafeMath.add(allowed[msg.sender][_spender],_addedValue);
+    allowed[msg.sender][_spender] += _addedValue;
     emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
     return true;
   }
@@ -173,11 +179,13 @@ contract StandardToken is ERC20, BasicToken {
   function decreaseApproval (address _spender, uint _subtractedValue) public
     returns (bool) {
     uint oldValue = allowed[msg.sender][_spender];
-    if (_subtractedValue > oldValue) {
-      allowed[msg.sender][_spender] = 0;
-    } else {
-      allowed[msg.sender][_spender] = SafeMath.sub(oldValue,_subtractedValue);
-    }
+    // if (_subtractedValue > oldValue) {
+    //   allowed[msg.sender][_spender] = 0;
+    // } else {
+    //   allowed[msg.sender][_spender] = SafeMath.sub(oldValue,_subtractedValue);
+    // }
+    require(_subtractedValue <= oldValue);
+    allowed[msg.sender][_spender] -= _subtractedValue;
     emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
     return true;
   }

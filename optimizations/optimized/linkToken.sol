@@ -1,19 +1,15 @@
 contract Linktoken {
   struct OwnerTuple {
     address p;
-    bool _valid;
   }
   struct TotalSupplyTuple {
     uint n;
-    bool _valid;
   }
   struct BalanceOfTuple {
     uint n;
-    bool _valid;
   }
   struct AllowanceTuple {
     uint n;
-    bool _valid;
   }
   TotalSupplyTuple totalSupply;
   mapping(address=>BalanceOfTuple) balanceOf;
@@ -44,8 +40,8 @@ contract Linktoken {
       }
   }
   function getAllowance(address p,address s) public view  returns (uint) {
-      AllowanceTuple memory allowanceTuple = allowance[p][s];
-      uint n = allowanceTuple.n;
+      // AllowanceTuple memory allowanceTuple = allowance[p][s];
+      uint n = allowance[p][s].n;
       return n;
   }
   function approve(address s,uint n) public    {
@@ -71,8 +67,8 @@ contract Linktoken {
       return n;
   }
   function getBalanceOf(address p) public view  returns (uint) {
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      uint n = balanceOfTuple.n;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      uint n = balanceOf[p].n;
       return n;
   }
   function transferFrom(address from,address to,uint amount) public    {
@@ -89,8 +85,8 @@ contract Linktoken {
   }
   function updateDecreaseAllowanceOnInsertRecv_decreaseApproval_r9(address s,uint n) private   returns (bool) {
       address o = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint m = allowanceTuple.n;
+      // AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint m = allowance[o][s].n;
       if(m>=n && validRecipient(s)) {
         emit DecreaseAllowance(o,s,n);
         allowance[o][s].n -= n;
@@ -109,8 +105,8 @@ contract Linktoken {
   }
   function updateIncreaseAllowanceOnInsertRecv_approve_r24(address s,uint n) private   returns (bool) {
       address o = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint m = allowanceTuple.n;
+      // AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint m = allowance[o][s].n;
       if(validRecipient(s)) {
         uint d = n-m;
         emit IncreaseAllowance(o,s,d);
@@ -122,8 +118,8 @@ contract Linktoken {
   function updateBurnOnInsertRecv_burn_r5(address p,uint n) private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-        uint m = balanceOfTuple.n;
+        // BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+        uint m = balanceOf[p].n;
         if(p!=address(0) && n<=m) {
           emit Burn(p,n);
           balanceOf[p].n -= n;
@@ -154,15 +150,15 @@ contract Linktoken {
   }
   function updateOwnerOnInsertConstructor_r10() private    {
       address s = msg.sender;
-      owner = OwnerTuple(s,true);
+      owner = OwnerTuple(s);
   }
   function updateTotalBalancesOnInsertConstructor_r25(uint n) private    {
       // Empty()
   }
   function updateTransferOnInsertRecv_transfer_r4(address r,uint n) private   returns (bool) {
       address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[s];
-      uint m = balanceOfTuple.n;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[s];
+      uint m = balanceOf[s].n;
       if(n<=m && validRecipient(r)) {
         emit Transfer(s,r,n);
         balanceOf[s].n -= n;
@@ -173,13 +169,13 @@ contract Linktoken {
   }
   function updateTransferFromOnInsertRecv_transferFrom_r13(address o,address r,uint n) private   returns (bool) {
       address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[o];
-      uint m = balanceOfTuple.n;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint k = allowanceTuple.n;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[o];
+      uint m = balanceOf[o].n;
+      // AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint k = allowance[o][s].n;
       if(m>=n && k>=n && validRecipient(r)) {
         emit TransferFrom(o,r,s,n);
-        emit Transfer(o,r,n);
+        // emit Transfer(o,r,n);
         balanceOf[o].n -= n;
         balanceOf[r].n += n;
         allowance[o][s].n -= n;
@@ -195,9 +191,9 @@ contract Linktoken {
   }
   function updateBalanceOfOnInsertConstructor_r7(uint n) private    {
       address p = msg.sender;
-      balanceOf[p] = BalanceOfTuple(n,true);
+      balanceOf[p] = BalanceOfTuple(n);
   }
   function updateTotalSupplyOnInsertConstructor_r21(uint n) private    {
-      totalSupply = TotalSupplyTuple(n,true);
+      totalSupply = TotalSupplyTuple(n);
   }
 }
