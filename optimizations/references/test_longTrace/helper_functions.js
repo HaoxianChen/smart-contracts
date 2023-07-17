@@ -64,7 +64,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           var opcodeData = '';
           var gasUsedOpTotal = 0;
           var gasUsedComputeTotal = 0;
-          var gasUsedMemTotal = 0;
+          var gasUsedMemReadTotal = 0;
+          var gasUsedMemWriteTotal = 0;
           var gasUsedMemTotal_others = 0;
           var gasUsedStorageTotal = 0;
           var storageOverheadTotal_read = 0;
@@ -179,7 +180,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                   // get trace of transaction
                   var gasUsedOp = 0;
                   var gasUsedCompute = 0;
-                  var gasUsedMem = 0;
+                  var gasUsedMemWrite = 0;
+                  var gasUsedMemRead = 0;
                   var gasUsedStorage = 0;
                   var gasUsedMem_others = 0;
                   var storageOverhead_write = 0; // slots (1 slot = 32 bytes)
@@ -210,8 +212,10 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                    var logs = data.result.structLogs;
                    logs.forEach(log => {
                      gasUsedOp += +log.gasCost;
-                     if(log.op == 'MSTORE' || log.op == 'MSTORE8' || log.op == 'MLOAD') {
-                       gasUsedMem += +log.gasCost;
+                     if(log.op == 'MSTORE' || log.op == 'MSTORE8') {
+                       gasUsedMemWrite += +log.gasCost;
+                     } else if ( log.op == 'MLOAD') {
+                       gasUsedMemRead += +log.gasCost;
                      } else if(log.op == 'KECCAK256'|| log.op == 'CALLDATACOPY' || log.op == 'CODECOPY' || log.op == 'EXTCODECOPY' || log.op == 'RETURNDATACOPY' || log.op == 'LOG0' || log.op == 'LOG1' || log.op == 'LOG2' || log.op == 'LOG3' || log.op == 'LOG4' || log.op == 'CREATE' || log.op == 'CALL' || log.op == 'CALLCODE' || log.op == 'RETURN' || log.op == 'DELEGATECALL' || log.op == 'CREATE2' || log.op == 'STATICCALL') {
                        gasUsedMem_others += +log.gasCost;
                      } else if (log.op == 'SLOAD') {
@@ -263,7 +267,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                  // read_over_write.toFixed(decimal);
                  opcodeData += `\nGas cost (from result.receipt): ${gasUsed}\n`;
                  opcodeData += `Gas cost (from opcodes): ${gasUsedOp}\n`;
-                 opcodeData += `Gas cost (memory operations): ${gasUsedMem}\n`;
+                 opcodeData += `Gas cost (memory read operations): ${gasUsedMemRead}\n`;
+                 opcodeData += `Gas cost (memory write operations): ${gasUsedMemWrite}\n`;
                  opcodeData += `Gas cost (memory_others operations): ${gasUsedMem_others}\n`;
                  opcodeData += `Gas cost (storage operations): ${gasUsedStorage}\n`;
                  opcodeData += `Gas cost (computation operations): ${gasUsedCompute}\n\n`;
@@ -285,7 +290,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
 
                  gasUsedOpTotal += gasUsedOp;
                  gasUsedComputeTotal += gasUsedCompute;
-                 gasUsedMemTotal += gasUsedMem;
+                 gasUsedMemReadTotal += gasUsedMemRead;
+                 gasUsedMemWriteTotal += gasUsedMemWrite;
                  gasUsedMemTotal_others += gasUsedMem_others;
                  gasUsedStorageTotal += gasUsedStorage;
                  storageOverheadTotal_read += storageOverhead_read;
@@ -357,7 +363,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           // calculate aggregation
           var gasUsedAgg;
           var gasUsedOpAgg;
-          var gasUsedMemAgg;
+          var gasUsedMemReadAgg;
+          var gasUsedMemWriteAgg;
           var gasUsedMemAgg_others;
           var gasUsedStorageAgg;
           var gasUsedComputeAgg;
@@ -379,7 +386,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           if(aggregationMethod == 'average') {
             gasUsedAgg =  resultTotal / transactionCount;
             gasUsedOpAgg = gasUsedOpTotal / transactionCount;
-            gasUsedMemAgg = gasUsedMemTotal / transactionCount;
+            gasUsedMemReadAgg = gasUsedMemReadTotal / transactionCount;
+            gasUsedMemWriteAgg = gasUsedMemWriteTotal / transactionCount;
             gasUsedMemAgg_others = gasUsedMemTotal_others / transactionCount;
             gasUsedStorageAgg = gasUsedStorageTotal / transactionCount;
             gasUsedComputeAgg = gasUsedComputeTotal / transactionCount;
@@ -405,7 +413,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           }
           console.log(`${contractName}.${transactionName} Gas Used (from result.receipt) (${aggregationMethod}): `, gasUsedAgg);
           console.log(`${contractName}.${transactionName} Gas Used (from opcodes)(${aggregationMethod}): `, gasUsedOpAgg);
-          console.log(`${contractName}.${transactionName} Gas Used (memory operations)(${aggregationMethod}): `, gasUsedMemAgg);
+          console.log(`${contractName}.${transactionName} Gas Used (memory read operations)(${aggregationMethod}): `, gasUsedMemReadAgg);
+          console.log(`${contractName}.${transactionName} Gas Used (memory write operations)(${aggregationMethod}): `, gasUsedMemWriteAgg);
           console.log(`${contractName}.${transactionName} Gas Used (memory_others operations)(${aggregationMethod}): `, gasUsedMemAgg_others);
           console.log(`${contractName}.${transactionName} Gas Used (storage operations)(${aggregationMethod}): `, gasUsedStorageAgg);
           console.log(`${contractName}.${transactionName} Gas Used (computation operations)(${aggregationMethod}): `, gasUsedComputeAgg);
@@ -429,7 +438,8 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
           opcodeData += `summary:\n`;
           opcodeData += `gas: ${gasUsedAgg}\n`;
           opcodeData += `gas_op: ${gasUsedOpAgg}\n`;
-          opcodeData += `gas_memory: ${gasUsedMemAgg}\n`;
+          opcodeData += `gas_memory_read: ${gasUsedMemReadAgg}\n`;
+          opcodeData += `gas_memory_write: ${gasUsedMemWriteAgg}\n`;
           opcodeData += `gas_memory_other: ${gasUsedMemAgg_others}\n`;
           opcodeData += `gas_storage: ${gasUsedStorageAgg}\n`;
           opcodeData += `gas_computation: ${gasUsedComputeAgg}\n`;

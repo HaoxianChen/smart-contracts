@@ -48,7 +48,7 @@ contract Nft {
   constructor() public {
     updateOwnerOnInsertConstructor_r10();
   }
-  function getOwnerOf(uint tokenId) public view  returns (address) {
+  function getOwnerOf(uint tokenId) public returns (address) {
       OwnerOfTuple memory ownerOfTuple = ownerOf[tokenId];
       address p = ownerOfTuple.p;
       return p;
