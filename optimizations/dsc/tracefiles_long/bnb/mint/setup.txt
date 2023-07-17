@@ -1,2 +1,0 @@
-nt,10
-method,average
