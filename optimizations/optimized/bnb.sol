@@ -1,23 +1,18 @@
 contract Bnb {
   struct TotalSupplyTuple {
     uint n;
-    bool _valid;
   }
   struct AllowanceTuple {
     uint n;
-    bool _valid;
   }
   struct OwnerTuple {
     address p;
-    bool _valid;
   }
   struct FreezeOfTuple {
     uint n;
-    bool _valid;
   }
   struct BalanceOfTuple {
     uint n;
-    bool _valid;
   }
   mapping(address=>FreezeOfTuple) freezeOf;
   TotalSupplyTuple totalSupply;
@@ -65,7 +60,6 @@ contract Bnb {
         revert("Rule condition failed");
       }
   }
-
   function withdrawEther(uint amount) public    {
       bool r23 = updateWithdrawEtherOnInsertRecv_withdrawEther_r23(amount);
       if(r23==false) {
@@ -97,17 +91,17 @@ contract Bnb {
   }
   function updateOwnerOnInsertConstructor_r9() private    {
       address s = msg.sender;
-      owner = OwnerTuple(s,true);
+      owner = OwnerTuple(s);
   }
   function updateTransferFromOnInsertRecv_transferFrom_r29(address o,address r,uint n) private   returns (bool) {
       address s = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint k = allowanceTuple.n;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[o];
-      uint m = balanceOfTuple.n;
+      // AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint k = allowance[o][s].n;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[o];
+      uint m = balanceOf[o].n;
       if(m>=n && k>=n) {
         emit TransferFrom(o,r,s,n);
-        emit Transfer(o,r,n);
+        // emit Transfer(o,r,n);
         balanceOf[o].n -= n;
         balanceOf[r].n += n;
         allowance[o][s].n -= n;
@@ -117,8 +111,8 @@ contract Bnb {
   }
   function updateFreezeOnInsertRecv_freeze_r24(uint n) private   returns (bool) {
       address p = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      uint m = balanceOfTuple.n;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      uint m = balanceOf[p].n;
       if(n<=m && n>0) {
         emit Freeze(p,n);
         freezeOf[p].n += n;
@@ -139,16 +133,10 @@ contract Bnb {
       }
       return false;
   }
-  function updateuintByint(uint x,int delta) private   returns (uint) {
-      int convertedX = int(x);
-      int value = convertedX+delta;
-      uint convertedValue = uint(value);
-      return convertedValue;
-  }
   function updateTransferOnInsertRecv_transfer_r19(address r,uint n) private   returns (bool) {
       address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[s];
-      uint m = balanceOfTuple.n;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[s];
+      uint m = balanceOf[s].n;
       if(n<=m) {
         emit Transfer(s,r,n);
         balanceOf[s].n -= n;
@@ -159,12 +147,12 @@ contract Bnb {
   }
   function updateBalanceOfOnInsertConstructor_r4(uint n) private    {
       address s = msg.sender;
-      balanceOf[s] = BalanceOfTuple(n,true);
+      balanceOf[s] = BalanceOfTuple(n);
   }
   function updateBurnOnInsertRecv_burn_r15(uint n) private   returns (bool) {
       address p = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      uint m = balanceOfTuple.n;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      uint m = balanceOf[p].n;
       if(p!=address(0) && n<=m) {
         emit Burn(p,n);
         balanceOf[p].n -= n;
@@ -175,8 +163,8 @@ contract Bnb {
   }
   function updateIncreaseAllowanceOnInsertRecv_approve_r28(address s,uint n) private   returns (bool) {
       address o = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint m = allowanceTuple.n;
+      // AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint m = allowance[o][s].n;
       uint d = n-m;
       emit IncreaseAllowance(o,s,d);
       allowance[o][s].n += d;
@@ -185,8 +173,8 @@ contract Bnb {
   }
   function updateUnfreezeOnInsertRecv_unfreeze_r6(uint n) private   returns (bool) {
       address p = msg.sender;
-      FreezeOfTuple memory freezeOfTuple = freezeOf[p];
-      uint m = freezeOfTuple.n;
+      // FreezeOfTuple memory freezeOfTuple = freezeOf[p];
+      uint m = freezeOf[p].n;
       if(n<=m && n>0) {
         emit Unfreeze(p,n);
         freezeOf[p].n -= n;
@@ -196,6 +184,6 @@ contract Bnb {
       return false;
   }
   function updateTotalSupplyOnInsertConstructor_r5(uint n) private    {
-      totalSupply = TotalSupplyTuple(n,true);
+      totalSupply = TotalSupplyTuple(n);
   }
 }

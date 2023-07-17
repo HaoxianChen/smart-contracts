@@ -8,38 +8,39 @@ pragma solidity ^0.8.0;
 /**
  * Math operations with safety checks
  */
-contract SafeMath {
-  function safeMul(uint256 a, uint256 b) pure internal returns (uint256) {
-    uint256 c = a * b;
-    require(a == 0 || c / a == b);
-    return c;
-  }
-
-  function safeDiv(uint256 a, uint256 b) pure internal returns (uint256) {
-    require(b > 0);
-    uint256 c = a / b;
-    require(a == b * c + a % b);
-    return c;
-  }
-
-  function safeSub(uint256 a, uint256 b) pure internal returns (uint256) {
-    require(b <= a);
-    return a - b;
-  }
-
-  function safeAdd(uint256 a, uint256 b) pure internal returns (uint256) {
-    uint256 c = a + b;
-    require(c>=a && c>=b);
-    return c;
-  }
+// contract SafeMath {
+//   function safeMul(uint256 a, uint256 b) pure internal returns (uint256) {
+//     uint256 c = a * b;
+//     require(a == 0 || c / a == b);
+//     return c;
+//   }
+// 
+//   function safeDiv(uint256 a, uint256 b) pure internal returns (uint256) {
+//     require(b > 0);
+//     uint256 c = a / b;
+//     require(a == b * c + a % b);
+//     return c;
+//   }
+// 
+//   function safeSub(uint256 a, uint256 b) pure internal returns (uint256) {
+//     require(b <= a);
+//     return a - b;
+//   }
+// 
+//   function safeAdd(uint256 a, uint256 b) pure internal returns (uint256) {
+//     uint256 c = a + b;
+//     require(c>=a && c>=b);
+//     return c;
+//   }
 
   // function assert(bool assertion) internal {
   //   if (!assertion) {
   //     revert();
   //   }
   // }
-}
-contract BNB is SafeMath{
+// }
+// contract BNB is SafeMath{
+contract BNB {
     string public name;
     string public symbol;
     uint8 public decimals;
@@ -92,9 +93,11 @@ contract BNB is SafeMath{
 		if (_value <= 0) revert(); 
         if (balanceOf[msg.sender] < _value) revert();           // Check if the sender has enough
         if (balanceOf[_to] + _value < balanceOf[_to]) revert(); // Check for overflows
-        balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                     // Subtract from the sender
+        // balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                     // Subtract from the sender
+        balanceOf[msg.sender] -= _value;                     // Subtract from the sender
         // totalBalance = SafeMath.safeSub(totalBalance, _value);
-        balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                            // Add the same to the recipient
+        // balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                            // Add the same to the recipient
+        balanceOf[_to] += _value;                            // Add the same to the recipient
         // totalBalance = SafeMath.safeAdd(totalBalance, _value);
         emit Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
     }
@@ -115,11 +118,14 @@ contract BNB is SafeMath{
         if (balanceOf[_from] < _value) revert();                 // Check if the sender has enough
         if (balanceOf[_to] + _value < balanceOf[_to]) revert();  // Check for overflows
         if (_value > allowance[_from][msg.sender]) revert();     // Check allowance
-        balanceOf[_from] = SafeMath.safeSub(balanceOf[_from], _value);                           // Subtract from the sender
+        // balanceOf[_from] = SafeMath.safeSub(balanceOf[_from], _value);                           // Subtract from the sender
+        balanceOf[_from] -= _value;                           // Subtract from the sender
         // totalBalance = SafeMath.safeSub(totalBalance, _value);
-        balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                             // Add the same to the recipient
+        // balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                             // Add the same to the recipient
+        balanceOf[_to] += _value;                             // Add the same to the recipient
         // totalBalance = SafeMath.safeAdd(totalBalance, _value);
-        allowance[_from][msg.sender] = SafeMath.safeSub(allowance[_from][msg.sender], _value);
+        // allowance[_from][msg.sender] = SafeMath.safeSub(allowance[_from][msg.sender], _value);
+        allowance[_from][msg.sender] -= _value;
         emit Transfer(_from, _to, _value);
         return true;
     }
@@ -127,9 +133,11 @@ contract BNB is SafeMath{
     function burn(uint256 _value) public returns (bool success) {
         if (balanceOf[msg.sender] < _value) revert();            // Check if the sender has enough
 		if (_value <= 0) revert(); 
-        balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                      // Subtract from the sender
+        // balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                      // Subtract from the sender
+        balanceOf[msg.sender] -= _value;                      // Subtract from the sender
         // totalBalance = SafeMath.safeSub(totalBalance, _value);
-        totalSupply = SafeMath.safeSub(totalSupply,_value);                                // Updates totalSupply
+        // totalSupply = SafeMath.safeSub(totalSupply,_value);                                // Updates totalSupply
+        totalSupply -= _value;                                // Updates totalSupply
         emit Burn(msg.sender, _value);
         return true;
     }
@@ -137,9 +145,11 @@ contract BNB is SafeMath{
 	function freeze(uint256 _value) public returns (bool success) {
         if (balanceOf[msg.sender] < _value) revert();            // Check if the sender has enough
 		if (_value <= 0) revert(); 
-        balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                      // Subtract from the sender
+        // balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                      // Subtract from the sender
+        balanceOf[msg.sender] -= _value;                      // Subtract from the sender
         // totalBalance = SafeMath.safeSub(totalBalance, _value);
-        freezeOf[msg.sender] = SafeMath.safeAdd(freezeOf[msg.sender], _value);                                // Updates totalSupply
+        // freezeOf[msg.sender] = SafeMath.safeAdd(freezeOf[msg.sender], _value);                                // Updates totalSupply
+        freezeOf[msg.sender] += _value;                                // Updates totalSupply
         // freezeTotal = SafeMath.safeAdd(freezeTotal, _value);
         emit Freeze(msg.sender, _value);
         return true;
@@ -148,9 +158,11 @@ contract BNB is SafeMath{
 	function unfreeze(uint256 _value) public returns (bool success) {
         if (freezeOf[msg.sender] < _value) revert();            // Check if the sender has enough
 		if (_value <= 0) revert(); 
-        freezeOf[msg.sender] = SafeMath.safeSub(freezeOf[msg.sender], _value);                      // Subtract from the sender
+        // freezeOf[msg.sender] = SafeMath.safeSub(freezeOf[msg.sender], _value);                      // Subtract from the sender
+        freezeOf[msg.sender] -= _value;                      // Subtract from the sender
         // freezeTotal = SafeMath.safeSub(freezeTotal, _value);
-        balanceOf[msg.sender] = SafeMath.safeAdd(balanceOf[msg.sender], _value);
+        // balanceOf[msg.sender] = SafeMath.safeAdd(balanceOf[msg.sender], _value);
+        balanceOf[msg.sender] += _value;
         // totalBalance = SafeMath.safeAdd(totalBalance, _value);
         emit Unfreeze(msg.sender, _value);
         return true;
