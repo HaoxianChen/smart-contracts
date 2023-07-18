@@ -35,19 +35,19 @@ contract Bnb {
   constructor(uint initialSupply) public {
     updateTotalSupplyOnInsertConstructor_r5(initialSupply);
     updateTotalBalancesOnInsertConstructor_r25(initialSupply);
-    updateBalanceOfOnInsertConstructor_r18(initialSupply);
+    updateBalanceOfOnInsertConstructor_r4(initialSupply);
     updateOwnerOnInsertConstructor_r9();
+  }
+  function burn(uint amount) public    {
+      bool r15 = updateBurnOnInsertRecv_burn_r15(amount);
+      if(r15==false) {
+        revert("Rule condition failed");
+      }
   }
   function getAllowance(address p,address s) public view  returns (uint) {
       AllowanceTuple memory allowanceTuple = allowance[p][s];
       uint n = allowanceTuple.n;
       return n;
-  }
-  function mint(address p,uint amount) public    {
-      bool r27 = updateMintOnInsertRecv_mint_r27(p,amount);
-      if(r27==false) {
-        revert("Rule condition failed");
-      }
   }
   function transfer(address to,uint amount) public    {
       bool r19 = updateTransferOnInsertRecv_transfer_r19(to,amount);
@@ -65,13 +65,7 @@ contract Bnb {
         revert("Rule condition failed");
       }
   }
-  function burn(address p,uint amount) public    {
-      bool r17 = updateBurnOnInsertRecv_burn_r17(p,amount);
-      if(r17==false) {
-        revert("Rule condition failed");
-      }
-  }
-  function withdrawEther(uint amount) public payable   {
+  function withdrawEther(uint amount) public    {
       bool r23 = updateWithdrawEtherOnInsertRecv_withdrawEther_r23(amount);
       if(r23==false) {
         revert("Rule condition failed");
@@ -111,24 +105,12 @@ contract Bnb {
       BalanceOfTuple memory balanceOfTuple = balanceOf[o];
       uint m = balanceOfTuple.n;
       if(m>=n && k>=n) {
-        // emit TransferFrom(o,r,s,n);
+        emit TransferFrom(o,r,s,n);
         emit Transfer(o,r,n);
         balanceOf[o].n -= n;
         balanceOf[r].n += n;
         allowance[o][s].n -= n;
         return true;
-      }
-      return false;
-  }
-  function updateMintOnInsertRecv_mint_r27(address p,uint n) private   returns (bool) {
-      address s = owner.p;
-      if(s==msg.sender) {
-        if(p!=address(0)) {
-          emit Mint(p,n);
-          totalSupply.n += n;
-          balanceOf[p].n += n;
-          return true;
-        }
       }
       return false;
   }
@@ -174,9 +156,31 @@ contract Bnb {
       }
       return false;
   }
-  function updateBalanceOfOnInsertConstructor_r18(uint n) private    {
+  function updateBalanceOfOnInsertConstructor_r4(uint n) private    {
       address s = msg.sender;
       balanceOf[s] = BalanceOfTuple(n,true);
+  }
+  function updateBurnOnInsertRecv_burn_r15(uint n) private   returns (bool) {
+      address p = msg.sender;
+      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      uint m = balanceOfTuple.n;
+      if(p!=address(0) && n<=m) {
+        emit Burn(p,n);
+        balanceOf[p].n -= n;
+        totalSupply.n -= n;
+        return true;
+      }
+      return false;
+  }
+  function updateIncreaseAllowanceOnInsertRecv_approve_r28(address s,uint n) private   returns (bool) {
+      address o = msg.sender;
+      AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint m = allowanceTuple.n;
+      uint d = n-m;
+      emit IncreaseAllowance(o,s,d);
+      allowance[o][s].n += d;
+      return true;
+      return false;
   }
   function updateUnfreezeOnInsertRecv_unfreeze_r6(uint n) private   returns (bool) {
       address p = msg.sender;
@@ -192,29 +196,5 @@ contract Bnb {
   }
   function updateTotalSupplyOnInsertConstructor_r5(uint n) private    {
       totalSupply = TotalSupplyTuple(n,true);
-  }
-  function updateIncreaseAllowanceOnInsertRecv_approve_r28(address s,uint n) private   returns (bool) {
-      address o = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint m = allowanceTuple.n;
-      uint d = n-m;
-      emit IncreaseAllowance(o,s,d);
-      allowance[o][s].n += n;
-      return true;
-      return false;
-  }
-  function updateBurnOnInsertRecv_burn_r17(address p,uint n) private   returns (bool) {
-      address s = owner.p;
-      if(s==msg.sender) {
-        BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-        uint m = balanceOfTuple.n;
-        if(p!=address(0) && n<=m) {
-          emit Burn(p,n);
-          balanceOf[p].n -= n;
-          totalSupply.n -= n;
-          return true;
-        }
-      }
-      return false;
   }
 }
