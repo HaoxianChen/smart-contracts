@@ -13,7 +13,7 @@ const path = require('path');
 const lowerBoundInput = 10;
 const upperBoundInput = 1000;
 
-const testFolder = path.join(__dirname, `../tracefiles_long/bnb_all`);
+const testFolder = path.join(__dirname, `../tracefiles_long/bnb_arithmetic`);
 // set up tests for contracts
 const testPath = path.join(testFolder, '/setup.txt');
 const setup = fs.readFileSync(testPath, 'utf-8');
