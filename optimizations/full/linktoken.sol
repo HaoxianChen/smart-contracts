@@ -11,6 +11,10 @@ contract Linktoken {
     address p;
     bool _valid;
   }
+  struct DecreaseAllowanceTotalTuple {
+    uint m;
+    bool _valid;
+  }
   struct TotalMintTuple {
     uint n;
     bool _valid;
@@ -51,6 +55,7 @@ contract Linktoken {
   mapping(address=>TotalOutTuple) totalOut;
   mapping(address=>TotalBurnTuple) totalBurn;
   OwnerTuple owner;
+  mapping(address=>mapping(address=>DecreaseAllowanceTotalTuple)) decreaseAllowanceTotal;
   mapping(address=>TotalMintTuple) totalMint;
   TotalSupplyTuple totalSupply;
   AllMintTuple allMint;
@@ -127,60 +132,157 @@ contract Linktoken {
         revert("Rule condition failed");
       }
   }
-  function updateAllowanceOnIncrementDecreaseAllowanceTotal_r22(address o,address s,int d) private    {
-      int _delta = int(-d);
-      uint newValue = updateuintByint(allowance[o][s].n,_delta);
-      allowance[o][s].n = newValue;
+  function updateTotalSupplyOnInsertAllMint_r17(uint m) private    {
+      uint b = allBurn.n;
+      uint n = m-b;
+      totalSupply = TotalSupplyTuple(n,true);
   }
-  function updateAllMintOnInsertMint_r1(uint n) private    {
-      int delta0 = int(n);
-      updateTotalSupplyOnIncrementAllMint_r17(delta0);
-      allMint.n += n;
+  function updateAllowanceOnIncrementDecreaseAllowanceTotal_r22(address o,address s,int d) private    {
+      int _delta = int(d);
+      uint newValue = updateuintByint(decreaseAllowanceTotal[o][s].m,_delta);
+      updateAllowanceOnInsertDecreaseAllowanceTotal_r22(o,s,newValue);
+  }
+  function updateBalanceOfOnInsertTotalIn_r6(address p,uint i) private    {
+      TotalInTuple memory toDelete = totalIn[p];
+      if(toDelete._valid==true) {
+        updateBalanceOfOnDeleteTotalIn_r6(p,toDelete.n);
+      }
+      TotalOutTuple memory totalOutTuple = totalOut[p];
+      uint o = totalOutTuple.n;
+      TotalBurnTuple memory totalBurnTuple = totalBurn[p];
+      uint m = totalBurnTuple.n;
+      TotalMintTuple memory totalMintTuple = totalMint[p];
+      uint n = totalMintTuple.n;
+      uint s = ((n+i)-m)-o;
+      balanceOf[p] = BalanceOfTuple(s,true);
+  }
+  function updateAllowanceOnDeleteSpentTotal_r22(address o,address s,uint l) private    {
+      DecreaseAllowanceTotalTuple memory decreaseAllowanceTotalTuple = decreaseAllowanceTotal[o][s];
+      uint d = decreaseAllowanceTotalTuple.m;
+      AllowanceTotalTuple memory allowanceTotalTuple = allowanceTotal[o][s];
+      uint m = allowanceTotalTuple.m;
+      uint n = (m-l)-d;
+      AllowanceTuple memory allowanceTuple = allowance[o][s];
+      if(n==allowanceTuple.n) {
+        allowance[o][s] = AllowanceTuple(0,false);
+      }
   }
   function updateDecreaseAllowanceTotalOnInsertDecreaseAllowance_r8(address o,address s,uint n) private    {
-      int delta0 = int(n);
-      updateAllowanceOnIncrementDecreaseAllowanceTotal_r22(o,s,delta0);
+      int delta1 = int(n);
+      updateAllowanceOnIncrementDecreaseAllowanceTotal_r22(o,s,delta1);
+      decreaseAllowanceTotal[o][s].m += n;
   }
-  function updateAllowanceTotalOnInsertIncreaseAllowance_r26(address o,address s,uint n) private    {
-      int delta0 = int(n);
-      updateAllowanceOnIncrementAllowanceTotal_r22(o,s,delta0);
-      allowanceTotal[o][s].m += n;
+  function updateDecreaseAllowanceOnInsertRecv_decreaseApproval_r9(address s,uint n) private   returns (bool) {
+      address o = msg.sender;
+      AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint m = allowanceTuple.n;
+      if(m>=n && validRecipient(s)) {
+        updateDecreaseAllowanceTotalOnInsertDecreaseAllowance_r8(o,s,n);
+        emit DecreaseAllowance(o,s,n);
+        return true;
+      }
+      return false;
   }
-  function updateTotalMintOnInsertMint_r16(address p,uint n) private    {
-      int delta0 = int(n);
-      updateBalanceOfOnIncrementTotalMint_r6(p,delta0);
-      totalMint[p].n += n;
+  function updateTotalSupplyOnIncrementAllMint_r17(int m) private    {
+      int _delta = int(m);
+      uint newValue = updateuintByint(allMint.n,_delta);
+      updateTotalSupplyOnInsertAllMint_r17(newValue);
   }
-  function updateuintByint(uint x,int delta) private   returns (uint) {
-      int convertedX = int(x);
-      int value = convertedX+delta;
-      uint convertedValue = uint(value);
-      return convertedValue;
+  function updateAllowanceOnDeleteAllowanceTotal_r22(address o,address s,uint m) private    {
+      DecreaseAllowanceTotalTuple memory decreaseAllowanceTotalTuple = decreaseAllowanceTotal[o][s];
+      uint d = decreaseAllowanceTotalTuple.m;
+      SpentTotalTuple memory spentTotalTuple = spentTotal[o][s];
+      uint l = spentTotalTuple.m;
+      uint n = (m-l)-d;
+      AllowanceTuple memory allowanceTuple = allowance[o][s];
+      if(n==allowanceTuple.n) {
+        allowance[o][s] = AllowanceTuple(0,false);
+      }
   }
-  function updateTransferOnInsertTransferFrom_r0(address o,address r,uint n) private    {
-      updateTotalOutOnInsertTransfer_r18(o,n);
-      updateTotalInOnInsertTransfer_r12(r,n);
-      emit Transfer(o,r,n);
+  function updateTransferFromOnInsertRecv_transferFrom_r13(address o,address r,uint n) private   returns (bool) {
+      address s = msg.sender;
+      BalanceOfTuple memory balanceOfTuple = balanceOf[o];
+      uint m = balanceOfTuple.n;
+      AllowanceTuple memory allowanceTuple = allowance[o][s];
+      uint k = allowanceTuple.n;
+      if(m>=n && k>=n && validRecipient(r)) {
+        updateSpentTotalOnInsertTransferFrom_r20(o,s,n);
+        updateTransferOnInsertTransferFrom_r0(o,r,n);
+        emit TransferFrom(o,r,s,n);
+        return true;
+      }
+      return false;
   }
-  function updateBalanceOfOnIncrementTotalBurn_r6(address p,int m) private    {
-      int _delta = int(-m);
-      uint newValue = updateuintByint(balanceOf[p].n,_delta);
-      balanceOf[p].n = newValue;
+  function updateAllowanceOnInsertSpentTotal_r22(address o,address s,uint l) private    {
+      SpentTotalTuple memory toDelete = spentTotal[o][s];
+      if(toDelete._valid==true) {
+        updateAllowanceOnDeleteSpentTotal_r22(o,s,toDelete.m);
+      }
+      DecreaseAllowanceTotalTuple memory decreaseAllowanceTotalTuple = decreaseAllowanceTotal[o][s];
+      uint d = decreaseAllowanceTotalTuple.m;
+      AllowanceTotalTuple memory allowanceTotalTuple = allowanceTotal[o][s];
+      uint m = allowanceTotalTuple.m;
+      uint n = (m-l)-d;
+      allowance[o][s] = AllowanceTuple(n,true);
   }
-  function updateBalanceOfOnIncrementTotalOut_r6(address p,int o) private    {
-      int _delta = int(-o);
-      uint newValue = updateuintByint(balanceOf[p].n,_delta);
-      balanceOf[p].n = newValue;
+  function updateBalanceOfOnIncrementTotalIn_r6(address p,int i) private    {
+      int _delta = int(i);
+      uint newValue = updateuintByint(totalIn[p].n,_delta);
+      updateBalanceOfOnInsertTotalIn_r6(p,newValue);
   }
-  function updateTotalBurnOnInsertBurn_r15(address p,uint n) private    {
-      int delta0 = int(n);
-      updateBalanceOfOnIncrementTotalBurn_r6(p,delta0);
-      totalBurn[p].n += n;
+  function updateTotalSupplyOnIncrementAllBurn_r17(int b) private    {
+      int _delta = int(b);
+      uint newValue = updateuintByint(allBurn.n,_delta);
+      updateTotalSupplyOnInsertAllBurn_r17(newValue);
   }
-  function updateTotalInOnInsertTransfer_r12(address p,uint n) private    {
-      int delta0 = int(n);
-      updateBalanceOfOnIncrementTotalIn_r6(p,delta0);
-      totalIn[p].n += n;
+  function updateBalanceOfOnDeleteTotalBurn_r6(address p,uint m) private    {
+      TotalInTuple memory totalInTuple = totalIn[p];
+      uint i = totalInTuple.n;
+      TotalOutTuple memory totalOutTuple = totalOut[p];
+      uint o = totalOutTuple.n;
+      TotalMintTuple memory totalMintTuple = totalMint[p];
+      uint n = totalMintTuple.n;
+      uint s = ((n+i)-m)-o;
+      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      if(s==balanceOfTuple.n) {
+        balanceOf[p] = BalanceOfTuple(0,false);
+      }
+  }
+  function updateTotalSupplyOnInsertAllBurn_r17(uint b) private    {
+      uint m = allMint.n;
+      uint n = m-b;
+      totalSupply = TotalSupplyTuple(n,true);
+  }
+  function updateAllowanceOnInsertAllowanceTotal_r22(address o,address s,uint m) private    {
+      AllowanceTotalTuple memory toDelete = allowanceTotal[o][s];
+      if(toDelete._valid==true) {
+        updateAllowanceOnDeleteAllowanceTotal_r22(o,s,toDelete.m);
+      }
+      DecreaseAllowanceTotalTuple memory decreaseAllowanceTotalTuple = decreaseAllowanceTotal[o][s];
+      uint d = decreaseAllowanceTotalTuple.m;
+      SpentTotalTuple memory spentTotalTuple = spentTotal[o][s];
+      uint l = spentTotalTuple.m;
+      uint n = (m-l)-d;
+      allowance[o][s] = AllowanceTuple(n,true);
+  }
+  function updateAllMintOnInsertMint_r1(uint n) private    {
+      int delta1 = int(n);
+      updateTotalSupplyOnIncrementAllMint_r17(delta1);
+      allMint.n += n;
+  }
+  function updateBalanceOfOnInsertTotalMint_r6(address p,uint n) private    {
+      TotalMintTuple memory toDelete = totalMint[p];
+      if(toDelete._valid==true) {
+        updateBalanceOfOnDeleteTotalMint_r6(p,toDelete.n);
+      }
+      TotalInTuple memory totalInTuple = totalIn[p];
+      uint i = totalInTuple.n;
+      TotalOutTuple memory totalOutTuple = totalOut[p];
+      uint o = totalOutTuple.n;
+      TotalBurnTuple memory totalBurnTuple = totalBurn[p];
+      uint m = totalBurnTuple.n;
+      uint s = ((n+i)-m)-o;
+      balanceOf[p] = BalanceOfTuple(s,true);
   }
   function updateIncreaseAllowanceOnInsertRecv_approve_r24(address s,uint n) private   returns (bool) {
       address o = msg.sender;
@@ -211,6 +313,17 @@ contract Linktoken {
   function updateTotalBalancesOnInsertConstructor_r25(uint n) private    {
       // Empty()
   }
+  function updateAllowanceOnDeleteDecreaseAllowanceTotal_r22(address o,address s,uint d) private    {
+      SpentTotalTuple memory spentTotalTuple = spentTotal[o][s];
+      uint l = spentTotalTuple.m;
+      AllowanceTotalTuple memory allowanceTotalTuple = allowanceTotal[o][s];
+      uint m = allowanceTotalTuple.m;
+      uint n = (m-l)-d;
+      AllowanceTuple memory allowanceTuple = allowance[o][s];
+      if(n==allowanceTuple.n) {
+        allowance[o][s] = AllowanceTuple(0,false);
+      }
+  }
   function updateIncreaseAllowanceOnInsertRecv_increaseApproval_r14(address s,uint n) private   returns (bool) {
       address o = msg.sender;
       if(validRecipient(s)) {
@@ -219,6 +332,11 @@ contract Linktoken {
         return true;
       }
       return false;
+  }
+  function updateAllowanceOnIncrementAllowanceTotal_r22(address o,address s,int m) private    {
+      int _delta = int(m);
+      uint newValue = updateuintByint(allowanceTotal[o][s].m,_delta);
+      updateAllowanceOnInsertAllowanceTotal_r22(o,s,newValue);
   }
   function updateTransferOnInsertRecv_transfer_r4(address r,uint n) private   returns (bool) {
       address s = msg.sender;
@@ -232,20 +350,10 @@ contract Linktoken {
       }
       return false;
   }
-  function updateTotalSupplyOnIncrementAllBurn_r17(int b) private    {
-      int _delta = int(-b);
-      uint newValue = updateuintByint(totalSupply.n,_delta);
-      totalSupply.n = newValue;
-  }
-  function updateTotalSupplyOnIncrementAllMint_r17(int m) private    {
-      int _delta = int(m);
-      uint newValue = updateuintByint(totalSupply.n,_delta);
-      totalSupply.n = newValue;
-  }
-  function updateAllowanceOnIncrementAllowanceTotal_r22(address o,address s,int m) private    {
-      int _delta = int(m);
-      uint newValue = updateuintByint(allowance[o][s].n,_delta);
-      allowance[o][s].n = newValue;
+  function updateAllBurnOnInsertBurn_r23(uint n) private    {
+      int delta1 = int(n);
+      updateTotalSupplyOnIncrementAllBurn_r17(delta1);
+      allBurn.n += n;
   }
   function validRecipient(address p) private view  returns (bool) {
       address t = address(this);
@@ -259,21 +367,51 @@ contract Linktoken {
       updateAllowanceOnIncrementSpentTotal_r22(o,s,delta0);
       spentTotal[o][s].m += n;
   }
-  function updateAllBurnOnInsertBurn_r23(uint n) private    {
-      int delta0 = int(n);
-      updateTotalSupplyOnIncrementAllBurn_r17(delta0);
-      allBurn.n += n;
-  }
-  function updateDecreaseAllowanceOnInsertRecv_decreaseApproval_r9(address s,uint n) private   returns (bool) {
-      address o = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint m = allowanceTuple.n;
-      if(m>=n && validRecipient(s)) {
-        updateDecreaseAllowanceTotalOnInsertDecreaseAllowance_r8(o,s,n);
-        emit DecreaseAllowance(o,s,n);
-        return true;
+  function updateAllowanceOnInsertDecreaseAllowanceTotal_r22(address o,address s,uint d) private    {
+      DecreaseAllowanceTotalTuple memory toDelete = decreaseAllowanceTotal[o][s];
+      if(toDelete._valid==true) {
+        updateAllowanceOnDeleteDecreaseAllowanceTotal_r22(o,s,toDelete.m);
       }
-      return false;
+      SpentTotalTuple memory spentTotalTuple = spentTotal[o][s];
+      uint l = spentTotalTuple.m;
+      AllowanceTotalTuple memory allowanceTotalTuple = allowanceTotal[o][s];
+      uint m = allowanceTotalTuple.m;
+      uint n = (m-l)-d;
+      allowance[o][s] = AllowanceTuple(n,true);
+  }
+  function updateBalanceOfOnDeleteTotalMint_r6(address p,uint n) private    {
+      TotalInTuple memory totalInTuple = totalIn[p];
+      uint i = totalInTuple.n;
+      TotalOutTuple memory totalOutTuple = totalOut[p];
+      uint o = totalOutTuple.n;
+      TotalBurnTuple memory totalBurnTuple = totalBurn[p];
+      uint m = totalBurnTuple.n;
+      uint s = ((n+i)-m)-o;
+      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      if(s==balanceOfTuple.n) {
+        balanceOf[p] = BalanceOfTuple(0,false);
+      }
+  }
+  function updateTotalInOnInsertTransfer_r12(address p,uint n) private    {
+      int delta1 = int(n);
+      updateBalanceOfOnIncrementTotalIn_r6(p,delta1);
+      totalIn[p].n += n;
+  }
+  function updateuintByint(uint x,int delta) private   returns (uint) {
+      int convertedX = int(x);
+      int value = convertedX+delta;
+      uint convertedValue = uint(value);
+      return convertedValue;
+  }
+  function updateTotalMintOnInsertMint_r16(address p,uint n) private    {
+      int delta1 = int(n);
+      updateBalanceOfOnIncrementTotalMint_r6(p,delta1);
+      totalMint[p].n += n;
+  }
+  function updateTransferOnInsertTransferFrom_r0(address o,address r,uint n) private    {
+      updateTotalOutOnInsertTransfer_r18(o,n);
+      updateTotalInOnInsertTransfer_r12(r,n);
+      emit Transfer(o,r,n);
   }
   function updateMintOnInsertRecv_mint_r11(address p,uint n) private   returns (bool) {
       address s = owner.p;
@@ -287,15 +425,39 @@ contract Linktoken {
       }
       return false;
   }
+  function updateTotalBurnOnInsertBurn_r15(address p,uint n) private    {
+      int delta1 = int(n);
+      updateBalanceOfOnIncrementTotalBurn_r6(p,delta1);
+      totalBurn[p].n += n;
+  }
   function updateTotalOutOnInsertTransfer_r18(address p,uint n) private    {
       int delta0 = int(n);
       updateBalanceOfOnIncrementTotalOut_r6(p,delta0);
       totalOut[p].n += n;
   }
-  function updateBalanceOfOnIncrementTotalMint_r6(address p,int n) private    {
-      int _delta = int(n);
-      uint newValue = updateuintByint(balanceOf[p].n,_delta);
-      balanceOf[p].n = newValue;
+  function updateBalanceOfOnIncrementTotalOut_r6(address p,int o) private    {
+      int _delta = int(o);
+      uint newValue = updateuintByint(totalOut[p].n,_delta);
+      updateBalanceOfOnInsertTotalOut_r6(p,newValue);
+  }
+  function updateBalanceOfOnInsertTotalBurn_r6(address p,uint m) private    {
+      TotalBurnTuple memory toDelete = totalBurn[p];
+      if(toDelete._valid==true) {
+        updateBalanceOfOnDeleteTotalBurn_r6(p,toDelete.n);
+      }
+      TotalInTuple memory totalInTuple = totalIn[p];
+      uint i = totalInTuple.n;
+      TotalOutTuple memory totalOutTuple = totalOut[p];
+      uint o = totalOutTuple.n;
+      TotalMintTuple memory totalMintTuple = totalMint[p];
+      uint n = totalMintTuple.n;
+      uint s = ((n+i)-m)-o;
+      balanceOf[p] = BalanceOfTuple(s,true);
+  }
+  function updateAllowanceTotalOnInsertIncreaseAllowance_r26(address o,address s,uint n) private    {
+      int delta1 = int(n);
+      updateAllowanceOnIncrementAllowanceTotal_r22(o,s,delta1);
+      allowanceTotal[o][s].m += n;
   }
   function updateBalanceOfOnInsertConstructor_r7(uint n) private    {
       address p = msg.sender;
@@ -304,32 +466,63 @@ contract Linktoken {
   function updateTotalSupplyOnInsertConstructor_r21(uint n) private    {
       totalSupply = TotalSupplyTuple(n,true);
   }
-  function updateAllowanceOnIncrementSpentTotal_r22(address o,address s,int l) private    {
-      int _delta = int(-l);
-      uint newValue = updateuintByint(allowance[o][s].n,_delta);
-      allowance[o][s].n = newValue;
-  }
-  function updateTransferFromOnInsertRecv_transferFrom_r13(address o,address r,uint n) private   returns (bool) {
-      address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[o];
-      uint m = balanceOfTuple.n;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint k = allowanceTuple.n;
-      if(m>=n && k>=n && validRecipient(r)) {
-        updateSpentTotalOnInsertTransferFrom_r20(o,s,n);
-        updateTransferOnInsertTransferFrom_r0(o,r,n);
-        emit TransferFrom(o,r,s,n);
-        return true;
+  function updateBalanceOfOnInsertTotalOut_r6(address p,uint o) private    {
+      TotalOutTuple memory toDelete = totalOut[p];
+      if(toDelete._valid==true) {
+        updateBalanceOfOnDeleteTotalOut_r6(p,toDelete.n);
       }
-      return false;
+      TotalInTuple memory totalInTuple = totalIn[p];
+      uint i = totalInTuple.n;
+      TotalBurnTuple memory totalBurnTuple = totalBurn[p];
+      uint m = totalBurnTuple.n;
+      TotalMintTuple memory totalMintTuple = totalMint[p];
+      uint n = totalMintTuple.n;
+      uint s = ((n+i)-m)-o;
+      balanceOf[p] = BalanceOfTuple(s,true);
+  }
+  function updateAllowanceOnIncrementSpentTotal_r22(address o,address s,int l) private    {
+      int _delta = int(l);
+      uint newValue = updateuintByint(spentTotal[o][s].m,_delta);
+      updateAllowanceOnInsertSpentTotal_r22(o,s,newValue);
+  }
+  function updateBalanceOfOnDeleteTotalIn_r6(address p,uint i) private    {
+      TotalOutTuple memory totalOutTuple = totalOut[p];
+      uint o = totalOutTuple.n;
+      TotalBurnTuple memory totalBurnTuple = totalBurn[p];
+      uint m = totalBurnTuple.n;
+      TotalMintTuple memory totalMintTuple = totalMint[p];
+      uint n = totalMintTuple.n;
+      uint s = ((n+i)-m)-o;
+      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      if(s==balanceOfTuple.n) {
+        balanceOf[p] = BalanceOfTuple(0,false);
+      }
+  }
+  function updateBalanceOfOnDeleteTotalOut_r6(address p,uint o) private    {
+      TotalInTuple memory totalInTuple = totalIn[p];
+      uint i = totalInTuple.n;
+      TotalBurnTuple memory totalBurnTuple = totalBurn[p];
+      uint m = totalBurnTuple.n;
+      TotalMintTuple memory totalMintTuple = totalMint[p];
+      uint n = totalMintTuple.n;
+      uint s = ((n+i)-m)-o;
+      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+      if(s==balanceOfTuple.n) {
+        balanceOf[p] = BalanceOfTuple(0,false);
+      }
+  }
+  function updateBalanceOfOnIncrementTotalBurn_r6(address p,int m) private    {
+      int _delta = int(m);
+      uint newValue = updateuintByint(totalBurn[p].n,_delta);
+      updateBalanceOfOnInsertTotalBurn_r6(p,newValue);
   }
   function updateOwnerOnInsertConstructor_r10() private    {
       address s = msg.sender;
       owner = OwnerTuple(s,true);
   }
-  function updateBalanceOfOnIncrementTotalIn_r6(address p,int i) private    {
-      int _delta = int(i);
-      uint newValue = updateuintByint(balanceOf[p].n,_delta);
-      balanceOf[p].n = newValue;
+  function updateBalanceOfOnIncrementTotalMint_r6(address p,int n) private    {
+      int _delta = int(n);
+      uint newValue = updateuintByint(totalMint[p].n,_delta);
+      updateBalanceOfOnInsertTotalMint_r6(p,newValue);
   }
 }
