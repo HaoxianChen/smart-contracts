@@ -115,7 +115,7 @@ contract Bnb {
         revert("Rule condition failed");
       }
   }
-  function withdrawEther(uint amount) public    {
+  function withdrawEther(uint amount) public  payable  {
       bool r23 = updateWithdrawEtherOnInsertRecv_withdrawEther_r23(amount);
       if(r23==false) {
         revert("Rule condition failed");
