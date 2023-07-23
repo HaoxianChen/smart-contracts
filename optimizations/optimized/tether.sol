@@ -100,8 +100,9 @@ contract Tether {
   function updateRedeemOnInsertRecv_redeem_r25(address p,uint n) private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-        uint m = balanceOfTuple.n;
+        // BalanceOfTuple memory balanceOfTuple = balanceOf[p];
+        // uint m = balanceOfTuple.n;
+        uint m = balanceOf[p].n;
         if(p!=address(0) && n<=m) {
           emit Redeem(p,n);
           totalSupply.n -= n;
@@ -134,26 +135,28 @@ contract Tether {
       totalSupply = TotalSupplyTuple(n,true);
   }
   function updateTransferFromWithFeeOnInsertRecv_transferFrom_r0(address o,address r,uint n) private   returns (bool) {
-      // uint rt = rate.r;
-      // uint mf = maxFee.m;
-      // address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[o];
-      uint m = balanceOfTuple.n;
+      uint rt = rate.r;
+      uint mf = maxFee.m;
+      address s = msg.sender;
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[o];
+      // uint m = balanceOfTuple.n;
+      uint m = balanceOf[o].n;
       IsBlackListedTuple memory isBlackListedTuple = isBlackListed[o];
       if(false==isBlackListedTuple.b) {
-        AllowanceTuple memory allowanceTuple = allowance[o][msg.sender];
-        uint k = allowanceTuple.n;
+        // AllowanceTuple memory allowanceTuple = allowance[o][s];
+        // uint k = allowanceTuple.n;
+        uint k = allowance[o][s].n;
         if(m>=n && k>=n) {
-          uint f = (rate.r*n)/10000 < maxFee.m ? (rate.r*n)/10000 : maxFee.m;
-          emit TransferFromWithFee(o,r,msg.sender,f,n);
+          uint f = (rt*n)/10000 < mf ? (rt*n)/10000 : mf;
+          emit TransferFromWithFee(o,r,s,f,n);
           address p = owner.p;
           balanceOf[o].n -= f;
           balanceOf[p].n += f;
-          allowance[o][msg.sender].n -= f;
+          allowance[o][s].n -= f;
           uint m = n-f;
           balanceOf[o].n -= m;
           balanceOf[r].n += m;
-          allowance[o][msg.sender].n -= m;
+          allowance[o][s].n -= m;
           
           return true;
         }
@@ -162,8 +165,9 @@ contract Tether {
   }
   function updateIncreaseAllowanceOnInsertRecv_approve_r26(address s,uint n) private   returns (bool) {
       address o = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint m = allowanceTuple.n;
+      // AllowanceTuple memory allowanceTuple = allowance[o][s];
+      // uint m = allowanceTuple.n;
+      uint m = allowance[o][s].n;
       uint d = n-m;
       emit IncreaseAllowance(o,s,d);
       allowance[o][s].n += d;
@@ -178,10 +182,11 @@ contract Tether {
       uint rt = rate.r;
       uint mf = maxFee.m;
       address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[s];
-      uint m = balanceOfTuple.n;
-      IsBlackListedTuple memory isBlackListedTuple = isBlackListed[s];
-      if(false==isBlackListedTuple.b) {
+      // BalanceOfTuple memory balanceOfTuple = balanceOf[s];
+      // uint m = balanceOfTuple.n;
+      uint m = balanceOf[s].n;
+      // IsBlackListedTuple memory isBlackListedTuple = isBlackListed[s];
+      if(false==isBlackListed[s].b) {
         if(n<=m) {
           uint f = (rt*n)/10000 < mf ? (rt*n)/10000 : mf;
           emit TransferWithFee(s,r,f,n);
