@@ -1,31 +1,24 @@
 contract Tether {
   struct OwnerTuple {
     address p;
-    bool _valid;
   }
   struct TotalSupplyTuple {
     uint n;
-    bool _valid;
   }
   struct IsBlackListedTuple {
     bool b;
-    bool _valid;
   }
   struct MaxFeeTuple {
     uint m;
-    bool _valid;
   }
   struct BalanceOfTuple {
     uint n;
-    bool _valid;
   }
   struct RateTuple {
     uint r;
-    bool _valid;
   }
   struct AllowanceTuple {
     uint n;
-    bool _valid;
   }
   RateTuple rate;
   TotalSupplyTuple totalSupply;
@@ -129,10 +122,10 @@ contract Tether {
   }
   function updateBalanceOfOnInsertConstructor_r8(uint n) private    {
       address s = msg.sender;
-      balanceOf[s] = BalanceOfTuple(n,true);
+      balanceOf[s] = BalanceOfTuple(n);
   }
   function updateTotalSupplyOnInsertConstructor_r22(uint n) private    {
-      totalSupply = TotalSupplyTuple(n,true);
+      totalSupply = TotalSupplyTuple(n);
   }
   function updateTransferFromWithFeeOnInsertRecv_transferFrom_r0(address o,address r,uint n) private   returns (bool) {
       uint rt = rate.r;
@@ -176,7 +169,7 @@ contract Tether {
   }
   function updateOwnerOnInsertConstructor_r24() private    {
       address s = msg.sender;
-      owner = OwnerTuple(s,true);
+      owner = OwnerTuple(s);
   }
   function updateTransferWithFeeOnInsertRecv_transfer_r7(address r,uint n) private   returns (bool) {
       uint rt = rate.r;
