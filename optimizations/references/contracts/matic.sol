@@ -499,8 +499,9 @@ abstract contract ERC20Detailed is IERC20 {
 // File: contracts/MaticToken.sol
 
 contract MaticToken is ERC20Pausable, ERC20Detailed {
-    constructor (string memory name, string memory symbol, uint8 decimals, uint256 totalSupply)
-    ERC20Detailed (name, symbol, decimals) {
+    // constructor (string memory name, string memory symbol, uint8 decimals, uint256 totalSupply)
+    constructor (uint256 totalSupply)
+    ERC20Detailed ("", "", 1) {
         _mint(msg.sender, totalSupply);
     }
 

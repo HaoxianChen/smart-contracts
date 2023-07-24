@@ -340,7 +340,7 @@ contract TetherToken is Pausable, StandardToken, BlackList {
     // @param _name Token Name
     // @param _symbol Token symbol
     // @param _decimals Token decimals
-    constructor(uint _initialSupply
+    constructor(uint _initialSupply 
                 // string memory _name, string memory _symbol, uint _decimals
                ) {
         _totalSupply = _initialSupply;
