@@ -85,7 +85,7 @@ helper.range(transactionCounts).forEach(l => {
       let mintAmount = helper.random(lowerBound, upperBound+1);
       let burnAmount_1 = helper.random(1, (mintAmount+1)/2);
       let burnAmount_2 = helper.random(1, (mintAmount+1)/2);
-      let text = `burn,constructor,,,${ownerIndex},,false\nburn,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_1},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_2},${ownerIndex},,true\n`;
+      let text = `burn,constructor,,,${ownerIndex},,false\nburn,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\nburn,burn,instance,${burnAmount_1},${mintAccountIndex},,false\nburn,burn,instance,${burnAmount_2},${mintAccountIndex},,true\n`;
       if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
         console.log('generating new tracefiles ...');
         fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
@@ -268,37 +268,7 @@ helper.range(transactionCounts).forEach(l => {
       }
     }) 
   }
-  // if(transactionName == 'claimOwnership') {
-  //   tracefileCount = transactionCount;
-  //   helper.range(tracefileCount).forEach(testFileIndex => {
-  //     let fileName = `${transactionName}_${testFileIndex}.txt`;
-  //     let ownerIndex = helper.random(0, deployAccountCount);
-  //     let arrayRandom = [];
-  //     for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
-  //       if(appIndex != ownerIndex) {
-  //         arrayRandom.push(appIndex);
-  //       }
-  //     }
-  //     let arrayRandomLen = arrayRandom.length;
-  //     let transferOwnerAccountIndex_1 = arrayRandom[helper.random(0, arrayRandomLen)];
-  //     arrayRandom = [];
-  //     for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
-  //       if(appIndex != ownerIndex && appIndex != transferOwnerAccountIndex_1) {
-  //         arrayRandom.push(appIndex);
-  //       }
-  //     }
-  //     arrayRandomLen = arrayRandom.length;
-  //     let transferOwnerAccountIndex_2 = arrayRandom[helper.random(0, arrayRandomLen)];
-  //     let text = `claimOwnership,constructor,,,${ownerIndex},,false\nclaimOwnership,transferOwner,instance,accounts[${transferOwnerAccountIndex_1}],${ownerIndex},,false\nclaimOwnership,claimOwnership,instance,,${transferOwnerAccountIndex_1},,false\nclaimOwnership,transferOwner,instance,accounts[${transferOwnerAccountIndex_2}],${transferOwnerAccountIndex_1},,false\nclaimOwnership,claimOwnership,instance,,${transferOwnerAccountIndex_2},,true\n`;
-  //     if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
-  //       console.log('generating new tracefiles ...');
-  //       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-  //         if (err) throw err;
-  //         console.log('File is created successfully.');
-  //       });
-  //     }
-  //   }) 
-  // }  
+ 
   if(transactionName == 'claimOwnership') {
     tracefileCount = transactionCount;
     helper.range(tracefileCount).forEach(testFileIndex => {
