@@ -1,27 +1,21 @@
 contract Wbtc {
   struct OwnerTuple {
     address p;
-    bool _valid;
   }
   struct PendingOwnerTuple {
     address p;
-    bool _valid;
   }
   struct TotalSupplyTuple {
     uint n;
-    bool _valid;
   }
   struct BalanceOfTuple {
     uint n;
-    bool _valid;
   }
   struct AllowanceTuple {
     uint n;
-    bool _valid;
   }
   struct PausedTuple {
     bool b;
-    bool _valid;
   }
   PendingOwnerTuple pendingOwner;
   TotalSupplyTuple totalSupply;
@@ -132,9 +126,9 @@ contract Wbtc {
       address s = pendingOwner.p;
       if(s==msg.sender) {
         emit ClaimOwnership(s);
-        pendingOwner = PendingOwnerTuple(address(0),true);
+        pendingOwner = PendingOwnerTuple(address(0));
         emit PendingOwner(address(0));
-        owner = OwnerTuple(s,true);
+        owner = OwnerTuple(s);
         return true;
       }
       return false;
@@ -153,7 +147,7 @@ contract Wbtc {
   function updatePausedOnInsertRecv_unpause_r27() private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        paused = PausedTuple(false,true);
+        paused = PausedTuple(false);
         emit Paused(false);
         return true;
       }
@@ -211,12 +205,12 @@ contract Wbtc {
   }
   function updateOwnerOnInsertConstructor_r9() private    {
       address s = msg.sender;
-      owner = OwnerTuple(s,true);
+      owner = OwnerTuple(s);
   }
   function updatePendingOwnerOnInsertRecv_transferOwnership_r0(address p) private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        pendingOwner = PendingOwnerTuple(p,true);
+        pendingOwner = PendingOwnerTuple(p);
         emit PendingOwner(p);
         return true;
       }
@@ -225,7 +219,7 @@ contract Wbtc {
   function updatePausedOnInsertRecv_pause_r13() private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        paused = PausedTuple(true,true);
+        paused = PausedTuple(true);
         emit Paused(true);
         return true;
       }
@@ -272,6 +266,6 @@ contract Wbtc {
       return false;
   }
   function updateTotalSupplyOnInsertConstructor_r14() private    {
-      totalSupply = TotalSupplyTuple(0,true);
+      totalSupply = TotalSupplyTuple(0);
   }
 }

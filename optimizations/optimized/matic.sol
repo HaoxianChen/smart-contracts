@@ -1,27 +1,21 @@
 contract Matic {
   struct OwnerTuple {
     address p;
-    bool _valid;
   }
   struct TotalSupplyTuple {
     uint n;
-    bool _valid;
   }
   struct IsPauserTuple {
     bool b;
-    bool _valid;
   }
   struct BalanceOfTuple {
     uint n;
-    bool _valid;
   }
   struct AllowanceTuple {
     uint n;
-    bool _valid;
   }
   struct PausedTuple {
     bool b;
-    bool _valid;
   }
   TotalSupplyTuple totalSupply;
   mapping(address=>IsPauserTuple) isPauser;
@@ -128,7 +122,7 @@ contract Matic {
   function updateIsPauserOnInsertRecv_addPauser_r7(address p) private   returns (bool) {
       address s = msg.sender;
       if(true==isPauser[s].b) {
-        isPauser[p] = IsPauserTuple(true,true);
+        isPauser[p] = IsPauserTuple(true);
         emit IsPauser(p,true);
         return true;
       }
@@ -140,13 +134,13 @@ contract Matic {
   }
   function updateOwnerOnInsertConstructor_r8() private    {
       address s = msg.sender;
-      owner = OwnerTuple(s,true);
+      owner = OwnerTuple(s);
   }
   function updateAllMintOnInsertConstructor_r15(uint n) private    {
       // Empty()
   }
   function updatePausedOnInsertConstructor_r25() private    {
-      paused = PausedTuple(false,true);
+      paused = PausedTuple(false);
       emit Paused(false);
   }
   function updateTransferOnInsertRecv_transfer_r14(address r,uint n) private   returns (bool) {
@@ -186,7 +180,7 @@ contract Matic {
   function updatePausedOnInsertRecv_pause_r3() private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        paused = PausedTuple(true,true);
+        paused = PausedTuple(true);
         emit Paused(true);
         return true;
       }
@@ -195,7 +189,7 @@ contract Matic {
   function updatePausedOnInsertRecv_unpause_r9() private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        paused = PausedTuple(false,true);
+        paused = PausedTuple(false);
         emit Paused(false);
         return true;
       }
@@ -212,7 +206,7 @@ contract Matic {
   }
   function updateBalanceOfOnInsertConstructor_r20(uint n) private    {
       address s = msg.sender;
-      balanceOf[s] = BalanceOfTuple(n,true);
+      balanceOf[s] = BalanceOfTuple(n);
   }
   function updateIncreaseAllowanceOnInsertRecv_increaseApproval_r13(address s,uint n) private   returns (bool) {
       address o = msg.sender;
@@ -240,16 +234,16 @@ contract Matic {
   }
   function updateIsPauserOnInsertConstructor_r5() private    {
       address s = msg.sender;
-      isPauser[s] = IsPauserTuple(true,true);
+      isPauser[s] = IsPauserTuple(true);
       emit IsPauser(s,true);
   }
   function updateTotalSupplyOnInsertConstructor_r28(uint n) private    {
-      totalSupply = TotalSupplyTuple(n,true);
+      totalSupply = TotalSupplyTuple(n);
   }
   function updateIsPauserOnInsertRecv_renouncePauser_r0() private   returns (bool) {
       address s = msg.sender;
       if(true==isPauser[s].b) {
-        isPauser[s] = IsPauserTuple(false,true);
+        isPauser[s] = IsPauserTuple(false);
         emit IsPauser(s,false);
         return true;
       }
