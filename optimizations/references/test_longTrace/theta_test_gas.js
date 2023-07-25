@@ -82,26 +82,26 @@ helper.range(transactionCounts).forEach(l => {
       }
     }) 
   }
-  if(transactionName == 'burn') {
-    tracefileCount = transactionCount;
-    helper.range(tracefileCount).forEach(testFileIndex => {
-      let fileName = `${transactionName}_${testFileIndex}.txt`;
-      let time = helper.random(timeLowerBound, timeUpperBound+1);
-      let ownerIndex = helper.random(0, deployAccountCount);
-      let mintAccountIndex = helper.random(0, deployAccountCount);
-      let mintAmount = helper.random(lowerBound, upperBound+1);
-      let burnAmount_1 = helper.random(1, (mintAmount+1)/2);
-      let burnAmount_2 = helper.random(1, (mintAmount+1)/2);
-      let text = `burn,constructor,,${time},${ownerIndex},,false\nburn,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_1},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_2},${ownerIndex},,true\n`;
-      if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
-        console.log('generating new tracefiles ...');
-        fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-          if (err) throw err;
-          console.log('File is created successfully.');
-        });
-      }
-    }) 
-  }  
+  // if(transactionName == 'burn') {
+  //   tracefileCount = transactionCount;
+  //   helper.range(tracefileCount).forEach(testFileIndex => {
+  //     let fileName = `${transactionName}_${testFileIndex}.txt`;
+  //     let time = helper.random(timeLowerBound, timeUpperBound+1);
+  //     let ownerIndex = helper.random(0, deployAccountCount);
+  //     let mintAccountIndex = helper.random(0, deployAccountCount);
+  //     let mintAmount = helper.random(lowerBound, upperBound+1);
+  //     let burnAmount_1 = helper.random(1, (mintAmount+1)/2);
+  //     let burnAmount_2 = helper.random(1, (mintAmount+1)/2);
+  //     let text = `burn,constructor,,${time},${ownerIndex},,false\nburn,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_1},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_2},${ownerIndex},,true\n`;
+  //     if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
+  //       console.log('generating new tracefiles ...');
+  //       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+  //         if (err) throw err;
+  //         console.log('File is created successfully.');
+  //       });
+  //     }
+  //   }) 
+  // }  
 
   if(transactionName == 'approve') {
     tracefileCount = transactionCount;
