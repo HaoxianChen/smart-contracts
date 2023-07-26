@@ -122,7 +122,7 @@ helper.range(transactionCounts).forEach(l => {
       let approveAmount_1 = helper.random(1, (mintAmount+1)/2);
       let approveAmount_2 = approveAmount_1+ helper.random(0, (mintAmount+1)/2);
       let text = `approve,constructor,,${time},${ownerIndex},,false\napprove,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount_1},${mintAccountIndex},,true\n`;
-      if(/*!fs.existsSync(path.join(transactionFolderPath, fileName))*/true) {
+      if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
         console.log('generating new tracefiles ...');
         fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
           if (err) throw err;

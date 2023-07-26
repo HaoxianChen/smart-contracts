@@ -82,26 +82,26 @@ helper.range(transactionCounts).forEach(l => {
       }
     }) 
   }
-  if(transactionName == 'burn') {
-    tracefileCount = transactionCount;
-    helper.range(tracefileCount).forEach(testFileIndex => {
-      let fileName = `${transactionName}_${testFileIndex}.txt`;
-      let time = helper.random(timeLowerBound, timeUpperBound+1);
-      let ownerIndex = helper.random(0, deployAccountCount);
-      let mintAccountIndex = helper.random(0, deployAccountCount);
-      let mintAmount = helper.random(lowerBound, upperBound+1);
-      let burnAmount_1 = helper.random(1, (mintAmount+1)/2);
-      let burnAmount_2 = helper.random(1, (mintAmount+1)/2);
-      let text = `burn,constructor,,${time},${ownerIndex},,false\nburn,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_1},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_2},${ownerIndex},,true\n`;
-      if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
-        console.log('generating new tracefiles ...');
-        fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
-          if (err) throw err;
-          console.log('File is created successfully.');
-        });
-      }
-    }) 
-  }  
+  // if(transactionName == 'burn') {
+  //   tracefileCount = transactionCount;
+  //   helper.range(tracefileCount).forEach(testFileIndex => {
+  //     let fileName = `${transactionName}_${testFileIndex}.txt`;
+  //     let time = helper.random(timeLowerBound, timeUpperBound+1);
+  //     let ownerIndex = helper.random(0, deployAccountCount);
+  //     let mintAccountIndex = helper.random(0, deployAccountCount);
+  //     let mintAmount = helper.random(lowerBound, upperBound+1);
+  //     let burnAmount_1 = helper.random(1, (mintAmount+1)/2);
+  //     let burnAmount_2 = helper.random(1, (mintAmount+1)/2);
+  //     let text = `burn,constructor,,${time},${ownerIndex},,false\nburn,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_1},${ownerIndex},,false\nburn,burn,instance,accounts[${mintAccountIndex}] ${burnAmount_2},${ownerIndex},,true\n`;
+  //     if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
+  //       console.log('generating new tracefiles ...');
+  //       fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+  //         if (err) throw err;
+  //         console.log('File is created successfully.');
+  //       });
+  //     }
+  //   }) 
+  // }  
 
   if(transactionName == 'approve') {
     tracefileCount = transactionCount;
@@ -121,7 +121,7 @@ helper.range(transactionCounts).forEach(l => {
       let approveAccountIndex = arrayRandom[helper.random(0, arrayRandomLen)];
       let approveAmount_1 = helper.random(1, (mintAmount+1)/2);
       let approveAmount_2 = approveAmount_1+ helper.random(0, (mintAmount+1)/2);
-      let text = `approve,constructor,,${time},${ownerIndex},,false\napprove,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount_1},${mintAccountIndex},,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount_2},${mintAccountIndex},,true\n`;
+      let text = `approve,constructor,,${time},${ownerIndex},,false\napprove,mint,instance,accounts[${mintAccountIndex}] ${mintAmount},${ownerIndex},,false\napprove,approve,instance,accounts[${approveAccountIndex}] ${approveAmount_1},${mintAccountIndex},,true\n`;
       if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
         console.log('generating new tracefiles ...');
         fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
@@ -190,10 +190,112 @@ helper.range(transactionCounts).forEach(l => {
       }
     }) 
   }
+  if(transactionName == 'allowPrecirculation') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let unlockTime = helper.random(lowerBound, upperBound+1);
+      let controllerIndex = helper.random(0, deployAccountCount);
+      let circAccountIndex_1 = helper.random(0, deployAccountCount);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != circAccountIndex_1) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let circAccountIndex_2 = arrayRandom[helper.random(0, arrayRandomLen)];
+      let text = `allowPrecirculation,constructor,,${unlockTime},${controllerIndex},,false\nallowPrecirculation,allowPrecirculation,instance,accounts[${circAccountIndex_1}],${controllerIndex},,false\nallowPrecirculation,allowPrecirculation,instance,accounts[${circAccountIndex_2}],${controllerIndex},,true\n`;
+      if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
+        console.log('generating new tracefiles ...');
+        fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+          if (err) throw err;
+          console.log('File is created successfully.');
+        });
+      }
+    }) 
+  }   
+
+  if(transactionName == 'disallowPrecirculation') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let unlockTime = helper.random(lowerBound, upperBound+1);
+      let controllerIndex = helper.random(0, deployAccountCount);
+      let circAccountIndex_1 = helper.random(0, deployAccountCount);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != circAccountIndex_1) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let circAccountIndex_2 = arrayRandom[helper.random(0, arrayRandomLen)];
+      let text = `allowPrecirculation,constructor,,${unlockTime},${controllerIndex},,false\nallowPrecirculation,allowPrecirculation,instance,accounts[${circAccountIndex_1}],${controllerIndex},,false\ndisallowPrecirculation,disallowPrecirculation,instance,accounts[${circAccountIndex_1}],${controllerIndex},,false\nallowPrecirculation,allowPrecirculation,instance,accounts[${circAccountIndex_2}],${controllerIndex},,false\ndisallowPrecirculation,disallowPrecirculation,instance,accounts[${circAccountIndex_2}],${controllerIndex},,true\n`;
+      if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
+        console.log('generating new tracefiles ...');
+        fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+          if (err) throw err;
+          console.log('File is created successfully.');
+        });
+      }
+    }) 
+  }     
+  
+
+  if(transactionName == 'changeUnlockTime') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let unlockTime = helper.random(lowerBound, upperBound+1);
+      let controllerIndex = helper.random(0, deployAccountCount);
+      let newUnlockTime_1 = helper.random(1, 5);
+      let newUnlockTime_2 = helper.random(6, 10);
+      let text = `changeUnlockTime,constructor,,${unlockTime},${controllerIndex},,false\nchangeUnlockTime,changeUnlockTime,instance,${newUnlockTime_1},${controllerIndex},,false\nchangeUnlockTime,changeUnlockTime,instance,${newUnlockTime_2},${controllerIndex},,true\n`;
+      if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
+        console.log('generating new tracefiles ...');
+        fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+          if (err) throw err;
+          console.log('File is created successfully.');
+        });
+      }
+    }) 
+  } 
 
 
 
-
+  if(transactionName == 'changeController') {
+    tracefileCount = transactionCount;
+    helper.range(tracefileCount).forEach(testFileIndex => {
+      let fileName = `${transactionName}_${testFileIndex}.txt`;
+      let unlockTime = helper.random(lowerBound, upperBound+1);
+      let controllerIndex = helper.random(0, deployAccountCount);
+      let arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != controllerIndex) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      let arrayRandomLen = arrayRandom.length;
+      let newControllerAccountIndex_1 = arrayRandom[helper.random(0, arrayRandomLen)];
+      arrayRandom = [];
+      for (let appIndex = 0; appIndex < deployAccountCount; appIndex++) {
+        if(appIndex != controllerIndex && appIndex != newControllerAccountIndex_1) {
+          arrayRandom.push(appIndex);
+        }
+      }
+      arrayRandomLen = arrayRandom.length;
+      let newControllerAccountIndex_2 = arrayRandom[helper.random(0, arrayRandomLen)];
+      let text = `changeController,constructor,,${unlockTime},${controllerIndex},,false\nchangeController,changeController,instance,accounts[${newControllerAccountIndex_1}],${controllerIndex},,false\nchangeController,changeController,instance,accounts[${newControllerAccountIndex_2}],${newControllerAccountIndex_1},,true\n`;
+      if(!fs.existsSync(path.join(transactionFolderPath, fileName))) {
+        console.log('generating new tracefiles ...');
+        fs.writeFileSync(path.join(transactionFolderPath, fileName), text, function (err) {
+          if (err) throw err;
+          console.log('File is created successfully.');
+        });
+      }
+    }) 
+  } 
 
 
     
