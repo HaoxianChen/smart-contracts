@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Token is ERC20 {
+contract Erc20 is ERC20 {
     uint256 totalBalance;
     constructor() ERC20("Token", "MCO") {
       // totalBalance = 0;

@@ -93,13 +93,13 @@ contract Matic {
         revert("Rule condition failed");
       }
   }
-  function increaseApproval(address p,uint n) public    {
+  function increaseAllowance(address p,uint n) public    {
       bool r10 = updateIncreaseAllowanceOnInsertRecv_increaseApproval_r10(p,n);
       if(r10==false) {
         revert("Rule condition failed");
       }
   }
-  function decreaseApproval(address p,uint n) public    {
+  function decreaseAllowance(address p,uint n) public    {
       bool r17 = updateDecreaseAllowanceOnInsertRecv_decreaseApproval_r17(p,n);
       if(r17==false) {
         revert("Rule condition failed");

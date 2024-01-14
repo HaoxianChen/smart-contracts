@@ -252,9 +252,9 @@ function runTests(transactionCounts, transactionFolders, testFolder, contractNam
                        gasUsedCompute += +log.gasCost;
                      }
                      // export the opcode data to a file: 
-                     opcodeData += `op: ${log.op} gas: ${log.gas} gasCost: ${log.gasCost}\n`;
-                     opcodeData += `memory: ${log.memory}\n`;
-                     opcodeData += `storage: ${JSON.stringify(log.storage)}\n\n`;
+                     // opcodeData += `op: ${log.op} gas: ${log.gas} gasCost: ${log.gasCost}\n`;
+                     // opcodeData += `memory: ${log.memory}\n`;
+                     // opcodeData += `storage: ${JSON.stringify(log.storage)}\n\n`;
                    })
                  })
                  storage_over_op = round((gasUsedStorage / gasUsedOp) * 100);

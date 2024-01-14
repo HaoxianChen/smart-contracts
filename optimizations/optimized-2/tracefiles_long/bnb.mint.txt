@@ -1,0 +1,600 @@
+transaction: mint(accounts[6], 410, {from: accounts[0]})
+Gas cost (from result.receipt): 54452
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[4], 971, {from: accounts[0]})
+Gas cost (from result.receipt): 54452
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[7], 128, {from: accounts[0]})
+Gas cost (from result.receipt): 54428
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[5], 19, {from: accounts[0]})
+Gas cost (from result.receipt): 54440
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[8], 835, {from: accounts[0]})
+Gas cost (from result.receipt): 54452
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[6], 440, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[9], 378, {from: accounts[0]})
+Gas cost (from result.receipt): 54452
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[0], 337, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[5], 945, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[6], 650, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[3], 872, {from: accounts[0]})
+Gas cost (from result.receipt): 54452
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[0], 57, {from: accounts[0]})
+Gas cost (from result.receipt): 37328
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[7], 633, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[0], 12, {from: accounts[0]})
+Gas cost (from result.receipt): 37328
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[4], 479, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[8], 848, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[3], 325, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[2], 171, {from: accounts[0]})
+Gas cost (from result.receipt): 54440
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[8], 316, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[4], 66, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[2], 485, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[4], 736, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[2], 228, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[1], 276, {from: accounts[0]})
+Gas cost (from result.receipt): 54452
+Gas cost (from opcodes): 32868
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 29200
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 22900
+
+transaction: mint(accounts[4], 798, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[1], 399, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[3], 124, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[2], 848, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[0], 95, {from: accounts[0]})
+Gas cost (from result.receipt): 37328
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[6], 292, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[6], 634, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[9], 845, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[7], 827, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[2], 649, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[0], 151, {from: accounts[0]})
+Gas cost (from result.receipt): 37328
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[5], 120, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[5], 645, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[6], 549, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[2], 599, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[3], 194, {from: accounts[0]})
+Gas cost (from result.receipt): 37340
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[4], 902, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[2], 422, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[4], 708, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[3], 853, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[4], 855, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[8], 769, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[8], 590, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[8], 991, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[3], 779, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+
+transaction: mint(accounts[3], 845, {from: accounts[0]})
+Gas cost (from result.receipt): 37352
+Gas cost (from opcodes): 15768
+Gas cost (memory operations): 45
+Gas cost (memory_others operations): 1262
+Gas cost (storage operations): 12100
+Gas cost (computation operations): 2361
+Transaction storage overhead (read): 3 slot(s)
+Read Gas Cost: 6300
+Transaction storage overhead (write): 2 slot(s)
+Write Gas Cost: 5800
+

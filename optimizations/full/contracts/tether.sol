@@ -11,16 +11,8 @@ contract Tether {
     address p;
     bool _valid;
   }
-  struct AllIssueTuple {
-    uint n;
-    bool _valid;
-  }
   struct TotalSupplyTuple {
     uint n;
-    bool _valid;
-  }
-  struct IsBlackListedTuple {
-    bool b;
     bool _valid;
   }
   struct AllowanceTotalTuple {
@@ -35,16 +27,52 @@ contract Tether {
     uint n;
     bool _valid;
   }
+  struct TransferWithoutFeeTuple {
+    address from;
+    address to;
+    uint amount;
+    bool _valid;
+  }
   struct BalanceOfTuple {
     uint n;
+    bool _valid;
+  }
+  struct TransferFromWithoutFeeTuple {
+    address from;
+    address to;
+    address spender;
+    uint amount;
     bool _valid;
   }
   struct TotalInTuple {
     uint n;
     bool _valid;
   }
+  struct TransferFromWithFeeTuple {
+    address from;
+    address to;
+    address spender;
+    uint fee;
+    uint amount;
+    bool _valid;
+  }
+  struct AllIssueTuple {
+    uint n;
+    bool _valid;
+  }
+  struct TransferWithFeeTuple {
+    address from;
+    address to;
+    uint fee;
+    uint amount;
+    bool _valid;
+  }
   struct RateTuple {
     uint r;
+    bool _valid;
+  }
+  struct IsBlackListedTuple {
+    bool b;
     bool _valid;
   }
   struct TotalRedeemTuple {
@@ -59,54 +87,72 @@ contract Tether {
     uint n;
     bool _valid;
   }
-  mapping(address=>TotalInTuple) totalIn;
+  struct PausedTuple {
+    bool b;
+    bool _valid;
+  }
   mapping(address=>TotalOutTuple) totalOut;
   mapping(address=>TotalIssueTuple) totalIssue;
   OwnerTuple owner;
   AllIssueTuple allIssue;
-  RateTuple rate;
   TotalSupplyTuple totalSupply;
   mapping(address=>IsBlackListedTuple) isBlackListed;
   mapping(address=>mapping(address=>AllowanceTotalTuple)) allowanceTotal;
   MaxFeeTuple maxFee;
   AllRedeemTuple allRedeem;
+  TransferWithoutFeeTuple transferWithoutFee;
   mapping(address=>BalanceOfTuple) balanceOf;
-  mapping(address=>mapping(address=>AllowanceTuple)) allowance;
+  TransferFromWithoutFeeTuple transferFromWithoutFee;
+  mapping(address=>TotalInTuple) totalIn;
+  TransferFromWithFeeTuple transferFromWithFee;
+  TransferWithFeeTuple transferWithFee;
+  RateTuple rate;
   mapping(address=>TotalRedeemTuple) totalRedeem;
   mapping(address=>mapping(address=>SpentTotalTuple)) spentTotal;
+  mapping(address=>mapping(address=>AllowanceTuple)) allowance;
+  PausedTuple paused;
+  event RemoveBlackList(address p);
   event Issue(address p,uint amount);
-  event AddBlackList(address p);
-  event TransferFromWithFee(address from,address to,address spender,uint fee,uint amount);
+  event SetParams(uint b,uint f);
   event Redeem(address p,uint amount);
+  event Transfer(address from,address to,uint fee,uint amount);
+  event DestroyBlackFunds(address p,uint n);
+  event TransferOwnership(address o);
+  event Unpause(bool b);
+  event AddBlackList(address p);
+  event TransferFrom(address from,address to,address spender,uint fee,uint amount);
   event IncreaseAllowance(address p,address s,uint n);
-  event TransferWithFee(address from,address to,uint fee,uint amount);
-  event DestroyBlackFund(address p,uint n);
+  event Pause(bool b);
   constructor(uint n) public {
-    updateOwnerOnInsertConstructor_r24();
-    updateBalanceOfOnInsertConstructor_r8(n);
-    updateTotalSupplyOnInsertConstructor_r22(n);
-    updateTotalBalancesOnInsertConstructor_r29(n);
+    updateBalanceOfOnInsertConstructor_r24(n);
+    updateOwnerOnInsertConstructor_r38();
+    updateTotalBalancesOnInsertConstructor_r45(n);
+    updateRateOnInsertConstructor_r26();
+    updatePausedOnInsertConstructor_r5();
+    updateMaxFeeOnInsertConstructor_r43();
+    updateTotalSupplyOnInsertConstructor_r6(n);
   }
-  function transfer(address to,uint amount) public    {
-      bool r7 = updateTransferWithFeeOnInsertRecv_transfer_r7(to,amount);
-      if(r7==false) {
+  function transferOwnership(address o) public    {
+      bool r32 = updateTransferOwnershipOnInsertRecv_transferOwnership_r32(o);
+      if(r32==false) {
         revert("Rule condition failed");
       }
   }
-  function approve(address s,uint n) public    {
-      bool r26 = updateIncreaseAllowanceOnInsertRecv_approve_r26(s,n);
-      if(r26==false) {
+  function pause() public    {
+      bool r40 = updatePauseOnInsertRecv_pause_r40();
+      if(r40==false) {
         revert("Rule condition failed");
       }
   }
-  function getAllowance(address p,address s) public view  returns (uint) {
-      AllowanceTuple memory allowanceTuple = allowance[p][s];
-      uint n = allowanceTuple.n;
-      return n;
+  function removeBlackList(address p) public    {
+      bool r36 = updateRemoveBlackListOnInsertRecv_removeBlackList_r36(p);
+      if(r36==false) {
+        revert("Rule condition failed");
+      }
   }
-  function issue(address p,uint amount) public    {
-      bool r11 = updateIssueOnInsertRecv_issue_r11(p,amount);
-      if(r11==false) {
+  function setParams(uint b,uint f) public    {
+      bool r17 = updateSetParamsOnInsertRecv_setParams_r17(b,f);
+      if(r17==false) {
         revert("Rule condition failed");
       }
   }
@@ -114,210 +160,301 @@ contract Tether {
       uint n = totalSupply.n;
       return n;
   }
-  function redeem(address p,uint amount) public    {
-      bool r25 = updateRedeemOnInsertRecv_redeem_r25(p,amount);
-      if(r25==false) {
-        revert("Rule condition failed");
-      }
-  }
-  function getBalanceOf(address p) public view  returns (uint) {
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      uint n = balanceOfTuple.n;
-      return n;
-  }
   function transferFrom(address from,address to,uint amount) public    {
-      bool r0 = updateTransferFromWithFeeOnInsertRecv_transferFrom_r0(from,to,amount);
+      bool r0 = updateTransferFromOnInsertRecv_transferFrom_r0(from,to,amount);
       if(r0==false) {
         revert("Rule condition failed");
       }
   }
-  function updateAllowanceOnDeleteSpentTotal_r12(address o,address s,uint l) private    {
-      AllowanceTotalTuple memory allowanceTotalTuple = allowanceTotal[o][s];
-      uint m = allowanceTotalTuple.m;
-      uint n = m-l;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      if(n==allowanceTuple.n) {
-        allowance[o][s] = AllowanceTuple(0,false);
+  function destroyBlackFunds(address p) public    {
+      bool r13 = updateDestroyBlackFundsOnInsertRecv_destroyBlackFunds_r13(p);
+      if(r13==false) {
+        revert("Rule condition failed");
       }
   }
-  function updateIncreaseAllowanceOnInsertRecv_approve_r26(address s,uint n) private   returns (bool) {
-      address o = msg.sender;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      uint m = allowanceTuple.n;
-      uint d = n-m;
-      updateAllowanceTotalOnInsertIncreaseAllowance_r30(o,s,d);
-      emit IncreaseAllowance(o,s,d);
-      return true;
-      return false;
+  function getAllowance(address p,address s) public view  returns (uint) {
+      uint n = allowance[p][s].n;
+      return n;
   }
-  function updateTransferOnInsertTransferFrom_r1(address o,address r,uint n) private    {
-      updateTotalInOnInsertTransfer_r28(r,n);
-      updateTotalOutOnInsertTransfer_r19(o,n);
-  }
-  function updateTotalBalancesOnInsertConstructor_r29(uint n) private    {
-      // Empty()
-  }
-  function updateTransferOnInsertTransferWithFee_r17(address s,address r,uint f,uint n) private    {
-      uint m = n-f;
-      updateTotalInOnInsertTransfer_r28(r,m);
-      updateTotalOutOnInsertTransfer_r19(s,m);
-  }
-  function updateTotalInOnInsertTransfer_r28(address p,uint n) private    {
-      int delta2 = int(n);
-      updateBalanceOfOnIncrementTotalIn_r6(p,delta2);
-      totalIn[p].n += n;
-  }
-  function updateBalanceOfOnDeleteTotalIn_r6(address p,uint i) private    {
-      TotalOutTuple memory totalOutTuple = totalOut[p];
-      uint o = totalOutTuple.n;
-      TotalRedeemTuple memory totalRedeemTuple = totalRedeem[p];
-      uint m = totalRedeemTuple.n;
-      TotalIssueTuple memory totalIssueTuple = totalIssue[p];
-      uint n = totalIssueTuple.n;
-      uint s = ((n+i)-m)-o;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      if(s==balanceOfTuple.n) {
-        balanceOf[p] = BalanceOfTuple(0,false);
+  function addBlackList(address p) public    {
+      bool r18 = updateAddBlackListOnInsertRecv_addBlackList_r18(p);
+      if(r18==false) {
+        revert("Rule condition failed");
       }
   }
-  function updateTotalSupplyOnInsertAllIssue_r2(uint m) private    {
-      uint b = allRedeem.n;
-      uint n = m-b;
-      totalSupply = TotalSupplyTuple(n,true);
-  }
-  function updateBalanceOfOnDeleteTotalOut_r6(address p,uint o) private    {
-      TotalInTuple memory totalInTuple = totalIn[p];
-      uint i = totalInTuple.n;
-      TotalRedeemTuple memory totalRedeemTuple = totalRedeem[p];
-      uint m = totalRedeemTuple.n;
-      TotalIssueTuple memory totalIssueTuple = totalIssue[p];
-      uint n = totalIssueTuple.n;
-      uint s = ((n+i)-m)-o;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      if(s==balanceOfTuple.n) {
-        balanceOf[p] = BalanceOfTuple(0,false);
+  function transfer(address to,uint amount) public    {
+      bool r1 = updateTransferOnInsertRecv_transfer_r1(to,amount);
+      if(r1==false) {
+        revert("Rule condition failed");
       }
   }
-  function updateBalanceOfOnIncrementTotalIssue_r6(address p,int n) private    {
-      int _delta = int(n);
-      uint newValue = updateuintByint(totalIssue[p].n,_delta);
-      updateBalanceOfOnInsertTotalIssue_r6(p,newValue);
-  }
-  function updateTransferFromOnInsertTransferFromWithFee_r18(address o,address r,address s,uint f,uint n) private    {
-      uint m = n-f;
-      updateSpentTotalOnInsertTransferFrom_r21(o,s,m);
-      updateTransferOnInsertTransferFrom_r1(o,r,m);
-  }
-  function updateBalanceOfOnInsertTotalRedeem_r6(address p,uint m) private    {
-      TotalRedeemTuple memory toDelete = totalRedeem[p];
-      if(toDelete._valid==true) {
-        updateBalanceOfOnDeleteTotalRedeem_r6(p,toDelete.n);
-      }
-      TotalInTuple memory totalInTuple = totalIn[p];
-      uint i = totalInTuple.n;
-      TotalOutTuple memory totalOutTuple = totalOut[p];
-      uint o = totalOutTuple.n;
-      TotalIssueTuple memory totalIssueTuple = totalIssue[p];
-      uint n = totalIssueTuple.n;
-      uint s = ((n+i)-m)-o;
-      balanceOf[p] = BalanceOfTuple(s,true);
-  }
-  function updateBalanceOfOnDeleteTotalIssue_r6(address p,uint n) private    {
-      TotalInTuple memory totalInTuple = totalIn[p];
-      uint i = totalInTuple.n;
-      TotalOutTuple memory totalOutTuple = totalOut[p];
-      uint o = totalOutTuple.n;
-      TotalRedeemTuple memory totalRedeemTuple = totalRedeem[p];
-      uint m = totalRedeemTuple.n;
-      uint s = ((n+i)-m)-o;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      if(s==balanceOfTuple.n) {
-        balanceOf[p] = BalanceOfTuple(0,false);
+  function approve(address s,uint n) public    {
+      bool r42 = updateIncreaseAllowanceOnInsertRecv_approve_r42(s,n);
+      if(r42==false) {
+        revert("Rule condition failed");
       }
   }
-  function updateBalanceOfOnIncrementTotalIn_r6(address p,int i) private    {
-      int _delta = int(i);
-      uint newValue = updateuintByint(totalIn[p].n,_delta);
-      updateBalanceOfOnInsertTotalIn_r6(p,newValue);
+  function getBalanceOf(address p) public view  returns (uint) {
+      uint n = balanceOf[p].n;
+      return n;
   }
-  function updateAllowanceOnInsertSpentTotal_r12(address o,address s,uint l) private    {
-      SpentTotalTuple memory toDelete = spentTotal[o][s];
-      if(toDelete._valid==true) {
-        updateAllowanceOnDeleteSpentTotal_r12(o,s,toDelete.m);
-      }
-      AllowanceTotalTuple memory allowanceTotalTuple = allowanceTotal[o][s];
-      uint m = allowanceTotalTuple.m;
-      uint n = m-l;
-      allowance[o][s] = AllowanceTuple(n,true);
-  }
-  function updateTransferFromOnInsertTransferFromWithFee_r10(address o,address r,address s,uint f) private    {
-      address p = owner.p;
-      updateSpentTotalOnInsertTransferFrom_r21(o,s,f);
-      updateTransferOnInsertTransferFrom_r1(o,p,f);
-  }
-  function updateAllowanceOnIncrementAllowanceTotal_r12(address o,address s,int m) private    {
-      int _delta = int(m);
-      uint newValue = updateuintByint(allowanceTotal[o][s].m,_delta);
-      updateAllowanceOnInsertAllowanceTotal_r12(o,s,newValue);
-  }
-  function updateTransferOnInsertTransferWithFee_r3(address s,address r,uint f) private    {
-      address o = owner.p;
-      updateTotalInOnInsertTransfer_r28(o,f);
-      updateTotalOutOnInsertTransfer_r19(s,f);
-  }
-  function updateBalanceOfOnInsertTotalIssue_r6(address p,uint n) private    {
-      TotalIssueTuple memory toDelete = totalIssue[p];
-      if(toDelete._valid==true) {
-        updateBalanceOfOnDeleteTotalIssue_r6(p,toDelete.n);
-      }
-      TotalInTuple memory totalInTuple = totalIn[p];
-      uint i = totalInTuple.n;
-      TotalOutTuple memory totalOutTuple = totalOut[p];
-      uint o = totalOutTuple.n;
-      TotalRedeemTuple memory totalRedeemTuple = totalRedeem[p];
-      uint m = totalRedeemTuple.n;
-      uint s = ((n+i)-m)-o;
-      balanceOf[p] = BalanceOfTuple(s,true);
-  }
-  function updateTotalRedeemOnInsertRedeem_r15(address p,uint n) private    {
-      int delta1 = int(n);
-      updateBalanceOfOnIncrementTotalRedeem_r6(p,delta1);
-      totalRedeem[p].n += n;
-  }
-  function updateAllowanceTotalOnInsertIncreaseAllowance_r30(address o,address s,uint n) private    {
-      int delta0 = int(n);
-      updateAllowanceOnIncrementAllowanceTotal_r12(o,s,delta0);
-      allowanceTotal[o][s].m += n;
-  }
-  function updateBalanceOfOnDeleteTotalRedeem_r6(address p,uint m) private    {
-      TotalInTuple memory totalInTuple = totalIn[p];
-      uint i = totalInTuple.n;
-      TotalOutTuple memory totalOutTuple = totalOut[p];
-      uint o = totalOutTuple.n;
-      TotalIssueTuple memory totalIssueTuple = totalIssue[p];
-      uint n = totalIssueTuple.n;
-      uint s = ((n+i)-m)-o;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-      if(s==balanceOfTuple.n) {
-        balanceOf[p] = BalanceOfTuple(0,false);
+  function redeem(uint amount) public    {
+      bool r31 = updateRedeemOnInsertRecv_redeem_r31(amount);
+      if(r31==false) {
+        revert("Rule condition failed");
       }
   }
-  function updateIssueOnInsertRecv_issue_r11(address p,uint n) private   returns (bool) {
+  function unpause() public    {
+      bool r4 = updateUnpauseOnInsertRecv_unpause_r4();
+      if(r4==false) {
+        revert("Rule condition failed");
+      }
+  }
+  function issue(uint amount) public    {
+      bool r33 = updateIssueOnInsertRecv_issue_r33(amount);
+      if(r33==false) {
+        revert("Rule condition failed");
+      }
+  }
+  function updateTransferFromWithFeeOnInsertTransferFrom_r16(address o,address r,address s,uint f,uint n) private    {
+      updateTransferFromWithoutFeeOnInsertTransferFromWithFee_r35(o,r,s,f);
+      updateTransferFromWithoutFeeOnInsertTransferFromWithFee_r2(o,r,s,f,n);
+      transferFromWithFee = TransferFromWithFeeTuple(o,r,s,f,n,true);
+  }
+  function updatePausedOnInsertPause_r22(bool p) private    {
+      paused = PausedTuple(p,true);
+  }
+  function updateAddBlackListOnInsertRecv_addBlackList_r18(address p) private   returns (bool) {
       address s = owner.p;
       if(s==msg.sender) {
-        if(p!=address(0)) {
-          updateTotalIssueOnInsertIssue_r23(p,n);
-          updateAllIssueOnInsertIssue_r27(n);
-          emit Issue(p,n);
+        updateIsBlackListedOnInsertAddBlackList_r30(p);
+        emit AddBlackList(p);
+        return true;
+      }
+      return false;
+  }
+  function updateIsBlackListedOnInsertAddBlackList_r30(address p) private    {
+      isBlackListed[p] = IsBlackListedTuple(true,true);
+  }
+  function updateRedeemOnInsertDestroyBlackFunds_r10(address p,uint n) private    {
+      updateTotalRedeemOnInsertRedeem_r28(p,n);
+      updateAllRedeemOnInsertRedeem_r9(n);
+      emit Redeem(p,n);
+  }
+  function updateRemoveBlackListOnInsertRecv_removeBlackList_r36(address p) private   returns (bool) {
+      address s = owner.p;
+      if(s==msg.sender) {
+        updateIsBlackListedOnInsertRemoveBlackList_r39(p);
+        emit RemoveBlackList(p);
+        return true;
+      }
+      return false;
+  }
+  function updateTotalSupplyOnIncrementAllRedeem_r11(int b) private    {
+      int _delta = int(-b);
+      uint newValue = updateuintByint(totalSupply.n,_delta);
+      totalSupply.n = newValue;
+  }
+  function updateTransferWithoutFeeOnInsertTransferWithFee_r7(address s,address r,uint f) private    {
+      address o = owner.p;
+      updateTotalInOnInsertTransferWithoutFee_r12(o,f);
+      updateTotalOutOnInsertTransferWithoutFee_r14(s,f);
+      transferWithoutFee = TransferWithoutFeeTuple(s,o,f,true);
+  }
+  function updateRedeemOnInsertRecv_redeem_r31(uint n) private   returns (bool) {
+      address s = owner.p;
+      if(s==msg.sender) {
+        uint m = balanceOf[s].n;
+        if(s!=address(0) && n<=m) {
+          updateTotalRedeemOnInsertRedeem_r28(s,n);
+          updateAllRedeemOnInsertRedeem_r9(n);
+          emit Redeem(s,n);
           return true;
         }
       }
       return false;
   }
-  function updateSpentTotalOnInsertTransferFrom_r21(address o,address s,uint n) private    {
+  function updateAllIssueOnInsertIssue_r44(uint n) private    {
       int delta0 = int(n);
-      updateAllowanceOnIncrementSpentTotal_r12(o,s,delta0);
-      spentTotal[o][s].m += n;
+      updateTotalSupplyOnIncrementAllIssue_r11(delta0);
+      allIssue.n += n;
+  }
+  function updateTransferWithFeeOnInsertTransfer_r29(address s,address r,uint f,uint n) private    {
+      updateTransferWithoutFeeOnInsertTransferWithFee_r41(s,r,f,n);
+      updateTransferWithoutFeeOnInsertTransferWithFee_r7(s,r,f);
+      transferWithFee = TransferWithFeeTuple(s,r,f,n,true);
+  }
+  function updateIsBlackListedOnInsertRemoveBlackList_r39(address p) private    {
+      isBlackListed[p] = IsBlackListedTuple(false,true);
+  }
+  function updateTransferOnInsertRecv_transfer_r1(address r,uint n) private   returns (bool) {
+      uint rt = rate.r;
+      uint mf = maxFee.m;
+      address s = msg.sender;
+      uint m = balanceOf[s].n;
+      if(false==isBlackListed[s].b) {
+        if(n<=m) {
+          uint f = (rt*n)/10000 < mf ? (rt*n)/10000 : mf;
+          updateTransferWithFeeOnInsertTransfer_r29(s,r,f,n);
+          emit Transfer(s,r,f,n);
+          return true;
+        }
+      }
+      return false;
+  }
+  function updateBalanceOfOnIncrementTotalIn_r20(address p,int i) private    {
+      int _delta = int(i);
+      uint newValue = updateuintByint(balanceOf[p].n,_delta);
+      balanceOf[p].n = newValue;
+  }
+  function updateOwnerOnInsertConstructor_r38() private    {
+      address s = msg.sender;
+      updateTransferFromWithoutFeeOnInsertOwner_r35(s);
+      updateTransferWithoutFeeOnInsertOwner_r7(s);
+      owner = OwnerTuple(s,true);
+  }
+  function updateIncreaseAllowanceOnInsertRecv_approve_r42(address s,uint n) private   returns (bool) {
+      address o = msg.sender;
+      uint m = allowance[o][s].n;
+      uint d = n-m;
+      updateAllowanceTotalOnInsertIncreaseAllowance_r46(o,s,d);
+      emit IncreaseAllowance(o,s,d);
+      return true;
+      return false;
+  }
+  function updateBalanceOfOnIncrementTotalOut_r20(address p,int o) private    {
+      int _delta = int(-o);
+      uint newValue = updateuintByint(balanceOf[p].n,_delta);
+      balanceOf[p].n = newValue;
+  }
+  function updateTransferOwnershipOnInsertRecv_transferOwnership_r32(address o) private   returns (bool) {
+      address s = owner.p;
+      if(s==msg.sender) {
+        if(o!=address(0)) {
+          updateOwnerOnInsertTransferOwnership_r3(o);
+          emit TransferOwnership(o);
+          return true;
+        }
+      }
+      return false;
+  }
+  function updateTransferFromWithoutFeeOnInsertTransferFromWithFee_r35(address o,address r,address s,uint f) private    {
+      address p = owner.p;
+      updateTransferWithoutFeeOnInsertTransferFromWithoutFee_r19(o,p,f);
+      updateSpentTotalOnInsertTransferFromWithoutFee_r23(o,s,f);
+      transferFromWithoutFee = TransferFromWithoutFeeTuple(o,p,s,f,true);
+  }
+  function updateTotalOutOnInsertTransferWithoutFee_r14(address p,uint n) private    {
+      int delta0 = int(n);
+      updateBalanceOfOnIncrementTotalOut_r20(p,delta0);
+      totalOut[p].n += n;
+  }
+  function updatePausedOnInsertUnpause_r25(bool p) private    {
+      paused = PausedTuple(p,true);
+  }
+  function updateBalanceOfOnInsertConstructor_r24(uint n) private    {
+      address s = msg.sender;
+      balanceOf[s] = BalanceOfTuple(n,true);
+  }
+  function updateTransferWithoutFeeOnInsertTransferWithFee_r41(address s,address r,uint f,uint n) private    {
+      uint m = n-f;
+      updateTotalInOnInsertTransferWithoutFee_r12(r,m);
+      updateTotalOutOnInsertTransferWithoutFee_r14(s,m);
+      transferWithoutFee = TransferWithoutFeeTuple(s,r,m,true);
+  }
+  function updateTotalSupplyOnInsertConstructor_r6(uint n) private    {
+      totalSupply = TotalSupplyTuple(n,true);
+  }
+  function updateBalanceOfOnIncrementTotalRedeem_r20(address p,int m) private    {
+      int _delta = int(-m);
+      uint newValue = updateuintByint(balanceOf[p].n,_delta);
+      balanceOf[p].n = newValue;
+  }
+  function updateDestroyBlackFundsOnInsertRecv_destroyBlackFunds_r13(address p) private   returns (bool) {
+      address s = msg.sender;
+      if(s==owner.p) {
+        uint n = balanceOf[p].n;
+        if(true==isBlackListed[p].b) {
+          if(p!=address(0) && n>0) {
+            updateRedeemOnInsertDestroyBlackFunds_r10(p,n);
+            emit DestroyBlackFunds(p,n);
+            return true;
+          }
+        }
+      }
+      return false;
+  }
+  function updateTotalSupplyOnIncrementAllIssue_r11(int m) private    {
+      int _delta = int(m);
+      uint newValue = updateuintByint(totalSupply.n,_delta);
+      totalSupply.n = newValue;
+  }
+  function updateTotalBalancesOnInsertConstructor_r45(uint n) private    {
+      // Empty()
+  }
+  function updateRateOnInsertSetParams_r21(uint b) private    {
+      rate = RateTuple(b,true);
+  }
+  function updatePauseOnInsertRecv_pause_r40() private   returns (bool) {
+      if(false==paused.b) {
+        address s = owner.p;
+        if(s==msg.sender) {
+          updatePausedOnInsertPause_r22(bool(true));
+          emit Pause(true);
+          return true;
+        }
+      }
+      return false;
+  }
+  function updateTransferFromWithoutFeeOnInsertTransferFromWithFee_r2(address o,address r,address s,uint f,uint n) private    {
+      uint m = n-f;
+      updateTransferWithoutFeeOnInsertTransferFromWithoutFee_r19(o,r,m);
+      updateSpentTotalOnInsertTransferFromWithoutFee_r23(o,s,m);
+      transferFromWithoutFee = TransferFromWithoutFeeTuple(o,r,s,m,true);
+  }
+  function updateTotalIssueOnInsertIssue_r37(address p,uint n) private    {
+      int delta0 = int(n);
+      updateBalanceOfOnIncrementTotalIssue_r20(p,delta0);
+      totalIssue[p].n += n;
+  }
+  function updateTotalInOnInsertTransferWithoutFee_r12(address p,uint n) private    {
+      int delta0 = int(n);
+      updateBalanceOfOnIncrementTotalIn_r20(p,delta0);
+      totalIn[p].n += n;
+  }
+  function updateSetParamsOnInsertRecv_setParams_r17(uint b,uint f) private   returns (bool) {
+      address s = owner.p;
+      if(s==msg.sender) {
+        if(b<20 && f<50) {
+          updateMaxFeeOnInsertSetParams_r15(f);
+          updateRateOnInsertSetParams_r21(b);
+          emit SetParams(b,f);
+          return true;
+        }
+      }
+      return false;
+  }
+  function updateTransferFromWithoutFeeOnInsertOwner_r35(address p) private    {
+      address o = transferFromWithFee.from;
+      address r = transferFromWithFee.to;
+      address s = transferFromWithFee.spender;
+      uint f = transferFromWithFee.fee;
+      updateTransferWithoutFeeOnInsertTransferFromWithoutFee_r19(o,p,f);
+      updateSpentTotalOnInsertTransferFromWithoutFee_r23(o,s,f);
+      transferFromWithoutFee = TransferFromWithoutFeeTuple(o,p,s,f,true);
+  }
+  function updateTransferWithoutFeeOnInsertOwner_r7(address o) private    {
+      address s = transferWithFee.from;
+      address r = transferWithFee.to;
+      uint f = transferWithFee.fee;
+      updateTotalInOnInsertTransferWithoutFee_r12(o,f);
+      updateTotalOutOnInsertTransferWithoutFee_r14(s,f);
+      transferWithoutFee = TransferWithoutFeeTuple(s,o,f,true);
+  }
+  function updateTransferWithoutFeeOnInsertTransferFromWithoutFee_r19(address o,address r,uint n) private    {
+      updateTotalOutOnInsertTransferWithoutFee_r14(o,n);
+      updateTotalInOnInsertTransferWithoutFee_r12(r,n);
+      transferWithoutFee = TransferWithoutFeeTuple(o,r,n,true);
   }
   function updateuintByint(uint x,int delta) private   returns (uint) {
       int convertedX = int(x);
@@ -325,164 +462,95 @@ contract Tether {
       uint convertedValue = uint(value);
       return convertedValue;
   }
-  function updateTransferWithFeeOnInsertRecv_transfer_r7(address r,uint n) private   returns (bool) {
-      uint rt = rate.r;
-      uint mf = maxFee.m;
-      address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[s];
-      uint m = balanceOfTuple.n;
-      IsBlackListedTuple memory isBlackListedTuple = isBlackListed[s];
-      if(false==isBlackListedTuple.b) {
-        if(n<=m) {
-          uint f = (rt*n)/10000 < mf ? (rt*n)/10000 : mf;
-          updateTransferOnInsertTransferWithFee_r3(s,r,f);
-          updateTransferOnInsertTransferWithFee_r17(s,r,f,n);
-          emit TransferWithFee(s,r,f,n);
+  function updateBalanceOfOnIncrementTotalIssue_r20(address p,int n) private    {
+      int _delta = int(n);
+      uint newValue = updateuintByint(balanceOf[p].n,_delta);
+      balanceOf[p].n = newValue;
+  }
+  function updateMaxFeeOnInsertConstructor_r43() private    {
+      maxFee = MaxFeeTuple(0,true);
+  }
+  function updateUnpauseOnInsertRecv_unpause_r4() private   returns (bool) {
+      if(true==paused.b) {
+        address s = owner.p;
+        if(s==msg.sender) {
+          updatePausedOnInsertUnpause_r25(bool(false));
+          emit Unpause(false);
           return true;
         }
       }
       return false;
   }
-  function updateAllowanceOnDeleteAllowanceTotal_r12(address o,address s,uint m) private    {
-      SpentTotalTuple memory spentTotalTuple = spentTotal[o][s];
-      uint l = spentTotalTuple.m;
-      uint n = m-l;
-      AllowanceTuple memory allowanceTuple = allowance[o][s];
-      if(n==allowanceTuple.n) {
-        allowance[o][s] = AllowanceTuple(0,false);
-      }
-  }
-  function updateBalanceOfOnIncrementTotalRedeem_r6(address p,int m) private    {
-      int _delta = int(m);
-      uint newValue = updateuintByint(totalRedeem[p].n,_delta);
-      updateBalanceOfOnInsertTotalRedeem_r6(p,newValue);
-  }
-  function updateTransferFromWithFeeOnInsertRecv_transferFrom_r0(address o,address r,uint n) private   returns (bool) {
-      uint rt = rate.r;
-      uint mf = maxFee.m;
-      address s = msg.sender;
-      BalanceOfTuple memory balanceOfTuple = balanceOf[o];
-      uint m = balanceOfTuple.n;
-      IsBlackListedTuple memory isBlackListedTuple = isBlackListed[o];
-      if(false==isBlackListedTuple.b) {
-        AllowanceTuple memory allowanceTuple = allowance[o][s];
-        uint k = allowanceTuple.n;
-        if(m>=n && k>=n) {
-          uint f = (rt*n)/10000 < mf ? (rt*n)/10000 : mf;
-          updateTransferFromOnInsertTransferFromWithFee_r10(o,r,s,f);
-          updateTransferFromOnInsertTransferFromWithFee_r18(o,r,s,f,n);
-          emit TransferFromWithFee(o,r,s,f,n);
-          return true;
-        }
-      }
-      return false;
-  }
-  function updateBalanceOfOnIncrementTotalOut_r6(address p,int o) private    {
-      int _delta = int(o);
-      uint newValue = updateuintByint(totalOut[p].n,_delta);
-      updateBalanceOfOnInsertTotalOut_r6(p,newValue);
-  }
-  function updateRedeemOnInsertRecv_redeem_r25(address p,uint n) private   returns (bool) {
-      address s = owner.p;
-      if(s==msg.sender) {
-        BalanceOfTuple memory balanceOfTuple = balanceOf[p];
-        uint m = balanceOfTuple.n;
-        if(p!=address(0) && n<=m) {
-          updateTotalRedeemOnInsertRedeem_r15(p,n);
-          updateAllRedeemOnInsertRedeem_r13(n);
-          emit Redeem(p,n);
-          return true;
-        }
-      }
-      return false;
-  }
-  function updateAllRedeemOnInsertRedeem_r13(uint n) private    {
-      int delta0 = int(n);
-      updateTotalSupplyOnIncrementAllRedeem_r2(delta0);
-      allRedeem.n += n;
-  }
-  function updateAllowanceOnInsertAllowanceTotal_r12(address o,address s,uint m) private    {
-      AllowanceTotalTuple memory toDelete = allowanceTotal[o][s];
-      if(toDelete._valid==true) {
-        updateAllowanceOnDeleteAllowanceTotal_r12(o,s,toDelete.m);
-      }
-      SpentTotalTuple memory spentTotalTuple = spentTotal[o][s];
-      uint l = spentTotalTuple.m;
-      uint n = m-l;
-      allowance[o][s] = AllowanceTuple(n,true);
-  }
-  function updateTotalOutOnInsertTransfer_r19(address p,uint n) private    {
-      int delta0 = int(n);
-      updateBalanceOfOnIncrementTotalOut_r6(p,delta0);
-      totalOut[p].n += n;
-  }
-  function updateOwnerOnInsertConstructor_r24() private    {
-      address s = msg.sender;
+  function updateOwnerOnInsertTransferOwnership_r3(address s) private    {
+      updateTransferFromWithoutFeeOnInsertOwner_r35(s);
+      updateTransferWithoutFeeOnInsertOwner_r7(s);
       owner = OwnerTuple(s,true);
   }
-  function updateTotalSupplyOnIncrementAllIssue_r2(int m) private    {
-      int _delta = int(m);
-      uint newValue = updateuintByint(allIssue.n,_delta);
-      updateTotalSupplyOnInsertAllIssue_r2(newValue);
-  }
-  function updateAllowanceOnIncrementSpentTotal_r12(address o,address s,int l) private    {
-      int _delta = int(l);
-      uint newValue = updateuintByint(spentTotal[o][s].m,_delta);
-      updateAllowanceOnInsertSpentTotal_r12(o,s,newValue);
-  }
-  function updateBalanceOfOnInsertConstructor_r8(uint n) private    {
-      address s = msg.sender;
-      balanceOf[s] = BalanceOfTuple(n,true);
-  }
-  function updateTotalSupplyOnIncrementAllRedeem_r2(int b) private    {
-      int _delta = int(b);
-      uint newValue = updateuintByint(allRedeem.n,_delta);
-      updateTotalSupplyOnInsertAllRedeem_r2(newValue);
-  }
-  function updateAllIssueOnInsertIssue_r27(uint n) private    {
+  function updateSpentTotalOnInsertTransferFromWithoutFee_r23(address o,address s,uint n) private    {
       int delta0 = int(n);
-      updateTotalSupplyOnIncrementAllIssue_r2(delta0);
-      allIssue.n += n;
+      updateAllowanceOnIncrementSpentTotal_r8(o,s,delta0);
+      spentTotal[o][s].m += n;
   }
-  function updateTotalIssueOnInsertIssue_r23(address p,uint n) private    {
-      int delta2 = int(n);
-      updateBalanceOfOnIncrementTotalIssue_r6(p,delta2);
-      totalIssue[p].n += n;
+  function updatePausedOnInsertConstructor_r5() private    {
+      paused = PausedTuple(false,true);
   }
-  function updateBalanceOfOnInsertTotalOut_r6(address p,uint o) private    {
-      TotalOutTuple memory toDelete = totalOut[p];
-      if(toDelete._valid==true) {
-        updateBalanceOfOnDeleteTotalOut_r6(p,toDelete.n);
+  function updateIssueOnInsertRecv_issue_r33(uint n) private   returns (bool) {
+      address s = owner.p;
+      if(s==msg.sender) {
+        if(s!=address(0)) {
+          updateAllIssueOnInsertIssue_r44(n);
+          updateTotalIssueOnInsertIssue_r37(s,n);
+          emit Issue(s,n);
+          return true;
+        }
       }
-      TotalInTuple memory totalInTuple = totalIn[p];
-      uint i = totalInTuple.n;
-      TotalRedeemTuple memory totalRedeemTuple = totalRedeem[p];
-      uint m = totalRedeemTuple.n;
-      TotalIssueTuple memory totalIssueTuple = totalIssue[p];
-      uint n = totalIssueTuple.n;
-      uint s = ((n+i)-m)-o;
-      balanceOf[p] = BalanceOfTuple(s,true);
+      return false;
   }
-  function updateBalanceOfOnInsertTotalIn_r6(address p,uint i) private    {
-      TotalInTuple memory toDelete = totalIn[p];
-      if(toDelete._valid==true) {
-        updateBalanceOfOnDeleteTotalIn_r6(p,toDelete.n);
+  function updateTransferFromOnInsertRecv_transferFrom_r0(address o,address r,uint n) private   returns (bool) {
+      uint rt = rate.r;
+      uint mf = maxFee.m;
+      address s = msg.sender;
+      uint m = balanceOf[o].n;
+      if(false==isBlackListed[o].b) {
+        uint k = allowance[o][s].n;
+        if(m>=n && k>=n) {
+          uint f = (rt*n)/10000 < mf ? (rt*n)/10000 : mf;
+          updateTransferFromWithFeeOnInsertTransferFrom_r16(o,r,s,f,n);
+          emit TransferFrom(o,r,s,f,n);
+          return true;
+        }
       }
-      TotalOutTuple memory totalOutTuple = totalOut[p];
-      uint o = totalOutTuple.n;
-      TotalRedeemTuple memory totalRedeemTuple = totalRedeem[p];
-      uint m = totalRedeemTuple.n;
-      TotalIssueTuple memory totalIssueTuple = totalIssue[p];
-      uint n = totalIssueTuple.n;
-      uint s = ((n+i)-m)-o;
-      balanceOf[p] = BalanceOfTuple(s,true);
+      return false;
   }
-  function updateTotalSupplyOnInsertConstructor_r22(uint n) private    {
-      totalSupply = TotalSupplyTuple(n,true);
+  function updateRateOnInsertConstructor_r26() private    {
+      rate = RateTuple(0,true);
   }
-  function updateTotalSupplyOnInsertAllRedeem_r2(uint b) private    {
-      uint m = allIssue.n;
-      uint n = m-b;
-      totalSupply = TotalSupplyTuple(n,true);
+  function updateAllowanceOnIncrementSpentTotal_r8(address o,address s,int l) private    {
+      int _delta = int(-l);
+      uint newValue = updateuintByint(allowance[o][s].n,_delta);
+      allowance[o][s].n = newValue;
+  }
+  function updateMaxFeeOnInsertSetParams_r15(uint f) private    {
+      maxFee = MaxFeeTuple(f,true);
+  }
+  function updateAllowanceOnIncrementAllowanceTotal_r8(address o,address s,int m) private    {
+      int _delta = int(m);
+      uint newValue = updateuintByint(allowance[o][s].n,_delta);
+      allowance[o][s].n = newValue;
+  }
+  function updateAllowanceTotalOnInsertIncreaseAllowance_r46(address o,address s,uint n) private    {
+      int delta0 = int(n);
+      updateAllowanceOnIncrementAllowanceTotal_r8(o,s,delta0);
+      allowanceTotal[o][s].m += n;
+  }
+  function updateAllRedeemOnInsertRedeem_r9(uint n) private    {
+      int delta0 = int(n);
+      updateTotalSupplyOnIncrementAllRedeem_r11(delta0);
+      allRedeem.n += n;
+  }
+  function updateTotalRedeemOnInsertRedeem_r28(address p,uint n) private    {
+      int delta0 = int(n);
+      updateBalanceOfOnIncrementTotalRedeem_r20(p,delta0);
+      totalRedeem[p].n += n;
   }
 }

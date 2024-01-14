@@ -4,8 +4,9 @@
     "@openzeppelin/test-helpers": "^0.5.15"
   },
   "dependencies": {
+    "@openzeppelin/truffle-upgrades": "^1.21.0",
     "ganache": "^7.8.0",
-    "node-fetch": "^2.6.11",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.11"
   }
 }

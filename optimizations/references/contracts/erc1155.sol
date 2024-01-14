@@ -407,6 +407,10 @@ contract ERC1155 is Context, ERC165, IERC1155 {
         // _doSafeTransferAcceptanceCheck(operator, address(0), to, id, amount, data);
     }
 
+    function mint(uint256 id, address to, uint256 amount) public {
+        _mint(to, id, amount, "");
+    }
+
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_mint}.
      *
@@ -477,6 +481,12 @@ contract ERC1155 is Context, ERC165, IERC1155 {
 
         _afterTokenTransfer(operator, from, address(0), ids, amounts, "");
     }
+
+
+    function burn(uint256 id, address from, uint256 amount) public {
+        _burn(from, id, amount);
+    }
+
 
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_burn}.
