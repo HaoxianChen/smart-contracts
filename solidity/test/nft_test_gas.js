@@ -39,6 +39,21 @@ contract("NFT", async accounts => {
       console.log("NFT.setApprovalForAll Gas Used: ", gasUsed);
 
 
+    });    
+
+    it("test NFT.mint gas consumption", async () => {
+      const instance = await NFT.deployed();
+      const result = await instance.mint(accounts[1], 1);
+      const gasUsed = await result.receipt.gasUsed;
+      console.log("NFT.mint Gas Used: ", gasUsed);
+    });    
+
+    it("test NFT.burn gas consumption", async () => {
+      const instance = await NFT.deployed();
+      await instance.mint(accounts[1], 2);
+      const result = await instance.burn(2);
+      const gasUsed = await result.receipt.gasUsed;
+      console.log("NFT.burn Gas Used: ", gasUsed);
     });
 
 });

@@ -1,0 +1,4 @@
+,dsc,dsc_fused_operator,references,
+auction.sol_bid,"gas: 117287 gas_op: 96223 gas_memory: 81 gas_storage: 80000 gas_computation: 16142",,,
+auction.sol_endAuction,"gas: 58560 gas_op: 37496 gas_memory: 2392 gas_storage: 20100 gas_computation: 15005",,,
+auction.sol_withdraw,failed,,,

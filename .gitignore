@@ -1,0 +1,8 @@
+**/.DS_Store
+**/*_*.txt
+**/opcode*.txt
+analysis/
+results/
+**/node_modules
+**/node_modules_backup
+
